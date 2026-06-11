@@ -74,16 +74,12 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
 .ins-sum-it{font-family:'Roboto',sans-serif;font-size:12px;font-weight:300;color:#fff;font-style:italic;line-height:1.6}
 .footer{background:var(--d);padding:.65rem 1.8rem;display:flex;justify-content:space-between;align-items:center}
 .footer p{font-family:'Roboto',sans-serif;font-size:10px;color:var(--l);letter-spacing:.04em}
-.print-header{display:none;background:var(--d);padding:.8rem 1.5rem;align-items:center;justify-content:space-between;margin-bottom:1rem;border-radius:8px}
-.print-header-title{font-weight:700;font-size:14px;color:#fff}
-.print-header-sub{font-family:'Roboto',sans-serif;font-size:11px;color:var(--l);margin-top:2px}
-.print-header-date{font-family:'Roboto',sans-serif;font-size:10px;color:var(--l)}
 .idx-note{font-family:'Roboto',sans-serif;font-size:9px;color:var(--m);font-style:italic;margin-bottom:6px}
+.milestone-badge{display:inline-block;background:var(--m);color:#fff;border-radius:4px;font-size:9px;font-weight:700;padding:2px 7px;font-family:'Roboto',sans-serif;letter-spacing:.04em;margin-right:4px}
 @media print{
   .tab-nav,.footer,.lang-strip{display:none!important}
   .page{display:none!important;padding:0}
   .page.print-target{display:block!important}
-  .print-header{display:flex!important}
   body{background:#fff}
   .card,.metric,.ins-card{box-shadow:none;border:1px solid #ddd}
   @page{margin:15mm;size:A4 landscape}
@@ -92,23 +88,22 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-left">
     <img src="logo.png" alt="Dolomiti NordicSki" style="height:40px;width:auto;display:block;">
     <div>
       <div class="hdr-de">DNS Network Analytics</div>
-      <div class="hdr-it">Verkaufsstatistik · Statistiche di vendita</div>
+      <div class="hdr-it">Statistics & Reporting</div>
     </div>
   </div>
   <div class="hdr-badge">WS · SI 2025-26</div>
 </div>
 
-<!-- TAB NAV -->
 <div class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('p1',this)">WS 2025-26</button>
   <button class="tab-btn" onclick="switchTab('p2',this)">Jahresvergleich · Confronto annuale</button>
   <button class="tab-btn" onclick="switchTab('p3',this)">Performance Regionen · Regioni</button>
+  <button class="tab-btn" onclick="switchTab('p4',this)">Network Reliability</button>
   <div class="tab-spacer"></div>
   <button class="print-btn" onclick="printTab()">
     <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
@@ -121,17 +116,14 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
   <div class="lang-it">🇮🇹 Italiano</div>
 </div>
 
-<!-- ═══ PAGE 1: WS 2025-26 ═══ -->
+<!-- ═══ PAGE 1 ═══ -->
 <div id="p1" class="page active">
-<div class="print-header"><div><div class="print-header-title">DNS Analyse — WS 2025-26</div><div class="print-header-sub">Dolomiti NordicSki · Verkaufsstatistik / Statistiche di vendita</div></div><div class="print-header-date" id="pd1"></div></div>
-
 <div class="metrics">
   <div class="metric"><div class="ml-de">Gesamttickets</div><div class="ml-it">Biglietti totali</div><div class="mv">77.462</div><div class="ms">↓ 10,9% vs. WS 2024-25</div></div>
   <div class="metric"><div class="ml-de">Gesamteinnahmen</div><div class="ml-it">Entrate totali</div><div class="mv">€ 1,89 Mio</div><div class="ms">↓ 7,8% vs. WS 2024-25</div></div>
   <div class="metric"><div class="ml-de">Ø Ticketpreis</div><div class="ml-it">Prezzo medio</div><div class="mv">€ 24,40</div><div class="ms">↑ +2,8% vs. WS 2024-25</div></div>
   <div class="metric top"><div class="ml-de">Top Leistung</div><div class="ml-it">Top performance</div><div class="mv" style="font-size:15px;margin-top:3px">3 Zinnen</div><div class="ms">€ 702.623 · 28.023 Tkts</div></div>
 </div>
-
 <div class="st"><div class="st-de">Verkäufe nach Region</div><div class="st-it">Vendite per regione</div></div>
 <div class="g2">
   <div class="card"><div class="ch"><div class="ch-de">Anzahl Tickets / Quantità</div><div class="ch-it">nach Region · per regione</div></div>
@@ -141,7 +133,6 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
     <div class="leg"><span><span class="dot" style="background:#0D4D5E"></span>3 Zinnen top</span><span><span class="dot" style="background:#AAD0D1"></span>altre regioni</span></div>
     <div style="position:relative;height:200px"><canvas id="cRegRev"></canvas></div></div>
 </div>
-
 <div class="st"><div class="st-de">Jahresvergleich · Tortendiagramme</div><div class="st-it">Confronto annuale · Grafici a torta</div></div>
 <div class="g3">
   <div class="card"><div class="ch"><div class="ch-de">Jahresvergleich Tickets</div><div class="ch-it">Confronto annuale biglietti</div></div>
@@ -154,24 +145,22 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
     <div class="leg"><span><span class="dot" style="background:#0D4D5E"></span>Büro 77%</span><span><span class="dot" style="background:#417483"></span>Online 15%</span><span><span class="dot" style="background:#AAD0D1"></span>Loipe 7%</span></div>
     <div style="position:relative;height:195px"><canvas id="cChannels"></canvas></div></div>
 </div>
-
 <div class="st"><div class="st-de">Einnahmen nach Tickettyp · Quota Menge vs Einnahmen</div><div class="st-it">Entrate per tipo · Peso quantità vs entrate</div></div>
 <div class="g2b">
-  <div class="card"><div class="ch"><div class="ch-de">Einnahmen nach Tickettyp — Barre</div><div class="ch-it">Entrate per tipo biglietto</div></div>
+  <div class="card"><div class="ch"><div class="ch-de">Einnahmen nach Tickettyp</div><div class="ch-it">Entrate per tipo biglietto</div></div>
     <div class="leg"><span><span class="dot" style="background:#D4CEC6"></span>DAY</span><span><span class="dot" style="background:#8B3A2F"></span>WK Area</span><span><span class="dot" style="background:#417483"></span>WK DNS</span><span><span class="dot" style="background:#7A7875"></span>SK Area</span><span><span class="dot" style="background:#AAD0D1"></span>SK DNS</span></div>
     <div style="position:relative;height:195px"><canvas id="cRevBar"></canvas></div></div>
   <div class="card"><div class="ch"><div class="ch-de">Einnahmen (%) vs. Menge (%) — Doppel Donut</div><div class="ch-it">Entrate (%) vs. quantità (%) — doppio doughnut</div></div>
     <div class="leg"><span><span class="dot" style="background:#D4CEC6"></span>DAY</span><span><span class="dot" style="background:#8B3A2F"></span>WK Area</span><span><span class="dot" style="background:#417483"></span>WK DNS</span><span><span class="dot" style="background:#7A7875"></span>SK Area</span><span><span class="dot" style="background:#AAD0D1"></span>SK DNS</span></div>
-    <div style="font-size:9px;font-family:'Roboto',sans-serif;color:var(--m);margin-bottom:4px">Esterno: Entrate · Interno: Menge / Esterno: Entrate · Interno: quantità</div>
+    <div style="font-size:9px;font-family:'Roboto',sans-serif;color:var(--m);margin-bottom:4px">Esterno: Entrate · Interno: quantità</div>
     <div style="position:relative;height:185px"><canvas id="cDoubleDonut"></canvas></div></div>
 </div>
-
 <div class="st" style="margin-top:.5rem"><div class="st-de">Strategische Erkenntnisse</div><div class="st-it">Insights strategici</div></div>
 <div class="ins-grid">
   <div class="ins-card top"><div class="ins-n">01</div><div class="ins-b"><div class="ins-tde">DNS SK — Rekord der Serie</div><div class="ins-tit">DNS SK — record storico assoluto</div><div class="ins-xde">2.355 Pässe · +31% vs. 2022-23 · +22% vs. 2024-25.</div><div class="ins-xit">2.355 tessere · +31% vs. 2022-23. Il cliente più fidelizzato premia la rete.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">↑ Strukturelles Wachstum · Crescita strutturale</div></div></div>
   <div class="ins-card"><div class="ins-n">02</div><div class="ins-b"><div class="ins-tde">DNS WK — KPI der Netzgesundheit</div><div class="ins-tit">DNS WK — KPI della salute del network</div><div class="ins-xde">Fast doppelt so viele wie 2022-23, aber volatil.</div><div class="ins-xit">Quasi il doppio del 2022-23, ma volatile. Dipende dalla rete operativa.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Sensibel · Sensibile alle aperture</div></div></div>
   <div class="ins-card"><div class="ins-n">03</div><div class="ins-b"><div class="ins-tde">3 Zinnen — Lokomotive des Systems</div><div class="ins-tit">3 Zinnen — locomotore del sistema</div><div class="ins-xde">€ 702.623 · 28.023 Tickets — 37% des DNS-Umsatzes.</div><div class="ins-xit">37% del fatturato DNS. Grande forza, ma dipendenza da una singola area.</div><div class="ins-tag" style="background:rgba(65,116,131,.12);color:#417483">⚠ Konzentration · Concentrazione</div></div></div>
-  <div class="ins-card"><div class="ins-n">04</div><div class="ins-b"><div class="ins-tde">DAY 84% — strukturelle Abhängigkeit</div><div class="ins-tit">DAY: 84% — dipendenza strutturale</div><div class="ins-xde">Identische Quote wie 2022-23. Modell stark tagesticketabhängig.</div><div class="ins-xit">Quota identica al 2022-23. Il modello resta legato al giornaliero.</div><div class="ins-tag" style="background:rgba(136,135,128,.12);color:#5F5E5A">Risiko · Rischio stagionale</div></div></div>
+  <div class="ins-card"><div class="ins-n">04</div><div class="ins-b"><div class="ins-tde">DAY 84% — strukturelle Abhängigkeit</div><div class="ins-tit">DAY: 84% — dipendenza strutturale</div><div class="ins-xde">Identische Quote wie 2022-23.</div><div class="ins-xit">Quota identica al 2022-23. Il modello resta legato al giornaliero.</div><div class="ins-tag" style="background:rgba(136,135,128,.12);color:#5F5E5A">Risiko · Rischio stagionale</div></div></div>
   <div class="ins-card"><div class="ins-n">05</div><div class="ins-b"><div class="ins-tde">Umsatz hält besser als Volumen</div><div class="ins-tit">Il fatturato regge meglio dei volumi</div><div class="ins-xde">Tickets −12% · Umsatz −8%. Ø-Ticketwert wächst.</div><div class="ins-xit">Ticket −12% · fatturato −8%. Il valore medio cresce.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">↑ Qualität · Qualità vs quantità</div></div></div>
   <div class="ins-card"><div class="ins-n">06</div><div class="ins-b"><div class="ins-tde">2025-26 weniger negativ als es scheint</div><div class="ins-tit">Il 2025-26 è meno negativo di quanto sembri</div><div class="ins-xde">Vs. 2022-23: +867 Tickets, +€318.096.</div><div class="ins-xit">Vs. 2022-23: +867 ticket, +€318.096. Il calo riguarda solo il 2024-25.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Langfristig positiv · Trend positivo</div></div></div>
 </div>
@@ -179,25 +168,21 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
   <div class="ins-sum-de">"Trotz ungünstiger Schneebedingungen bestätigt DNS seine wirtschaftliche Stärke und erzielt mit dem DNS SK den besten Serienrekord."</div>
   <div class="ins-sum-it">"Nonostante condizioni meno favorevoli, DNS conferma la propria solidità e registra il miglior risultato storico del DNS SK."</div>
 </div>
-</div><!-- /p1 -->
+</div>
 
-<!-- ═══ PAGE 2: JAHRESVERGLEICH ═══ -->
+<!-- ═══ PAGE 2 ═══ -->
 <div id="p2" class="page">
-<div class="print-header"><div><div class="print-header-title">Jahresvergleich · Confronto annuale 2022-2026</div><div class="print-header-sub">Dolomiti NordicSki · Trend analysis WS 2022-23 → 2025-26</div></div><div class="print-header-date" id="pd2"></div></div>
-
 <div class="metrics">
   <div class="metric top"><div class="ml-de">DNS SK — Rekord</div><div class="ml-it">DNS SK — record</div><div class="mv">2.355</div><div class="ms">↑ +31% vs. 2022-23</div></div>
   <div class="metric"><div class="ml-de">DNS WK Wachstum</div><div class="ml-it">DNS WK crescita</div><div class="mv">+97%</div><div class="ms">vs. 2022-23 (1.759→3.458)</div></div>
   <div class="metric"><div class="ml-de">Umsatz 4 Jahre</div><div class="ml-it">Entrate 4 anni</div><div class="mv">+20,2%</div><div class="ms">2022-23 → 2025-26</div></div>
   <div class="metric"><div class="ml-de">Rekord-Saison</div><div class="ml-it">Stagione record</div><div class="mv">2024-25</div><div class="ms">€ 2,05 Mio · 88.013 Tkts</div></div>
 </div>
-
-<!-- TREND INDICE 100 + DNS VS AREA -->
 <div class="st"><div class="st-de">Trendentwicklung — Index 100 · DNS vs. Area</div><div class="st-it">Sviluppo trend — Indice 100 · DNS vs. Area</div></div>
 <div class="g2b">
   <div class="card a2">
     <div class="ch"><div class="ch-de">Trendentwicklung pro Tickettyp — Index 100</div><div class="ch-it">Sviluppo per tipo biglietto — indice base 100</div></div>
-    <div class="idx-note">Base 100 = WS 2022-23. Valori sopra 100 = crescita rispetto alla stagione di partenza.</div>
+    <div class="idx-note">Base 100 = WS 2022-23.</div>
     <div class="leg"><span><span class="dot" style="background:#D4CEC6"></span>DAY</span><span><span class="dot" style="background:#8B3A2F"></span>WK Area</span><span><span class="dot" style="background:#417483"></span>WK DNS</span><span><span class="dot" style="background:#7A7875"></span>SK Area</span><span><span class="dot" style="background:#AAD0D1"></span>SK DNS</span></div>
     <div style="position:relative;height:210px"><canvas id="cTrendIdx"></canvas></div>
   </div>
@@ -208,30 +193,20 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
     <div style="position:relative;height:210px"><canvas id="cDnsVsArea"></canvas></div>
   </div>
 </div>
-
-<!-- FOCUS DNS + TOTALE -->
 <div class="st"><div class="st-de">DNS-Produkte im Fokus · Gesamttickets</div><div class="st-it">Focus prodotti DNS · Totale biglietti</div></div>
 <div class="g3b">
-  <div class="card a2"><div class="ch"><div class="ch-de">DNS SK — Serienentwicklung</div><div class="ch-it">DNS SK — evoluzione storica</div></div>
-    <div style="position:relative;height:175px"><canvas id="cDnsSK"></canvas></div></div>
-  <div class="card a2"><div class="ch"><div class="ch-de">DNS WK — Serienentwicklung</div><div class="ch-it">DNS WK — evoluzione storica</div></div>
-    <div style="position:relative;height:175px"><canvas id="cDnsWK"></canvas></div></div>
-  <div class="card a2"><div class="ch"><div class="ch-de">Gesamttickets — 4 Saisons</div><div class="ch-it">Totale biglietti — 4 stagioni</div></div>
-    <div style="position:relative;height:175px"><canvas id="cTotTix"></canvas></div></div>
+  <div class="card a2"><div class="ch"><div class="ch-de">DNS SK — Serienentwicklung</div><div class="ch-it">DNS SK — evoluzione storica</div></div><div style="position:relative;height:175px"><canvas id="cDnsSK"></canvas></div></div>
+  <div class="card a2"><div class="ch"><div class="ch-de">DNS WK — Serienentwicklung</div><div class="ch-it">DNS WK — evoluzione storica</div></div><div style="position:relative;height:175px"><canvas id="cDnsWK"></canvas></div></div>
+  <div class="card a2"><div class="ch"><div class="ch-de">Gesamttickets — 4 Saisons</div><div class="ch-it">Totale biglietti — 4 stagioni</div></div><div style="position:relative;height:175px"><canvas id="cTotTix"></canvas></div></div>
 </div>
-
-<!-- TREND ENTRATE + STACKED FATTURATO -->
 <div class="st"><div class="st-de">Einnahmentrend · Zusammensetzung nach Jahr</div><div class="st-it">Trend entrate · Composizione per anno</div></div>
 <div class="g2b">
   <div class="card a2"><div class="ch"><div class="ch-de">Gesamteinnahmen — 4-Jahrestrend</div><div class="ch-it">Entrate totali — trend 4 anni</div></div>
-    <div class="leg"><span><span class="dot" style="background:#0D4D5E"></span>Einnahmen / Entrate €</span></div>
     <div style="position:relative;height:175px"><canvas id="cRevYear"></canvas></div></div>
   <div class="card a2"><div class="ch"><div class="ch-de">Einnahmen-Zusammensetzung pro Jahr</div><div class="ch-it">Composizione entrate per anno</div></div>
     <div class="leg"><span><span class="dot" style="background:#D4CEC6"></span>DAY</span><span><span class="dot" style="background:#8B3A2F"></span>WK Area</span><span><span class="dot" style="background:#417483"></span>WK DNS</span><span><span class="dot" style="background:#7A7875"></span>SK Area</span><span><span class="dot" style="background:#AAD0D1"></span>SK DNS</span></div>
     <div style="position:relative;height:175px"><canvas id="cStackedRev"></canvas></div></div>
 </div>
-
-<!-- DELTA + PREZZI -->
 <div class="st"><div class="st-de">Delta 2022-23 → 2025-26 & Ø Preise</div><div class="st-it">Variazione & prezzi medi</div></div>
 <div class="g2b">
   <div class="card"><div class="ch"><div class="ch-de">Δ Menge & Einnahmen</div><div class="ch-it">Δ quantità & entrate</div></div>
@@ -251,31 +226,20 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
       <tr><td>Area WK</td><td>€ 52,25</td></tr>
       <tr><td>Area SK</td><td>€ 116,70</td></tr>
       <tr><td>DNS WK</td><td>€ 62,10</td></tr>
-      <tr><td>DNS SK (inkl. Langlauflehrer)</td><td>€ 135,46</td></tr>
+      <tr><td>DNS SK</td><td>€ 135,46</td></tr>
     </table>
-    <div style="margin-top:12px"><div class="ch-de" style="margin-bottom:4px">Ø Preis-Trend / Trend prezzo medio</div>
+    <div style="margin-top:12px"><div class="ch-de" style="margin-bottom:4px">Ø Preis-Trend</div>
     <div style="position:relative;height:90px"><canvas id="cAvgPrice"></canvas></div></div>
   </div>
 </div>
-
-<div class="st" style="margin-top:.5rem"><div class="st-de">Strategische Erkenntnisse — 4 Jahre</div><div class="st-it">Insights strategici — 4 anni</div></div>
-<div class="ins-grid">
-  <div class="ins-card top"><div class="ins-n">A</div><div class="ins-b"><div class="ins-tde">Netz gewinnt Gewicht gegenüber Area</div><div class="ins-tit">La rete guadagna peso rispetto all'Area</div><div class="ins-xde">DNS WK+SK zusammen: +97% in 4 Jahren. Area WK+SK: stabil. Der Anteil der Netzprodukte am Gesamtfatturato wächst strukturell.</div><div class="ins-xit">DNS WK+SK insieme: +97% in 4 anni. Area WK+SK: stabile. Il peso dei prodotti di rete sul fatturato totale cresce strutturalmente.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">↑ Netzstärke · Forza della rete</div></div></div>
-  <div class="ins-card top"><div class="ins-n">B</div><div class="ins-b"><div class="ins-tde">DNS WK fast verdoppelt</div><div class="ins-tit">DNS WK quasi raddoppiato</div><div class="ins-xde">+1.699 Tickets (+96,6%) und +€109.056 (+103%) in 4 Jahren.</div><div class="ins-xit">+1.699 biglietti (+96,6%) e +€109.056 (+103%) in 4 anni.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">↑ Stärkstes Wachstum · Crescita più forte</div></div></div>
-  <div class="ins-card"><div class="ins-n">C</div><div class="ins-b"><div class="ins-tde">DNS SK: konstantes Wachstum</div><div class="ins-tit">DNS SK: crescita costante</div><div class="ins-xde">Einzige Linie die jedes Jahr wächst ohne Rückschritt.</div><div class="ins-xit">L'unica linea che cresce ogni anno senza arretrare.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Stabilstes Produkt · Prodotto più stabile</div></div></div>
-  <div class="ins-card"><div class="ins-n">D</div><div class="ins-b"><div class="ins-tde">Area SK: volatil</div><div class="ins-tit">Area SK: volatile</div><div class="ins-xde">+82% in 2024-25, dann −28%. Niveau 2024-25 kein neues Basisniveau.</div><div class="ins-xit">+82% nel 2024-25, poi −28%. Il picco non era strutturale.</div><div class="ins-tag" style="background:rgba(136,135,128,.12);color:#5F5E5A">Volatil · Volatile</div></div></div>
-  <div class="ins-card"><div class="ins-n">E</div><div class="ins-b"><div class="ins-tde">+20,2% Umsatz in 4 Jahren</div><div class="ins-tit">+20,2% fatturato in 4 anni</div><div class="ins-xde">Von €1,57 Mio auf €1,89 Mio bei fast gleicher Ticketmenge.</div><div class="ins-xit">Da €1,57 Mio a €1,89 Mio con quasi la stessa quantità.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">↑ Wertschöpfung · Creazione di valore</div></div></div>
-  <div class="ins-card"><div class="ins-n">F</div><div class="ins-b"><div class="ins-tde">Area WK stabil</div><div class="ins-tit">Area WK stabile</div><div class="ins-xde">−7,8% Menge, +1% Einnahmen. Erfüllt Funktion ohne Wachstum.</div><div class="ins-xit">−7,8% quantità, +1% entrate. Svolge la funzione senza crescita.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Stabil · Stabile</div></div></div>
-</div>
-<div class="ins-sum">
+<div class="ins-sum" style="margin-top:14px">
   <div class="ins-sum-de">"In vier Saisons: Umsatz +20,2%, DNS SK Rekord, DNS WK fast verdoppelt — das Netzkonzept überzeugt zunehmend."</div>
   <div class="ins-sum-it">"In quattro stagioni: fatturato +20,2%, DNS SK record, DNS WK quasi raddoppiato — il concetto di rete convince sempre di più."</div>
 </div>
-</div><!-- /p2 -->
+</div>
 
-<!-- ═══ PAGE 3: PERFORMANCE REGIONEN ═══ -->
+<!-- ═══ PAGE 3 ═══ -->
 <div id="p3" class="page">
-<div class="print-header"><div><div class="print-header-title">Performance Regionen · Regioni WS 2025-26</div><div class="print-header-sub">Dolomiti NordicSki · Analisi regionale per tipo di biglietto</div></div><div class="print-header-date" id="pd3"></div></div>
 <div class="metrics">
   <div class="metric top"><div class="ml-de">DAY-geprägte Region</div><div class="ml-it">Regione a forte vocazione DAY</div><div class="mv" style="font-size:15px;margin-top:3px">Ahrntal+Sand</div><div class="ms">92,1% delle vendite in DAY</div></div>
   <div class="metric top"><div class="ml-de">SK Area Schwerpunkt</div><div class="ml-it">SK Area più radicata</div><div class="mv" style="font-size:15px;margin-top:3px">Osttirol</div><div class="ms">1.474 pz · 56,7% del totale DNS</div></div>
@@ -319,27 +283,143 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
 </div>
 <div class="st"><div class="st-de">Regionale Erkenntnisse</div><div class="st-it">Insights regionali</div></div>
 <div class="ins-grid">
-  <div class="ins-card top"><div class="ins-n">I</div><div class="ins-b"><div class="ins-tde">Seiser Alm/Val Gardena — starkes WK Area Profil</div><div class="ins-tit">Seiser Alm/Val Gardena — forte profilo WK Area</div><div class="ins-xde">Mit 1.309 WK Area-Tickets weist Seiser Alm/Val Gardena den höchsten Wert im Network auf. DNS-Produkte sind kaum vertreten — hier liegt Potenzial für eine weitere Integration.</div><div class="ins-xit">Con 1.309 WK Area è il territorio con il valore più alto nel network. I prodotti DNS sono poco presenti — qui c'è potenziale per una maggiore integrazione.</div><div class="ins-tag" style="background:rgba(65,116,131,.12);color:#417483">↗ DNS-Potenzial · Potenziale DNS</div></div></div>
-  <div class="ins-card top"><div class="ins-n">II</div><div class="ins-b"><div class="ins-tde">Osttirol — starke lokale SK Area Verankerung</div><div class="ins-tit">Osttirol — forte radicamento locale SK Area</div><div class="ins-xde">1.474 SK Area entsprechen 56,7% des gesamten Network-Wertes. Eine treue, lokale Stammkundschaft prägt das Profil dieses Gebiets — ein eigenes Modell innerhalb des DNS.</div><div class="ins-xit">1.474 SK Area = 56,7% del totale network. Una clientela locale fidelizzata caratterizza questo territorio — un modello proprio all'interno del DNS.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">Lokale Verankerung · Radicamento locale</div></div></div>
-  <div class="ins-card"><div class="ins-n">III</div><div class="ins-b"><div class="ins-tde">Gsiesertal — ausgewogenes DNS-Profil</div><div class="ins-tit">Gsiesertal — profilo DNS equilibrato</div><div class="ins-xde">Gsiesertal weist unter allen Partnergebieten den ausgewogensten Produktmix auf — ein interessantes Pilotgebiet für neue Produkte und digitale Ticketing-Lösungen wie RFID.</div><div class="ins-xit">Tra tutti i territori partner, Gsiesertal ha il mix di prodotti più equilibrato — un territorio interessante per nuovi prodotti e soluzioni di ticketing digitale come RFID.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Pilotgebiet · Territorio pilota</div></div></div>
-  <div class="ins-card"><div class="ins-n">IV</div><div class="ins-b"><div class="ins-tde">3 Zinnen — starker Beitrag zum DNS WK</div><div class="ins-tit">3 Zinnen — contributo rilevante al DNS WK</div><div class="ins-xde">Mit 2.162 von 3.458 DNS WK-Tickets trägt 3 Zinnen (62,5%) wesentlich zum Erfolg dieses Produkts bei. Die Verfügbarkeit der Pisten beeinflusst direkt den wahrgenommenen Wert des DNS WK.</div><div class="ins-xit">Con 2.162 su 3.458 DNS WK (62,5%), 3 Zinnen contribuisce in modo rilevante al successo di questo prodotto. La disponibilità delle piste influenza direttamente il valore percepito del DNS WK.</div><div class="ins-tag" style="background:rgba(136,135,128,.12);color:#5F5E5A">DNS WK Beitrag · Contributo DNS WK</div></div></div>
-  <div class="ins-card"><div class="ins-n">V</div><div class="ins-b"><div class="ins-tde">Comelico & Cortina — kleinere Gebiete mit strategischer Bedeutung</div><div class="ins-tit">Comelico & Cortina — aree più piccole con ruolo strategico</div><div class="ins-xde">Zusammen unter €43k Umsatz, aber 135 SK DNS-Pässe. Ihr Beitrag liegt vor allem in der geografischen Reichweite und der Stärkung des DNS SK als Netzprodukt.</div><div class="ins-xit">Insieme sotto €43k di fatturato, ma 135 tessere SK DNS. Il loro contributo è nella copertura geografica e nel rafforzamento del DNS SK come prodotto di rete.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Strategische Reichweite · Copertura strategica</div></div></div>
-  <div class="ins-card"><div class="ins-n">VI</div><div class="ins-b"><div class="ins-tde">Ahrntal+Sand — stark bei DAY, mit Potenzial für DNS</div><div class="ins-tit">Ahrntal+Sand — forte nei DAY, con potenziale DNS</div><div class="ins-xde">Mit 92,1% DAY-Anteil weist Ahrntal+Sand die stärkste DAY-Orientierung im Network auf. Mit nur 45 DNS WK-Tickets zeigt sich hier Potenzial für eine weitere DNS-Integration.</div><div class="ins-xit">Con il 92,1% di DAY, Ahrntal+Sand ha la più alta vocazione giornaliera del network. Con soli 45 DNS WK, c'è potenziale per una maggiore integrazione DNS.</div><div class="ins-tag" style="background:rgba(65,116,131,.12);color:#417483">↗ DNS-Integration · Integrazione DNS</div></div></div>
+  <div class="ins-card top"><div class="ins-n">I</div><div class="ins-b"><div class="ins-tde">Seiser Alm/Val Gardena — starkes WK Area Profil</div><div class="ins-tit">Seiser Alm/Val Gardena — forte profilo WK Area</div><div class="ins-xde">Mit 1.309 WK Area-Tickets weist Seiser Alm/Val Gardena den höchsten Wert im Network auf. DNS-Produkte sind kaum vertreten — hier liegt Potenzial.</div><div class="ins-xit">Con 1.309 WK Area è il territorio con il valore più alto. I prodotti DNS sono poco presenti — potenziale per una maggiore integrazione.</div><div class="ins-tag" style="background:rgba(65,116,131,.12);color:#417483">↗ DNS-Potenzial · Potenziale DNS</div></div></div>
+  <div class="ins-card top"><div class="ins-n">II</div><div class="ins-b"><div class="ins-tde">Osttirol — starke lokale SK Area Verankerung</div><div class="ins-tit">Osttirol — forte radicamento locale SK Area</div><div class="ins-xde">1.474 SK Area entsprechen 56,7% des gesamten Network-Wertes. Eine treue, lokale Stammkundschaft prägt das Profil.</div><div class="ins-xit">1.474 SK Area = 56,7% del totale network. Clientela locale fidelizzata — un modello proprio all'interno del DNS.</div><div class="ins-tag" style="background:rgba(13,77,94,.12);color:#0D4D5E">Lokale Verankerung · Radicamento locale</div></div></div>
+  <div class="ins-card"><div class="ins-n">III</div><div class="ins-b"><div class="ins-tde">Gsiesertal — ausgewogenes DNS-Profil</div><div class="ins-tit">Gsiesertal — profilo DNS equilibrato</div><div class="ins-xde">Gsiesertal weist den ausgewogensten Produktmix auf — ein interessantes Pilotgebiet für digitale Ticketing-Lösungen wie RFID.</div><div class="ins-xit">Il mix più equilibrato del network — territorio pilota ideale per ticketing digitale RFID.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Pilotgebiet · Territorio pilota</div></div></div>
+  <div class="ins-card"><div class="ins-n">IV</div><div class="ins-b"><div class="ins-tde">3 Zinnen — starker Beitrag zum DNS WK</div><div class="ins-tit">3 Zinnen — contributo rilevante al DNS WK</div><div class="ins-xde">Mit 2.162 von 3.458 DNS WK-Tickets (62,5%) ist 3 Zinnen der Motor des Netzwochenprodukts.</div><div class="ins-xit">Con 2.162 su 3.458 DNS WK (62,5%), 3 Zinnen è il motore del prodotto settimanale di rete.</div><div class="ins-tag" style="background:rgba(136,135,128,.12);color:#5F5E5A">DNS WK Beitrag · Contributo DNS WK</div></div></div>
+  <div class="ins-card"><div class="ins-n">V</div><div class="ins-b"><div class="ins-tde">Comelico & Cortina — strategische Reichweite</div><div class="ins-tit">Comelico & Cortina — copertura strategica</div><div class="ins-xde">Zusammen unter €43k Umsatz, aber 135 SK DNS-Pässe. Ihr Beitrag liegt in der geografischen Reichweite.</div><div class="ins-xit">Sotto €43k di fatturato, ma 135 tessere SK DNS. Il valore è nella copertura geografica del network.</div><div class="ins-tag" style="background:rgba(170,208,209,.3);color:#0D4D5E">Strategische Reichweite · Copertura strategica</div></div></div>
+  <div class="ins-card"><div class="ins-n">VI</div><div class="ins-b"><div class="ins-tde">Ahrntal+Sand — stark bei DAY, Potenzial für DNS</div><div class="ins-tit">Ahrntal+Sand — forte nei DAY, potenziale DNS</div><div class="ins-xde">Mit 92,1% DAY-Anteil die stärkste DAY-Orientierung im Network. Mit nur 45 DNS WK zeigt sich großes Potenzial.</div><div class="ins-xit">Con 92,1% DAY è il territorio più orientato al giornaliero. Con soli 45 DNS WK c'è ampio spazio DNS.</div><div class="ins-tag" style="background:rgba(65,116,131,.12);color:#417483">↗ DNS-Integration · Integrazione DNS</div></div></div>
 </div>
 <div class="ins-sum">
   <div class="ins-sum-de">"Jedes Partnergebiet bringt sein eigenes Profil in das DNS-Network ein — diese Vielfalt ist eine Stärke des Verbunds und Grundlage für eine differenzierte Weiterentwicklung."</div>
-  <div class="ins-sum-it">"Ogni territorio partner porta il proprio profilo all'interno del network DNS — questa diversità è un punto di forza del consorzio e base per uno sviluppo differenziato."</div>
+  <div class="ins-sum-it">"Ogni territorio porta il proprio profilo nel network DNS — questa diversità è un punto di forza del consorzio e base per uno sviluppo differenziato."</div>
 </div>
-</div><!-- /p3 -->
+</div>
+
+<!-- ═══ PAGE 4: NETWORK RELIABILITY ═══ -->
+<div id="p4" class="page">
+<!-- LEGENDA -->
+<div style="display:flex;gap:24px;align-items:center;background:rgba(13,77,94,.06);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;flex-wrap:wrap">
+  <div style="font-size:10px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.07em">Legende / Legenda:</div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#0D4D5E"></span><strong>KS</strong> = Kunstschnee / neve artificiale</div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#AAD0D1"></span><strong>NS</strong> = Naturschnee / neve naturale</div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(65,116,131,.15)"></span>Loipe non aperte / nicht geöffnet</div>
+  <div style="font-family:'Roboto',sans-serif;font-size:10px;color:#5a7f8a;font-style:italic">KP = km KS al 20.01 / km potenziali totali (max 100%)</div>
+</div>
+<div class="metrics">
+  <div class="metric top"><div class="ml-de">Netzöffnung al 20.01</div><div class="ml-it">% rete aperta al 20.01.2026</div><div class="mv">52,3%</div><div class="ms">384,8 km su 736 km potenziali</div></div>
+  <div class="metric top"><div class="ml-de">KS sul totale aperto</div><div class="ml-it">% KS sul totale aperto al 20.01</div><div class="mv">54,0%</div><div class="ms">207,7 km KS su 384,8 km aperti</div></div>
+  <div class="metric"><div class="ml-de">Netzöffnung al 23.12</div><div class="ml-it">% rete aperta al 23.12.2025</div><div class="mv">30,0%</div><div class="ms">220,5 km su 736 — inizio stagione critico</div></div>
+  <div class="metric"><div class="ml-de">Höchste Reliability</div><div class="ml-it">Regione più affidabile</div><div class="mv" style="font-size:15px;margin-top:3px">Gsiesertal</div><div class="ms">100% alle 3 milestone — unica nel network</div></div>
+</div>
+<div class="st"><div class="st-de">KP — Kunstschnee-Index pro Region</div><div class="st-it">KP per regione — indice neve artificiale al 20.01.2026</div></div>
+<div class="g2">
+  <div class="card a2">
+    <div class="ch"><div class="ch-de">KP pro Region — KS km / Potenzial km (max 100%)</div><div class="ch-it">KP per regione — ordinato per valore decrescente</div></div>
+    <div class="leg">
+      <span><span class="dot" style="background:#0D4D5E"></span>KP ≥ 70% — alta dipendenza KS</span>
+      <span><span class="dot" style="background:#417483"></span>KP 30–70% — mix KS/NS</span>
+      <span><span class="dot" style="background:#AAD0D1"></span>KP &lt; 30% — prevalenza NS o chiuse</span>
+    </div>
+    <div style="position:relative;height:260px"><canvas id="cKpBar"></canvas></div>
+  </div>
+  <div class="card a2">
+    <div class="ch"><div class="ch-de">KS · aperti senza KS · potenziale non aperto — al 20.01.2026</div><div class="ch-it">KS · aperti senza KS · potenziale non aperto — km assoluti</div></div>
+    <div class="leg">
+      <span><span class="dot" style="background:#0D4D5E"></span>KS — neve artificiale</span>
+      <span><span class="dot" style="background:#AAD0D1"></span>Aperti senza KS</span>
+      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Potenziale non aperto</span>
+    </div>
+    <div style="position:relative;height:260px"><canvas id="cKpStacked"></canvas></div>
+  </div>
+</div>
+<div class="st"><div class="st-de">% Pistenöffnung — 3 Meilensteine pro Region</div><div class="st-it">% piste aperte per regione — nelle 3 milestone</div></div>
+<div class="g2b">
+  <div class="card">
+    <div class="ch"><div class="ch-de">% Pistenöffnung pro Region & Meilenstein</div><div class="ch-it">% piste aperte per regione alle 3 milestone</div></div>
+    <div class="leg">
+      <span><span class="dot" style="background:#c8e8e9"></span>23.12.2025</span>
+      <span><span class="dot" style="background:#417483"></span>06.01.2026</span>
+      <span><span class="dot" style="background:#0D4D5E"></span>20.01.2026</span>
+    </div>
+    <div style="position:relative;height:230px"><canvas id="cKpMilestone"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-de">Tabelle — KP pro Region WS 2025-26</div><div class="ch-it">Tabella KP per regione — dati al 20.01.2026</div></div>
+    <div style="overflow-y:auto;max-height:260px">
+      <table class="dtable">
+        <thead><tr>
+          <th>Regione</th><th>Pot.</th>
+          <th><span class="milestone-badge">23.12</span>%</th>
+          <th><span class="milestone-badge">06.01</span>%</th>
+          <th><span class="milestone-badge">20.01</span>%</th>
+          <th>KP</th>
+        </tr></thead>
+        <tbody id="kpTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="st"><div class="st-de">DNS Gesamtbild · Klassifikation nach KP-Index</div><div class="st-it">Quadro complessivo DNS · Classificazione per indice KP</div></div>
+<div class="g3b">
+  <div class="card">
+    <div class="ch"><div class="ch-de">DNS — KS · offen ohne KS · nicht geöffnet (20.01)</div><div class="ch-it">DNS — KS · aperte senza KS · non aperte (20.01)</div></div>
+    <div class="leg">
+      <span><span class="dot" style="background:#0D4D5E"></span>KS — neve artificiale 207,7 km</span>
+      <span><span class="dot" style="background:#AAD0D1"></span>Aperte senza KS 177,1 km</span>
+      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Non aperte 351,2 km</span>
+    </div>
+    <div style="position:relative;height:170px"><canvas id="cKpDonut"></canvas></div>
+  </div>
+  <div class="card" style="grid-column:span 2">
+    <div class="ch"><div class="ch-de">Klassifikation nach KP-Index</div><div class="ch-it">Classificazione per indice KP</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px">
+      <div><div style="font-size:10px;font-weight:700;color:#0D4D5E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">🔵 KP ≥ 70% — Hohe KS-Abhängigkeit / Alta dipendenza KS</div><div id="kpHighList" style="font-size:11px;line-height:1.8;color:#0D4D5E;font-family:'Roboto',sans-serif"></div></div>
+      <div><div style="font-size:10px;font-weight:700;color:#417483;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">🟦 KP 30–70% — Mix KS / NS</div><div id="kpMidList" style="font-size:11px;line-height:1.8;color:#417483;font-family:'Roboto',sans-serif"></div></div>
+      <div><div style="font-size:10px;font-weight:700;color:#5a7f8a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⬜ KP &lt; 30% — Naturschnee / Neve naturale</div><div id="kpLowList" style="font-size:11px;line-height:1.8;color:#5a7f8a;font-family:'Roboto',sans-serif"></div></div>
+    </div>
+    <div style="margin-top:12px;padding:8px 10px;background:rgba(65,116,131,.08);border-radius:6px;font-size:10px;font-family:'Roboto',sans-serif;color:#5a7f8a;line-height:1.6">
+      <strong style="color:#0D4D5E">Methodische Anmerkung · Nota metodologica:</strong>
+      KP = km KS am 20.01.2026 / potenzielle Einzelkm pro Region (Quelle: DNS-Website + GPX-Daten), gedeckelt bei 100% · KP = km KS al 20.01.2026 / km unici potenziali per regione (fonte: sito DNS + dati GPX), cappato a 100%.
+      % Pistenöffnung aus Rohdaten berechnet (KS+NS pro Meilenstein) · % piste aperte calcolata da dati raw (KS+NS per milestone).
+      Biathlon Antholz vom KP ausgeschlossen — Pisten für Athleten der Olympischen Spiele Milano Cortina 2026 reserviert · Biathlon escluso dal KP — piste riservate atleti Milano Cortina 2026.
+      <strong style="color:#993C1D">⚠ Osttirol vorläufig · provvisorio</strong> — Daten mit der Region zu überprüfen (Snowfarming Obertilliach) · dati da verificare con la regione (snowfarming Obertilliach).
+    </div>
+  </div>
+</div>
+<!-- DETTAGLIO 16 PARTNER -->
+<div class="st" style="margin-top:1.5rem"><div class="st-de">Detailansicht — 16 Partner einzeln</div><div class="st-it">Dettaglio operativo — 16 partner singoli</div></div>
+<div class="card" style="margin-bottom:14px">
+  <div class="ch"><div class="ch-de">KP pro Partner — km KS / km potenziali individuali</div><div class="ch-it">Livello operativo — ogni organizzazione separata</div></div>
+  <div style="overflow-x:auto">
+    <table class="dtable">
+      <thead><tr>
+        <th>Partner</th><th>Pot.</th>
+        <th><span class="milestone-badge">23.12</span>KS</th>
+        <th><span class="milestone-badge">06.01</span>KS</th>
+        <th><span class="milestone-badge">20.01</span>KS</th>
+        <th>% aperti</th><th>KP</th>
+      </tr></thead>
+      <tbody id="kp16Body"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:8px;font-size:9px;font-family:'Roboto',sans-serif;color:#5a7f8a;font-style:italic">
+    ⚠ Biathlon Antholz escluso dal KP — piste riservate atleti Milano Cortina 2026.
+  </div>
+</div>
+<div class="ins-sum">
+  <div class="ins-sum-de">"30% des Netzes war am 23.12. geöffnet — dieser Wert erklärt den Rückgang der DNS WK-Verkäufe zu Saisonbeginn direkt. Gsiesertal als einzige Region mit 100% Zuverlässigkeit über alle drei Meilensteine."</div>
+  <div class="ins-sum-it">"Il 30% della rete era aperto al 23.12 — questo dato spiega direttamente il calo vendite DNS WK a inizio stagione. Gsiesertal unica regione al 100% di affidabilità nelle 3 milestone."</div>
+</div>
+</div>
 
 <div class="footer">
-  <p>Dolomiti NordicSki · DNS Analyse + Jahresvergleich + Performance Regionen WS 2025-26</p>
-  <p>© 2026 DNS · Be Vietnam Pro / Roboto · Fonte: VERKAUFSTATISTIK 2025-26</p>
+  <p>Dolomiti NordicSki · DNS Analyse + Jahresvergleich + Performance Regionen + Network Reliability WS 2025-26</p>
+  <p>© 2026 DNS · Be Vietnam Pro / Roboto · Fonte: VERKAUFSTATISTIK + KP Artificial vs. natural snow 2025-26</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── PALETTE ──
 const cDAY='#D4CEC6',cWKA='#8B3A2F',cSKA='#7A7875',cWKD='#417483',cSKD='#AAD0D1';
 const cTOP='#0D4D5E',cREG='#417483';
 const cY1='#0D4D5E',cY2='#5a8f9e',cY3='#8ab8c4',cY4='#c8e8e9';
@@ -358,67 +438,53 @@ function switchTab(id,btn){
 }
 function printTab(){
   const active=document.querySelector('.page.active');
-  const now=new Date().toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric'});
-  ['pd1','pd2','pd3'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='Gedruckt am / Stampato il: '+now;});
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('print-target'));
   active.classList.add('print-target');
   window.print();
   active.classList.remove('print-target');
 }
 
-// ── PAGE 1 ──
+// PAGE 1
 new Chart(document.getElementById('cRegQty'),{type:'bar',data:{labels:regs,datasets:[{data:[4538,12586,28023,8931,7904,13710,1085,685],backgroundColor:rC,borderWidth:0,borderRadius:3}]},options:{...base,scales:{x:{ticks:{...tk,maxRotation:40,autoSkip:false}},y:{ticks:tk,beginAtZero:true,grid}}}});
 new Chart(document.getElementById('cRegRev'),{type:'bar',data:{labels:regs,datasets:[{data:[134868,302512,702623,352673,147409,206245,27780,15123],backgroundColor:rC,borderWidth:0,borderRadius:3}]},options:{...base,scales:{x:{ticks:{...tk,maxRotation:40,autoSkip:false}},y:{ticks:{...tk,callback:v=>'€'+(v/1000).toFixed(0)+'k'},beginAtZero:true,grid}}}});
 new Chart(document.getElementById('cYearComp'),{type:'bar',data:{labels:['DAY','WK Area','WK DNS','SK Area','SK DNS'],datasets:[{label:'2025-26',data:[65017,4032,3458,2600,2355],backgroundColor:cY1,borderWidth:0,borderRadius:2},{label:'2024-25',data:[74038,4448,4003,3597,1927],backgroundColor:cY2,borderWidth:0,borderRadius:2},{label:'2023-24',data:[71264,4716,3693,1974,2139],backgroundColor:cY3,borderWidth:0,borderRadius:2},{label:'2022-23',data:[66242,4371,1759,2422,1801],backgroundColor:cY4,borderWidth:0,borderRadius:2}]},options:{...base,scales:{x:{ticks:tk},y:{ticks:tk,beginAtZero:true,grid}}}});
 new Chart(document.getElementById('cPieType'),{type:'doughnut',data:{labels:['DAY','WK Area','WK DNS','SK Area','SK DNS'],datasets:[{data:[65017,4032,3458,2600,2355],backgroundColor:[cDAY,cWKA,cWKD,cSKA,cSKD],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:6}]},options:{...base,cutout:'62%'}});
 new Chart(document.getElementById('cChannels'),{type:'doughnut',data:{labels:['Büro/Uffici','Online','Loipe/Pista'],datasets:[{data:[56003,11201,5069],backgroundColor:[cTOP,cREG,cSKD],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:6}]},options:{...base,cutout:'62%'}});
 new Chart(document.getElementById('cRevBar'),{type:'bar',data:{labels:['DAY','WK Area','WK DNS','SK Area','SK DNS'],datasets:[{data:[842555,210672,214726,303415,319020],backgroundColor:[cDAY,cWKA,cWKD,cSKA,cSKD],borderWidth:0,borderRadius:4}]},options:{...base,scales:{x:{ticks:tk},y:{ticks:{...tk,callback:v=>'€'+(v/1000).toFixed(0)+'k'},beginAtZero:true,grid}}}});
-// Doppio doughnut: esterno=entrate, interno=quantità
-new Chart(document.getElementById('cDoubleDonut'),{type:'doughnut',data:{labels:['DAY','WK Area','WK DNS','SK Area','SK DNS'],datasets:[
-  {label:'Entrate',data:[842555,210672,214726,303415,319020],backgroundColor:[cDAY,cWKA,cWKD,cSKA,cSKD],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:4},
-  {label:'Menge',data:[65017,4032,3458,2600,2355],backgroundColor:[cDAY+'99',cWKA+'99',cWKD+'99',cSKA+'99',cSKD+'99'],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:4}
-]},options:{...base,cutout:'40%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed;const lbl=ctx.dataset.label==='Entrate'?'€ '+ctx.parsed.toLocaleString('it-IT'):ctx.parsed.toLocaleString('it-IT')+' pz';return ctx.dataset.label+': '+lbl;}}}}}});
+new Chart(document.getElementById('cDoubleDonut'),{type:'doughnut',data:{labels:['DAY','WK Area','WK DNS','SK Area','SK DNS'],datasets:[{label:'Entrate',data:[842555,210672,214726,303415,319020],backgroundColor:[cDAY,cWKA,cWKD,cSKA,cSKD],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:4},{label:'Menge',data:[65017,4032,3458,2600,2355],backgroundColor:[cDAY+'99',cWKA+'99',cWKD+'99',cSKA+'99',cSKD+'99'],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:4}]},options:{...base,cutout:'40%'}});
 
-// ── PAGE 2 ──
-// Indice base 100
+// PAGE 2
 const base22={day:66242,wka:4371,ska:2422,wkd:1759,skd:1801};
 const qty={day:[66242,71264,74038,65017],wka:[4371,4716,4448,4032],ska:[2422,1974,3597,2600],wkd:[1759,3693,4003,3458],skd:[1801,2139,1927,2355]};
 const idx=(arr,b)=>arr.map(v=>+(v/b*100).toFixed(1));
-
 new Chart(document.getElementById('cTrendIdx'),{type:'line',data:{labels:seasons,datasets:[
   {label:'DAY',data:idx(qty.day,base22.day),borderColor:cDAY,backgroundColor:'transparent',tension:0.4,borderWidth:2,pointRadius:5,pointBackgroundColor:cDAY,pointBorderColor:'#fff',pointBorderWidth:2},
   {label:'WK Area',data:idx(qty.wka,base22.wka),borderColor:cWKA,backgroundColor:'transparent',tension:0.4,borderWidth:2,pointRadius:5,pointBackgroundColor:cWKA,pointBorderColor:'#fff',pointBorderWidth:2},
   {label:'WK DNS',data:idx(qty.wkd,base22.wkd),borderColor:cWKD,backgroundColor:'transparent',tension:0.4,borderWidth:2,pointRadius:5,pointBackgroundColor:cWKD,pointBorderColor:'#fff',pointBorderWidth:2},
   {label:'SK Area',data:idx(qty.ska,base22.ska),borderColor:cSKA,backgroundColor:'transparent',tension:0.4,borderWidth:2,borderDash:[4,3],pointRadius:5,pointBackgroundColor:cSKA,pointBorderColor:'#fff',pointBorderWidth:2},
   {label:'SK DNS',data:idx(qty.skd,base22.skd),borderColor:cSKD,backgroundColor:'transparent',tension:0.4,borderWidth:2.5,pointRadius:6,pointBackgroundColor:cSKD,pointBorderColor:'#fff',pointBorderWidth:2}
-]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v},beginAtZero:false,grid},},plugins:{tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)}},annotation:{annotations:{line100:{type:'line',yMin:100,yMax:100,borderColor:'rgba(65,116,131,.3)',borderWidth:1,borderDash:[4,4]}}}}}});
-
-// DNS vs Area aggregato indice 100
+]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v},beginAtZero:false,grid}}}});
 const dnsTotal=[1759+1801,3693+2139,4003+1927,3458+2355];
 const areaTotal=[4371+2422,4716+1974,4448+3597,4032+2600];
-const dns22=dnsTotal[0],area22=areaTotal[0];
+const dns22t=dnsTotal[0],area22t=areaTotal[0];
 new Chart(document.getElementById('cDnsVsArea'),{type:'line',data:{labels:seasons,datasets:[
-  {label:'DNS (WK+SK)',data:dnsTotal.map(v=>+(v/dns22*100).toFixed(1)),borderColor:cTOP,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:0.4,borderWidth:2.5,pointRadius:6,pointBackgroundColor:cTOP,pointBorderColor:'#fff',pointBorderWidth:2},
-  {label:'Area (WK+SK)',data:areaTotal.map(v=>+(v/area22*100).toFixed(1)),borderColor:cWKA,backgroundColor:'rgba(139,58,47,.06)',fill:true,tension:0.4,borderWidth:2,pointRadius:5,pointBackgroundColor:cWKA,pointBorderColor:'#fff',pointBorderWidth:2}
-]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v},beginAtZero:false,grid}},plugins:{tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)}}}}});
-
+  {label:'DNS',data:dnsTotal.map(v=>+(v/dns22t*100).toFixed(1)),borderColor:cTOP,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:0.4,borderWidth:2.5,pointRadius:6,pointBackgroundColor:cTOP,pointBorderColor:'#fff',pointBorderWidth:2},
+  {label:'Area',data:areaTotal.map(v=>+(v/area22t*100).toFixed(1)),borderColor:cWKA,backgroundColor:'rgba(139,58,47,.06)',fill:true,tension:0.4,borderWidth:2,pointRadius:5,pointBackgroundColor:cWKA,pointBorderColor:'#fff',pointBorderWidth:2}
+]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v},beginAtZero:false,grid}}}});
 new Chart(document.getElementById('cDnsSK'),{type:'bar',data:{labels:seasons,datasets:[{data:[1801,2139,1927,2355],backgroundColor:[cY4,cY3,cY2,cY1],borderWidth:0,borderRadius:4}]},options:{...base,scales:{x:{ticks:tk},y:{ticks:tk,beginAtZero:true,grid}}}});
 new Chart(document.getElementById('cDnsWK'),{type:'bar',data:{labels:seasons,datasets:[{data:[1759,3693,4003,3458],backgroundColor:[cY4,cY3,cY2,cY1],borderWidth:0,borderRadius:4}]},options:{...base,scales:{x:{ticks:tk},y:{ticks:tk,beginAtZero:true,grid}}}});
 new Chart(document.getElementById('cTotTix'),{type:'line',data:{labels:seasons,datasets:[{data:[76595,83786,88013,77462],borderColor:cTOP,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:0.4,pointRadius:6,pointBackgroundColor:cTOP,pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2.5}]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid}}}});
 new Chart(document.getElementById('cRevYear'),{type:'line',data:{labels:seasons,datasets:[{data:[1572292,1767774,2051327,1890388],borderColor:cTOP,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:0.4,pointRadius:6,pointBackgroundColor:cTOP,pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2.5}]},options:{...base,scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>'€'+(v/1000000).toFixed(2)+'M'},grid}}}});
-
-// Stacked fatturato per anno
 new Chart(document.getElementById('cStackedRev'),{type:'bar',data:{labels:seasons,datasets:[
   {label:'DAY',data:[773234,878993,951847,842555],backgroundColor:cDAY,borderWidth:0},
   {label:'WK Area',data:[208408,229387,227820,210672],backgroundColor:cWKA,borderWidth:0},
   {label:'WK DNS',data:[105670,229387,240660,214726],backgroundColor:cWKD,borderWidth:0},
   {label:'SK Area',data:[269700,178046,377610,303415],backgroundColor:cSKA,borderWidth:0},
   {label:'SK DNS',data:[215280,251961,253390,319020],backgroundColor:cSKD,borderWidth:0,borderRadius:{topLeft:3,topRight:3}}
-]},options:{...base,scales:{x:{stacked:true,ticks:tk},y:{stacked:true,ticks:{...tk,callback:v=>'€'+(v/1000000).toFixed(1)+'M'},grid}},plugins:{tooltip:{callbacks:{label:ctx=>'€ '+ctx.parsed.y.toLocaleString('it-IT')}}}}});
-
+]},options:{...base,scales:{x:{stacked:true,ticks:tk},y:{stacked:true,ticks:{...tk,callback:v=>'€'+(v/1000000).toFixed(1)+'M'},grid}}}});
 new Chart(document.getElementById('cAvgPrice'),{type:'line',data:{labels:seasons,datasets:[{data:[20.53,21.10,23.31,24.40],borderColor:cTOP,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:cTOP,pointBorderColor:'#fff',pointBorderWidth:2,borderWidth:2}]},options:{...base,scales:{x:{ticks:{...tk,font:{size:9}}},y:{ticks:{...tk,callback:v=>'€'+v.toFixed(0)},grid}}}});
 
-// ── PAGE 3 ──
+// PAGE 3
 const dayQ=[3528,10888,23329,6205,7277,12279,921,590];
 const wkaQ=[186,504,1231,561,225,1309,15,1];
 const wkdQ=[360,624,2162,233,45,1,24,9];
@@ -431,12 +497,10 @@ const wkdR=[22320,38688,134154,14666,2790,62,1488,558];
 const skaR=[11040,28700,55945,172360,20170,9875,3450,1875];
 const skdR=[49500,43560,113600,62580,25425,5450,6740,12165];
 const totR=[134868,302512,702623,352673,147409,206245,27780,15123];
-
 const pctQ=regs.map((_,i)=>{const t=totQ[i];return{day:dayQ[i]/t*100,wka:wkaQ[i]/t*100,wkd:wkdQ[i]/t*100,ska:skaQ[i]/t*100,skd:skdQ[i]/t*100}});
 const pctR=regs.map((_,i)=>{const t=totR[i];return{day:dayR[i]/t*100,wka:wkaR[i]/t*100,wkd:wkdR[i]/t*100,ska:skaR[i]/t*100,skd:skdR[i]/t*100}});
 const sDs=(p,k)=>p.map(x=>x[k]);
 const sOpts={...base,scales:{x:{stacked:true,ticks:{...tk,maxRotation:35,autoSkip:false}},y:{stacked:true,ticks:{...tk,callback:v=>v+'%'},max:100,grid}},plugins:{tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}}};
-
 new Chart(document.getElementById('cStack100Qty'),{type:'bar',data:{labels:regs,datasets:[
   {label:'DAY',data:sDs(pctQ,'day'),backgroundColor:cDAY,borderWidth:0},
   {label:'WK Area',data:sDs(pctQ,'wka'),backgroundColor:cWKA,borderWidth:0},
@@ -444,7 +508,6 @@ new Chart(document.getElementById('cStack100Qty'),{type:'bar',data:{labels:regs,
   {label:'SK Area',data:sDs(pctQ,'ska'),backgroundColor:cSKA,borderWidth:0},
   {label:'SK DNS',data:sDs(pctQ,'skd'),backgroundColor:cSKD,borderWidth:0,borderRadius:{topLeft:2,topRight:2}}
 ]},options:sOpts});
-
 new Chart(document.getElementById('cStack100Rev'),{type:'bar',data:{labels:regs,datasets:[
   {label:'DAY',data:sDs(pctR,'day'),backgroundColor:cDAY,borderWidth:0},
   {label:'WK Area',data:sDs(pctR,'wka'),backgroundColor:cWKA,borderWidth:0},
@@ -452,30 +515,122 @@ new Chart(document.getElementById('cStack100Rev'),{type:'bar',data:{labels:regs,
   {label:'SK Area',data:sDs(pctR,'ska'),backgroundColor:cSKA,borderWidth:0},
   {label:'SK DNS',data:sDs(pctR,'skd'),backgroundColor:cSKD,borderWidth:0,borderRadius:{topLeft:2,topRight:2}}
 ]},options:sOpts});
-
 const barReg=(id,data)=>new Chart(document.getElementById(id),{type:'bar',data:{labels:regs,datasets:[{data,backgroundColor:data.map(v=>v===Math.max(...data)?cTOP:cSKD),borderWidth:0,borderRadius:3}]},options:{...base,scales:{x:{ticks:{...tk,maxRotation:40,autoSkip:false}},y:{ticks:tk,beginAtZero:true,grid}}}});
-barReg('cRDay',dayQ);
-barReg('cRWKA',wkaQ);
-barReg('cRWKD',wkdQ);
-barReg('cRSKA',skaQ);
-barReg('cRSKD',skdQ);
+barReg('cRDay',dayQ);barReg('cRWKA',wkaQ);barReg('cRWKD',wkdQ);barReg('cRSKA',skaQ);barReg('cRSKD',skdQ);
 new Chart(document.getElementById('cRTotRev'),{type:'bar',data:{labels:regs,datasets:[{data:totR,backgroundColor:totR.map(v=>v===Math.max(...totR)?cTOP:cSKD),borderWidth:0,borderRadius:3}]},options:{...base,scales:{x:{ticks:{...tk,maxRotation:40,autoSkip:false}},y:{ticks:{...tk,callback:v=>'€'+(v/1000).toFixed(0)+'k'},beginAtZero:true,grid}}}});
-
-// HEATMAP
 const hmData=[['Antholzertal/OK Biathlon',3528,186,360,96,362,134868],['Gsiesertal',10888,504,624,248,320,302512],['3 Zinnen',23329,1231,2162,477,809,702623],['Osttirol',6205,561,233,1474,458,352673],['Ahrntal+Sand',7277,225,45,172,185,147409],['Seiser Alm/Val Gardena',12279,1309,1,79,34,206245],['Comelico',921,15,24,30,84,27780],['Cortina',590,1,9,24,51,15123]];
 const colMax=[0,1,2,3,4,5].map(i=>Math.max(...hmData.map(r=>r[i+1])));
 const hC=(v,mx)=>`rgba(13,77,94,${(0.07+v/mx*0.52).toFixed(2)})`;
 const tbody=document.getElementById('heatmapBody');
 hmData.forEach(row=>{
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td style="padding:6px 10px;font-family:'Be Vietnam Pro',sans-serif;font-weight:600;font-size:11px;color:#0D4D5E;border-bottom:.5px solid rgba(65,116,131,.08)">${row[0]}</td>`+
-  [1,2,3,4,5].map(i=>`<td style="padding:6px 10px;text-align:right;font-family:'Roboto',sans-serif;font-size:11px;background:${hC(row[i],colMax[i-1])};border-bottom:.5px solid rgba(65,116,131,.08);color:#0D4D5E;font-weight:500">${row[i].toLocaleString('it-IT')}</td>`).join('')+
-  `<td style="padding:6px 10px;text-align:right;font-family:'Roboto',sans-serif;font-size:11px;background:${hC(row[6],colMax[5])};border-bottom:.5px solid rgba(65,116,131,.08);color:#0D4D5E;font-weight:700">€ ${row[6].toLocaleString('it-IT')}</td>`;
+  tr.innerHTML=`<td style="padding:6px 10px;font-weight:600;font-size:11px;color:#0D4D5E;border-bottom:.5px solid rgba(65,116,131,.08)">${row[0]}</td>`+
+  [1,2,3,4,5].map(i=>`<td style="padding:6px 10px;text-align:right;font-size:11px;background:${hC(row[i],colMax[i-1])};border-bottom:.5px solid rgba(65,116,131,.08);color:#0D4D5E;font-weight:500">${row[i].toLocaleString('it-IT')}</td>`).join('')+
+  `<td style="padding:6px 10px;text-align:right;font-size:11px;background:${hC(row[6],colMax[5])};border-bottom:.5px solid rgba(65,116,131,.08);color:#0D4D5E;font-weight:700">€ ${row[6].toLocaleString('it-IT')}</td>`;
   tbody.appendChild(tr);
 });
 
-const now=new Date().toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric'});
-['pd1','pd2','pd3'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='Gedruckt am / Stampato il: '+now;});
+// PAGE 4: NETWORK RELIABILITY
+const kpRegioni=[
+  {r:'Antholzertal',   pot:45,  tot1:23.2,ks1:23.2,pct1:Math.min(100,23.2/45*100),  tot2:24.3,ks2:24.3,pct2:Math.min(100,24.3/45*100),  tot3:35.9,ks3:33.5,pct3:Math.min(100,35.9/45*100),  kp:Math.min(100,33.5/45*100), note:'Biathlon escluso (Milano Cortina 2026)'},
+  {r:'Gsiesertal',     pot:40,  tot1:42.7,ks1:42.7,pct1:100, tot2:42.7,ks2:42.7,pct2:100, tot3:43.2,ks3:42.7,pct3:100, kp:100, note:'Cappato 100%'},
+  {r:'3 Zinnen',       pot:153, tot1:42.0,ks1:42.0,pct1:Math.min(100,42.0/153*100), tot2:56.1,ks2:50.1,pct2:Math.min(100,56.1/153*100), tot3:58.5,ks3:47.3,pct3:Math.min(100,58.5/153*100), kp:Math.min(100,47.3/153*100), note:''},
+  {r:'Osttirol',       pot:256, tot1:23.0,ks1:20.0,pct1:Math.min(100,23.0/256*100), tot2:41.0,ks2:31.0,pct2:Math.min(100,41.0/256*100), tot3:45.2,ks3:35.2,pct3:Math.min(100,45.2/256*100), kp:Math.min(100,35.2/256*100), note:'⚠ Dato provvisorio'},
+  {r:'Ahrntal+Sand',   pot:51,  tot1:34.5,ks1:4.0, pct1:Math.min(100,34.5/51*100),  tot2:44.5,ks2:14.0,pct2:Math.min(100,44.5/51*100),  tot3:49.0,ks3:14.0,pct3:Math.min(100,49.0/51*100),  kp:Math.min(100,14.0/51*100), note:''},
+  {r:'Seiser Alm/Gard',pot:90,  tot1:53.9,ks1:3.6, pct1:Math.min(100,53.9/90*100),  tot2:86.9,ks2:3.6, pct2:Math.min(100,86.9/90*100),  tot3:111.8,ks3:3.0,pct3:100, kp:Math.min(100,3.0/90*100), note:''},
+  {r:'Comelico',       pot:61,  tot1:1.5, ks1:1.5, pct1:Math.min(100,1.5/61*100),   tot2:2.5, ks2:2.5, pct2:Math.min(100,2.5/61*100),   tot3:42.0,ks3:12.0,pct3:Math.min(100,42.0/61*100),  kp:Math.min(100,12.0/61*100), note:''},
+  {r:'Cortina',        pot:20,  tot1:0,   ks1:0,   pct1:0, tot2:0,ks2:0,pct2:0, tot3:10.0,ks3:0,pct3:Math.min(100,10.0/20*100), kp:0, note:'20 km NS al 20.01'},
+];
+const kpSorted=[...kpRegioni].sort((a,b)=>b.kp-a.kp);
+const kpColor=p=>p>=70?'#0D4D5E':p>=30?'#417483':'#AAD0D1';
+
+new Chart(document.getElementById('cKpBar'),{type:'bar',data:{labels:kpSorted.map(d=>d.r),datasets:[{data:kpSorted.map(d=>+d.kp.toFixed(1)),backgroundColor:kpSorted.map(d=>kpColor(d.kp)),borderWidth:0,borderRadius:4}]},options:{...base,indexAxis:'y',scales:{x:{ticks:{...tk,callback:v=>v+'%'},max:110,grid},y:{ticks:{...tk,font:{size:10}}}},plugins:{tooltip:{callbacks:{label:ctx=>'KP: '+ctx.parsed.x.toFixed(1)+'%'}}}}});
+
+new Chart(document.getElementById('cKpStacked'),{type:'bar',data:{labels:kpRegioni.map(d=>d.r),datasets:[
+  {label:'KS — neve artificiale',data:kpRegioni.map(d=>d.ks3),backgroundColor:cTOP,borderWidth:0},
+  {label:'Aperti senza KS',data:kpRegioni.map(d=>Math.max(0,+(d.tot3-d.ks3).toFixed(1))),backgroundColor:cSKD,borderWidth:0},
+  {label:'Potenziale non aperto',data:kpRegioni.map(d=>Math.max(0,+(d.pot-d.tot3).toFixed(1))),backgroundColor:'rgba(65,116,131,.15)',borderWidth:0,borderRadius:{topLeft:3,topRight:3}}
+]},options:{...base,scales:{x:{stacked:true,ticks:{...tk,maxRotation:40,font:{size:9}}},y:{stacked:true,ticks:{...tk,callback:v=>v+' km'},grid}},plugins:{legend:{display:true,position:'top',labels:{font:{size:9},color:'#417483',boxWidth:10}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+' km'}}}}});
+
+new Chart(document.getElementById('cKpMilestone'),{type:'bar',data:{labels:kpRegioni.map(d=>d.r),datasets:[
+  {label:'23.12.2025',data:kpRegioni.map(d=>+d.pct1.toFixed(1)),backgroundColor:cY4,borderWidth:0},
+  {label:'06.01.2026',data:kpRegioni.map(d=>+d.pct2.toFixed(1)),backgroundColor:cWKD,borderWidth:0},
+  {label:'20.01.2026',data:kpRegioni.map(d=>+d.pct3.toFixed(1)),backgroundColor:cTOP,borderWidth:0,borderRadius:{topLeft:3,topRight:3}}
+]},options:{...base,scales:{x:{ticks:{...tk,maxRotation:40,font:{size:9}}},y:{ticks:{...tk,callback:v=>v+'%'},beginAtZero:true,max:110,grid}},plugins:{legend:{display:true,position:'top',labels:{font:{size:10},color:'#417483',boxWidth:12}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}}}});
+
+new Chart(document.getElementById('cKpDonut'),{type:'doughnut',data:{labels:['KS — neve artificiale','Aperti senza KS','Potenziale non aperto'],datasets:[{data:[207.7,177.1,351.2],backgroundColor:[cTOP,cSKD,'rgba(65,116,131,.2)'],borderWidth:2,borderColor:'#f4f8f9',hoverOffset:6}]},options:{...base,cutout:'58%',plugins:{tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed.toFixed(1)+' km'}}}}});
+
+// Tabella KP regioni
+const kpTbody=document.getElementById('kpTableBody');
+kpRegioni.forEach(d=>{
+  const col=d.kp>=70?'#0F6E56':d.kp>=30?'#417483':'#993C1D';
+  const isOst=d.r==='Osttirol';
+  const tr=document.createElement('tr');
+  tr.innerHTML=
+    `<td style="padding:5px 8px;font-size:10px;font-weight:600;color:#0D4D5E;border-bottom:.5px solid rgba(65,116,131,.08)">${d.r}${isOst?' <span style="color:#993C1D;font-size:9px">⚠</span>':''}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.pot}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.pct1.toFixed(0)}%</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.pct2.toFixed(0)}%</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.pct3.toFixed(0)}%</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700;color:${col};border-bottom:.5px solid rgba(65,116,131,.08)">${d.kp.toFixed(1)}%</td>`;
+  kpTbody.appendChild(tr);
+});
+// Riga DNS totale
+const trDns=document.createElement('tr');
+trDns.innerHTML=
+  `<td style="padding:5px 8px;font-size:10px;font-weight:700;color:#0D4D5E">DNS Gesamt</td>`+
+  `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700">736</td>`+
+  `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700">30,0%</td>`+
+  `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700">40,5%</td>`+
+  `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700">52,3%</td>`+
+  `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700;color:#0D4D5E">28,2%</td>`;
+kpTbody.appendChild(trDns);
+
+// Classificazione
+const high=kpRegioni.filter(d=>d.kp>=70);
+const mid=kpRegioni.filter(d=>d.kp>=30&&d.kp<70);
+const low=kpRegioni.filter(d=>d.kp<30);
+document.getElementById('kpHighList').innerHTML=high.map(d=>`<div><strong>${d.r}</strong> — ${d.kp.toFixed(1)}%${d.note?` <span style="font-size:9px;color:#5a7f8a">(${d.note})</span>`:''}</div>`).join('');
+document.getElementById('kpMidList').innerHTML=mid.map(d=>`<div><strong>${d.r}</strong> — ${d.kp.toFixed(1)}%${d.note?` <span style="font-size:9px;color:#5a7f8a">(${d.note})</span>`:''}</div>`).join('');
+document.getElementById('kpLowList').innerHTML=low.map(d=>`<div><strong>${d.r}</strong> — ${d.kp.toFixed(1)}%${d.note?` <span style="font-size:9px;color:#5a7f8a">(${d.note})</span>`:''}</div>`).join('');
+
+// Tabella 16 partner
+const kpPartner=[
+  {p:'Antholzertal',    pot:45,   ks1:23.2,ks2:24.3,ks3:33.5,tot3:35.9},
+  {p:'Biathlon Antholz',pot:16,   ks1:22.3,ks2:22.3,ks3:22.3,tot3:22.3,nota:'⚠ Escluso KP'},
+  {p:'Gsiesertal',      pot:40,   ks1:42.7,ks2:42.7,ks3:42.7,tot3:43.2},
+  {p:'3ZD - Toblach',   pot:69.87,ks1:20.0,ks2:20.0,ks3:31.0,tot3:31.0},
+  {p:'3ZD - Sexten',    pot:19.68,ks1:5.9, ks2:7.7, ks3:7.7, tot3:12.9},
+  {p:'3ZD - Innichen',  pot:16.52,ks1:6.7, ks2:6.7, ks3:0.0, tot3:0.0},
+  {p:'3ZD - Niederdorf',pot:14.58,ks1:6.4, ks2:14.7,ks3:6.4, tot3:6.4},
+  {p:'3ZD - Braies',    pot:25.08,ks1:3.0, ks2:1.0, ks3:1.0, tot3:7.0},
+  {p:'Osttirol',        pot:202,  ks1:15.0,ks2:19.0,ks3:23.2,tot3:30.2},
+  {p:'Osttirol-Obert.', pot:55,   ks1:5.0, ks2:12.0,ks3:12.0,tot3:15.0},
+  {p:'Cortina',         pot:20,   ks1:0.0, ks2:0.0, ks3:0.0, tot3:10.0},
+  {p:'Comelico',        pot:61,   ks1:1.5, ks2:2.5, ks3:12.0,tot3:42.0},
+  {p:'Ahrntal',         pot:22,   ks1:0.0, ks2:10.0,ks3:10.0,tot3:20.0},
+  {p:'Sand in Taufers', pot:29,   ks1:4.0, ks2:4.0, ks3:4.0, tot3:29.0},
+  {p:'Seiser Alm',      pot:56,   ks1:2.1, ks2:2.1, ks3:1.5, tot3:77.3},
+  {p:'Val Gardena',     pot:34,   ks1:1.5, ks2:1.5, ks3:1.5, tot3:34.5},
+];
+const p16body=document.getElementById('kp16Body');
+kpPartner.forEach(d=>{
+  const kpV=Math.min(100,d.ks3/d.pot*100);
+  const aperV=Math.min(100,d.tot3/d.pot*100);
+  const col=kpV>=70?'#0F6E56':kpV>=30?'#417483':'#993C1D';
+  const excl=d.nota&&d.nota.includes('Escluso');
+  const tr=document.createElement('tr');
+  tr.style.opacity=excl?'0.5':'1';
+  tr.innerHTML=
+    `<td style="padding:5px 8px;font-size:10px;color:#0D4D5E;border-bottom:.5px solid rgba(65,116,131,.08)">${d.p}${d.nota?` <span style="font-size:9px;color:#993C1D">${d.nota}</span>`:''}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.pot}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.ks1}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.ks2}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${d.ks3}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;border-bottom:.5px solid rgba(65,116,131,.08)">${excl?'—':aperV.toFixed(0)+'%'}</td>`+
+    `<td style="padding:5px 8px;text-align:right;font-family:'Roboto',sans-serif;font-size:10px;font-weight:700;color:${excl?'#aaa':col};border-bottom:.5px solid rgba(65,116,131,.08)">${excl?'—':kpV.toFixed(1)+'%'}</td>`;
+  p16body.appendChild(tr);
+});
 </script>
 </body>
 </html>
