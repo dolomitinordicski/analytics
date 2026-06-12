@@ -49,19 +49,21 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 .tfoot-row td{background:var(--lighter);font-weight:700;color:var(--deep);border-top:2px solid var(--light);padding:7px 10px}
 .g7{display:grid;grid-template-columns:200px 62px 70px 62px 62px 80px 90px;gap:4px}
 .g7f{display:grid;grid-template-columns:200px 72px 90px 78px 90px 90px 72px;gap:4px}
-.rhead,.fhead{padding:8px 10px;font-size:11px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.g5o{display:grid;grid-template-columns:190px 170px 90px 78px 90px;gap:4px}
+.rhead,.fhead,.ohead{padding:8px 10px;font-size:11px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .rhead{background:var(--mid);color:white}
 .fhead{background:var(--deep);color:white}
-.rhead span:not(:first-child),.fhead span:not(:first-child){text-align:right}
-.rrow,.frow{padding:7px 10px;border-bottom:1px solid var(--border);align-items:center}
-.rrow:nth-child(even),.frow:nth-child(even){background:var(--accent)}
-.rrow:last-child,.frow:last-child{border-bottom:none}
-.rrow span,.frow span{font-size:11px;text-align:right}
-.rrow span:first-child,.frow span:first-child{font-weight:600;color:var(--deep);text-align:left}
-.rtot,.ftot{padding:8px 10px;background:var(--lighter);border-top:2px solid var(--light)}
-.rtot span,.ftot span{font-size:11px;font-weight:700;color:var(--deep);text-align:right}
-.rtot span:first-child,.ftot span:first-child{text-align:left}
-.rwrap,.fwrap{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
+.ohead{background:var(--deep);color:white}
+.rhead span:not(:first-child),.fhead span:not(:first-child),.ohead span:not(:first-child){text-align:right}
+.rrow,.frow,.orrow{padding:7px 10px;border-bottom:1px solid var(--border);align-items:center}
+.rrow:nth-child(even),.frow:nth-child(even),.orrow.even{background:var(--accent)}
+.rrow:last-child,.frow:last-child,.orrow:last-child{border-bottom:none}
+.rrow span,.frow span,.orrow span{font-size:11px;text-align:right}
+.rrow span:first-child,.frow span:first-child,.orrow span:first-child{font-weight:600;color:var(--deep);text-align:left}
+.rtot,.ftot,.otot{padding:8px 10px;background:var(--lighter);border-top:2px solid var(--light)}
+.rtot span,.ftot span,.otot span{font-size:11px;font-weight:700;color:var(--deep);text-align:right}
+.rtot span:first-child,.ftot span:first-child,.otot span:first-child{text-align:left}
+.rwrap,.fwrap,.owrap{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
 .hl{color:var(--deep);font-weight:700}
 .eu{color:#1a5c2e;font-weight:700}
 .pos{color:#b85000;font-weight:700}
@@ -110,15 +112,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 
   <div class="sec" id="secW">Parameter &amp; Gewichtung (fix)</div>
   <div class="wgrid">
-    <div class="wcard"><div class="wsigla">PN</div><div class="wname" id="wPN">Winterliche Ubernachtungen</div><div class="wpct">15%</div><div class="wbadge dir" id="wDirPN">&#9650; direkt</div><div class="wlock" id="wL1">Nicht anderbar</div></div>
-    <div class="wcard"><div class="wsigla">SWDNS</div><div class="wname" id="wSW">DNS-Tickets (SK + WK)</div><div class="wpct">55%</div><div class="wbadge dir" id="wDirSW">&#9650; direkt</div><div class="wlock" id="wL2">Nicht anderbar</div></div>
-    <div class="wcard"><div class="wsigla">KP</div><div class="wname" id="wKP">Kunstschnee-Index (%)</div><div class="wpct">20%</div><div class="wbadge prem" id="wPremKP">&#9733; Pramienfaktor</div><div class="wlock" id="wL3">Nicht anderbar</div></div>
-    <div class="wcard"><div class="wsigla">SA</div><div class="wname" id="wSA">Assoziierte Strukturen</div><div class="wpct">10%</div><div class="wbadge prem" id="wPremSA">&#9733; Pramienfaktor</div><div class="wlock" id="wL4">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">PN</div><div class="wname" id="wPN">Winterliche Ubernachtungen</div><div class="wpct">15%</div><div class="wbadge dir" id="wDirPN">direkt</div><div class="wlock" id="wL1">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">SWDNS</div><div class="wname" id="wSW">DNS-Tickets (SK + WK)</div><div class="wpct">55%</div><div class="wbadge dir" id="wDirSW">direkt</div><div class="wlock" id="wL2">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">KP</div><div class="wname" id="wKP">Kunstschnee-Index (%)</div><div class="wpct">20%</div><div class="wbadge prem" id="wPremKP">Pramienfaktor</div><div class="wlock" id="wL3">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">SA</div><div class="wname" id="wSA">Assoziierte Strukturen</div><div class="wpct">10%</div><div class="wbadge prem" id="wPremSA">Pramienfaktor</div><div class="wlock" id="wL4">Nicht anderbar</div></div>
   </div>
-  <div class="note" id="noteBox">PN, SWDNS: direkte Normalisierung. KP: 9,80 EUR/Punkt Pramie. SA: 8,82 EUR/Struktur Pramie. Pramen werden intern umverteilt.</div>
+  <div class="note" id="noteBox">PN, SWDNS: direkte Normalisierung. KP und SA: Pramienfaktoren mit Beitragsreduktion. Pramen werden intern umverteilt - Variable Fee gesamt bleibt EUR 45.000.</div>
 
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-lbl" id="k1l">Variable Fee gesamt</div><div class="kpi-val">&#8364; 45.000</div><div class="kpi-sub" id="k1s">Vollstandig zu verteilen</div></div>
+    <div class="kpi"><div class="kpi-lbl" id="k1l">Variable Fee gesamt</div><div class="kpi-val">EUR 45.000</div><div class="kpi-sub" id="k1s">Vollstandig zu verteilen</div></div>
     <div class="kpi"><div class="kpi-lbl" id="k2l">Aktive Partner</div><div class="kpi-val" id="k2v">8</div><div class="kpi-sub" id="k2s">mit Score &gt; 0</div></div>
     <div class="kpi"><div class="kpi-lbl" id="k3l">Hochster Anteil</div><div class="kpi-val" id="k3v">--</div><div class="kpi-sub" id="k3s">--</div></div>
   </div>
@@ -130,8 +132,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
         <th id="thN">Partner</th>
         <th style="text-align:right" id="thPN">PN</th>
         <th style="text-align:right" id="thSW">SWDNS</th>
-        <th style="text-align:right">KP % <span class="prem-badge">&#9733;</span></th>
-        <th style="text-align:right">SA <span class="prem-badge">&#9733;</span></th>
+        <th style="text-align:right">KP % <span class="prem-badge">*</span></th>
+        <th style="text-align:right">SA <span class="prem-badge">*</span></th>
       </tr></thead>
       <tbody id="tbody"></tbody>
       <tfoot><tr class="tfoot-row" id="tfoot"></tr></tfoot>
@@ -150,14 +152,17 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 
   <div class="sec" id="secFinal">Jahresbeitrag 2027</div>
   <div class="fwrap">
-    <div class="fhead g7f">
-      <span>Partner</span><span>Score %</span><span>Variable Fee</span>
-      <span>Fixed Fee</span><span>Tot. 2027</span><span>Quote 2026</span><span>+/-</span>
-    </div>
+    <div class="fhead g7f"><span>Partner</span><span>Score %</span><span>Variable Fee</span><span>Fixed Fee</span><span>Tot. 2027</span><span>Quote 2026</span><span>+/-</span></div>
     <div id="fbody"></div>
     <div class="ftot g7f" id="ftot"></div>
   </div>
-  <div class="note" id="noteIVA">zzgl. MWST · escl. IVA</div>
+
+  <div class="sec" id="secOrg">Aufschlusselung je Organisation / Dettaglio per Organizzazione</div>
+  <div class="owrap">
+    <div class="ohead g5o"><span id="ohOrg">Organisation</span><span style="text-align:right" id="ohReg">Region / Partner DNS</span><span style="text-align:right" id="ohVF">Variable Fee</span><span style="text-align:right" id="ohFF">Fixed Fee</span><span style="text-align:right" id="ohTot">Tot. 2027</span></div>
+    <div id="orgBody"></div>
+    <div class="otot g5o" id="orgTot"></div>
+  </div>
 
   <div class="sec" id="secWP">FAIR Model -- Grundlagen</div>
   <div class="wpbox" id="wpBox"></div>
@@ -191,14 +196,26 @@ var DEF = [
   {name:"Seiser Alm / Val Gardena",        PN:2426065, SW:35,   KP:3,  SA:9 }
 ];
 
+// [nome_org, fixed_fee, quota_variable (0-1)]
+var ORGS = [
+  {reg:"Osttirol",                        list:[["Osttirol",7500,1.00]]},
+  {reg:"3 Zinnen Dolomites",              list:[["TV Toblach",1500,0.28],["TV Sexten",1500,0.28],["TV Innichen",1500,0.28],["TV Niederdorf",1500,0.08],["TV Prags",1500,0.08]]},
+  {reg:"Cortina d'Ampezzo",               list:[["Cortina d'Ampezzo",7500,1.00]]},
+  {reg:"Comelico",                        list:[["Comelico",7500,1.00]]},
+  {reg:"Gsiesertal / Welsberg / Taisten", list:[["Gsiesertal / Welsberg / Taisten",7500,1.00]]},
+  {reg:"Antholzertal",                    list:[["Antholzertal",3750,0.50],["Biathlon Antholz",3750,0.50]]},
+  {reg:"Ahrntal / Sand in Taufers",       list:[["Ahrntal",3750,0.50],["Sand in Taufers",3750,0.50]]},
+  {reg:"Seiser Alm / Val Gardena",        list:[["Seiser Alm",3750,0.50],["Val Gardena",3750,0.50]]}
+];
+
 var WP_DE = "<p><strong>Ziele</strong><br>Das FAIR-System verteilt die Beitrage proportional und ausgewogen, belohnt leistungsstarke Gebiete und unterstutzt weniger wettbewerbsfahige Partner.</p>" +
   "<p><strong>Struktur</strong><br><b>Fixed Fee</b> (7.500 EUR): gleich fur alle Partner. <b>Variable Fee</b> (45.000 EUR): abhangig von der Leistung des Partners, berechnet anhand von vier gewichteten Parametern.</p>" +
-  "<p><strong>Parameter</strong><br><b>PN</b> (15%) und <b>SWDNS</b> (55%) bestimmen den Grundbeitrag. <b>KP</b> (20%) und <b>SA</b> (10%) sind <b>Pramienfaktoren</b>: Gebiete mit hoherem Engagement in Infrastruktur und Partnernetzwerk erhalten eine Beitragsreduktion.</p>" +
+  "<p><strong>Parameter</strong><br><b>PN</b> (15%) und <b>SWDNS</b> (55%) bestimmen den Grundbeitrag. <b>KP</b> (20%) und <b>SA</b> (10%) sind <b>Pramienfaktoren</b>: Gebiete mit hoherem Engagement erhalten eine Beitragsreduktion.</p>" +
   "<p><strong>Hochstbetrag</strong><br>Der Gesamtbeitrag ist auf <b>105.000 EUR</b> begrenzt und kann nur mit einstimmiger Zustimmung erhoht werden.</p>";
 
 var WP_IT = "<p><strong>Obiettivi</strong><br>Il sistema FAIR distribuisce i contributi in modo proporzionale ed equilibrato, premia le aree piu performanti e sostiene i partner meno competitivi.</p>" +
   "<p><strong>Struttura</strong><br><b>Fixed Fee</b> (7.500 EUR): uguale per tutti i partner. <b>Variable Fee</b> (45.000 EUR): proporzionale alle prestazioni del partner, calcolata su quattro parametri ponderati.</p>" +
-  "<p><strong>Parametri</strong><br><b>PN</b> (15%) e <b>SWDNS</b> (55%) determinano il contributo base. <b>KP</b> (20%) e <b>SA</b> (10%) sono <b>fattori premianti</b>: le aree con maggiore impegno in infrastrutture e nella rete di partner ottengono una riduzione del contributo.</p>" +
+  "<p><strong>Parametri</strong><br><b>PN</b> (15%) e <b>SWDNS</b> (55%) determinano il contributo base. <b>KP</b> (20%) e <b>SA</b> (10%) sono <b>fattori premianti</b>: le aree con maggiore impegno ottengono una riduzione del contributo.</p>" +
   "<p><strong>Importo massimo</strong><br>Il contributo totale e limitato a <b>105.000 EUR</b>, superabile solo con consenso unanime.</p>";
 
 var lang    = "de";
@@ -208,30 +225,36 @@ var TR = {
   de:{
     secW:"Parameter & Gewichtung (fix)", secIn:"Dateneingabe je Partner",
     secR:"Ergebnis: FAIR-Verteilung", secC:"Variable Fee Verteilung",
-    secFinal:"Jahresbeitrag 2027", secWP:"FAIR Model -- Grundlagen",
+    secFinal:"Jahresbeitrag 2027", secOrg:"Aufschlusselung je Organisation",
+    secWP:"FAIR Model -- Grundlagen",
     wPN:"Winterliche Ubernachtungen", wSW:"DNS-Tickets (SK + WK)",
     wKP:"Kunstschnee-Index (%)", wSA:"Assoziierte Strukturen",
     wL:"Nicht anderbar", wDir:"direkt", wPrem:"Pramienfaktor",
-    note:"PN, SWDNS: direkte Normalisierung. KP: 9,80 EUR/Punkt Pramie. SA: 8,82 EUR/Struktur Pramie. Pramen werden intern umverteilt.",
+    note:"PN, SWDNS: direkte Normalisierung. KP und SA: Pramienfaktoren mit Beitragsreduktion. Pramen intern umverteilt - Variable Fee gesamt bleibt EUR 45.000.",
     bPrint:"PDF drucken", bReset:"Zurucksetzen",
     thN:"Partner", thPN:"PN", thSW:"SWDNS",
     k1l:"Variable Fee gesamt", k1s:"Vollstandig zu verteilen",
     k2l:"Aktive Partner", k2s:"mit Score > 0", k3l:"Hochster Anteil",
-    noteIVA:"zzgl. MWST - escl. IVA", total:"Total"
+    noteIVA:"Variable fee = zzgl. MWST",
+    ohOrg:"Organisation", ohReg:"Region DNS", ohVF:"Variable Fee", ohFF:"Fixed Fee", ohTot:"Tot. 2027",
+    total:"Total"
   },
   it:{
     secW:"Parametri & Pesi (fissi)", secIn:"Inserimento dati per Partner",
     secR:"Risultato: Distribuzione FAIR", secC:"Distribuzione Variable Fee",
-    secFinal:"Quota annuale 2027", secWP:"FAIR Model -- Principi",
+    secFinal:"Quota annuale 2027", secOrg:"Dettaglio per Organizzazione",
+    secWP:"FAIR Model -- Principi",
     wPN:"Pernottamenti invernali", wSW:"Biglietti DNS (SK + WK)",
     wKP:"Indice neve artificiale (%)", wSA:"Strutture associate",
     wL:"Non modificabile", wDir:"diretto", wPrem:"Fattore premiante",
-    note:"PN, SWDNS: normalizzazione diretta. KP: 9,80 EUR/punto premio. SA: 8,82 EUR/struttura premio. I premi vengono redistribuiti internamente.",
+    note:"PN, SWDNS: normalizzazione diretta. KP e SA: fattori premianti con riduzione contributo. Redistribuzione interna - Variable Fee totale resta EUR 45.000.",
     bPrint:"Stampa PDF", bReset:"Ripristina",
     thN:"Partner", thPN:"PN", thSW:"SWDNS",
     k1l:"Variable Fee totale", k1s:"Distribuita interamente",
     k2l:"Partner attivi", k2s:"con score > 0", k3l:"Quota piu alta",
-    noteIVA:"escl. IVA - zzgl. MWST", total:"Totale"
+    noteIVA:"Variable fee = escl. IVA",
+    ohOrg:"Organizzazione", ohReg:"Regione DNS", ohVF:"Variable Fee", ohFF:"Fixed Fee", ohTot:"Tot. 2027",
+    total:"Totale"
   }
 };
 
@@ -245,14 +268,15 @@ function setLang(l){
 
 function applyLang(){
   var t=TR[lang];
-  var ids=["secW","secIn","secR","secC","secFinal","secWP","wPN","wSW","wKP","wSA",
-    "bPrint","bReset","thN","thPN","thSW","k1l","k1s","k2l","k2s","k3l","noteBox","noteIVA"];
+  var ids=["secW","secIn","secR","secC","secFinal","secOrg","secWP",
+    "wPN","wSW","wKP","wSA","bPrint","bReset","thN","thPN","thSW",
+    "k1l","k1s","k2l","k2s","k3l","noteBox","noteIVA",
+    "ohOrg","ohReg","ohVF","ohFF","ohTot"];
   for(var j=0;j<ids.length;j++){
     var el=document.getElementById(ids[j]);
     if(el&&t[ids[j]])el.textContent=t[ids[j]];
   }
-  var wlids=["wL1","wL2","wL3","wL4"];
-  for(var j=0;j<wlids.length;j++){var el=document.getElementById(wlids[j]);if(el)el.textContent=t.wL;}
+  for(var j=1;j<=4;j++){var el=document.getElementById("wL"+j);if(el)el.textContent=t.wL;}
   var wdids=["wDirPN","wDirSW"];
   for(var j=0;j<wdids.length;j++){var el=document.getElementById(wdids[j]);if(el)el.textContent=t.wDir;}
   var wpids=["wPremKP","wPremSA"];
@@ -261,18 +285,12 @@ function applyLang(){
   if(wpBox)wpBox.innerHTML=lang==="de"?WP_DE:WP_IT;
 }
 
-function gv(id){
-  var el=document.getElementById(id);
-  if(!el)return 0;
-  return parseFloat(el.value)||0;
-}
+function gv(id){var el=document.getElementById(id);return el?parseFloat(el.value)||0:0;}
 
 function readInputs(){
   for(var i=0;i<regions.length;i++){
-    regions[i].PN=gv("pn"+i);
-    regions[i].SW=gv("sw"+i);
-    regions[i].KP=gv("kp"+i);
-    regions[i].SA=gv("sa"+i);
+    regions[i].PN=gv("pn"+i);regions[i].SW=gv("sw"+i);
+    regions[i].KP=gv("kp"+i);regions[i].SA=gv("sa"+i);
   }
 }
 
@@ -285,76 +303,53 @@ function compute(){
     if(regions[i].KP>maxKP)maxKP=regions[i].KP;
     if(regions[i].SA>maxSA)maxSA=regions[i].SA;
   }
-  if(!maxPN)maxPN=1;
-  if(!maxSW)maxSW=1;
-  if(!maxKP)maxKP=1;
-  if(!maxSA)maxSA=1;
+  if(!maxPN)maxPN=1;if(!maxSW)maxSW=1;if(!maxKP)maxKP=1;if(!maxSA)maxSA=1;
 
   var rows=[];
   for(i=0;i<regions.length;i++){
     var r=regions[i];
     rows.push({
-      pnW:(r.PN/maxPN)*WW.PN,
-      swW:(r.SW/maxSW)*WW.SW,
-      kpW:(r.KP/maxKP)*WW.KP,
-      saW:(r.SA/maxSA)*WW.SA
+      pnW:(r.PN/maxPN)*WW.PN, swW:(r.SW/maxSW)*WW.SW,
+      kpW:(r.KP/maxKP)*WW.KP, saW:(r.SA/maxSA)*WW.SA
     });
   }
 
   var totRaw=0;
-  for(i=0;i<rows.length;i++) totRaw+=rows[i].pnW+rows[i].swW;
+  for(i=0;i<rows.length;i++)totRaw+=rows[i].pnW+rows[i].swW;
   if(!totRaw)totRaw=1;
 
   var fees=[];
   for(i=0;i<regions.length;i++){
     var r=regions[i];
-    var row=rows[i];
-    var base=row.pnW+row.swW;
+    var base=rows[i].pnW+rows[i].swW;
     var baseVF=BF+base/totRaw*POOL;
     var sconto=r.KP*KP_MULT+r.SA*SA_MULT;
-    fees.push({
-      name:r.name,
-      pnW:row.pnW,swW:row.swW,kpW:row.kpW,saW:row.saW,
-      score:base/totRaw*100,
-      sconto:sconto,
-      varFee:baseVF-sconto,
-      capped:false
-    });
+    fees.push({name:r.name,pnW:rows[i].pnW,swW:rows[i].swW,kpW:rows[i].kpW,saW:rows[i].saW,
+      score:base/totRaw*100,sconto:sconto,varFee:baseVF-sconto,capped:false});
   }
 
   var totSconto=0;
-  for(i=0;i<fees.length;i++) totSconto+=fees[i].sconto;
+  for(i=0;i<fees.length;i++)totSconto+=fees[i].sconto;
   var redistrib=totSconto/N;
-  for(i=0;i<fees.length;i++) fees[i].varFee+=redistrib;
+  for(i=0;i<fees.length;i++)fees[i].varFee+=redistrib;
 
   var excess=0;
   for(i=0;i<fees.length;i++){
-    if(fees[i].varFee>CAP_VAR){
-      excess+=fees[i].varFee-CAP_VAR;
-      fees[i].varFee=CAP_VAR;
-      fees[i].capped=true;
-    }
+    if(fees[i].varFee>CAP_VAR){excess+=fees[i].varFee-CAP_VAR;fees[i].varFee=CAP_VAR;fees[i].capped=true;}
   }
-
   var iter=0;
   while(excess>0.01&&iter<100){
-    var totUncapped=0;
-    for(i=0;i<fees.length;i++) if(!fees[i].capped) totUncapped+=fees[i].score;
-    if(!totUncapped)break;
-    var newExcess=0;
+    var totU=0;
+    for(i=0;i<fees.length;i++)if(!fees[i].capped)totU+=fees[i].score;
+    if(!totU)break;
+    var ne=0;
     for(i=0;i<fees.length;i++){
       if(fees[i].capped)continue;
-      var add=(fees[i].score/totUncapped)*excess;
-      if(fees[i].varFee+add>CAP_VAR){
-        newExcess+=fees[i].varFee+add-CAP_VAR;
-        fees[i].varFee=CAP_VAR;
-        fees[i].capped=true;
-      } else {
-        fees[i].varFee+=add;
-      }
+      var add=(fees[i].score/totU)*excess;
+      if(fees[i].varFee+add>CAP_VAR){ne+=fees[i].varFee+add-CAP_VAR;fees[i].varFee=CAP_VAR;fees[i].capped=true;}
+      else fees[i].varFee+=add;
     }
-    excess=newExcess;
-    iter++;
+    excess=ne;iter++;
   }
   return fees;
 }
@@ -372,8 +367,7 @@ function render(){
       "<td style='text-align:right'><input type='number' id='pn"+i+"' value='"+r.PN+"' min='0' onchange='onInput()'></td>"+
       "<td style='text-align:right'><input type='number' id='sw"+i+"' value='"+r.SW+"' min='0' onchange='onInput()'></td>"+
       "<td style='text-align:right'><input type='number' id='kp"+i+"' value='"+r.KP+"' min='1' max='100' step='1' onchange='onInput()'></td>"+
-      "<td style='text-align:right'><input type='number' id='sa"+i+"' value='"+r.SA+"' min='0' onchange='onInput()'></td>"+
-      "</tr>";
+      "<td style='text-align:right'><input type='number' id='sa"+i+"' value='"+r.SA+"' min='0' onchange='onInput()'></td></tr>";
   }
   document.getElementById("tbody").innerHTML=tbH;
 
@@ -383,31 +377,25 @@ function render(){
     "<td><strong>"+t.total+"</strong></td>"+
     "<td style='text-align:right'><strong>"+tPN.toLocaleString("de-DE")+"</strong></td>"+
     "<td style='text-align:right'><strong>"+tSW.toLocaleString("de-DE")+"</strong></td>"+
-    "<td style='text-align:right'>--</td>"+
-    "<td style='text-align:right'><strong>"+tSA+"</strong></td>";
+    "<td style='text-align:right'>--</td><td style='text-align:right'><strong>"+tSA+"</strong></td>";
 
   var res=compute();
 
   var active=0;
-  for(i=0;i<res.length;i++) if(res[i].score>0) active++;
+  for(i=0;i<res.length;i++)if(res[i].score>0)active++;
   document.getElementById("k2v").textContent=active;
   var maxR=res[0];
-  for(i=1;i<res.length;i++) if(res[i].varFee>maxR.varFee) maxR=res[i];
+  for(i=1;i<res.length;i++)if(res[i].varFee>maxR.varFee)maxR=res[i];
   document.getElementById("k3v").textContent=fmtE(maxR.varFee);
   document.getElementById("k3s").textContent=maxR.name;
 
   var rbH="";
   for(i=0;i<res.length;i++){
-    var r=res[i];
-    rbH+="<div class='rrow g7'>"+
-      "<span>"+r.name+"</span>"+
-      "<span>"+fmt2(r.pnW)+"</span>"+
-      "<span>"+fmt2(r.swW)+"</span>"+
-      "<span>"+fmt2(r.kpW)+"</span>"+
-      "<span>"+fmt2(r.saW)+"</span>"+
-      "<span class='hl'>"+fmt2(r.score)+" %</span>"+
-      "<span class='eu'>"+fmtE(r.varFee)+"</span>"+
-      "</div>";
+    rbH+="<div class='rrow g7'><span>"+res[i].name+"</span>"+
+      "<span>"+fmt2(res[i].pnW)+"</span><span>"+fmt2(res[i].swW)+"</span>"+
+      "<span>"+fmt2(res[i].kpW)+"</span><span>"+fmt2(res[i].saW)+"</span>"+
+      "<span class='hl'>"+fmt2(res[i].score)+" %</span>"+
+      "<span class='eu'>"+fmtE(res[i].varFee)+"</span></div>";
   }
   document.getElementById("rbody").innerHTML=rbH;
 
@@ -420,11 +408,10 @@ function render(){
     "<span class='eu'>"+fmtE(tVF)+"</span>";
 
   var maxVF=0;
-  for(i=0;i<res.length;i++) if(res[i].varFee>maxVF) maxVF=res[i].varFee;
+  for(i=0;i<res.length;i++)if(res[i].varFee>maxVF)maxVF=res[i].varFee;
   var bH="";
   for(i=0;i<res.length;i++){
-    bH+="<div class='brow'>"+
-      "<div class='blbl'>"+res[i].name+"</div>"+
+    bH+="<div class='brow'><div class='blbl'>"+res[i].name+"</div>"+
       "<div class='btrack'><div class='bfill' style='width:"+(res[i].varFee/maxVF*100).toFixed(1)+"%'></div></div>"+
       "<div class='bval'>"+fmtE(res[i].varFee)+"</div></div>";
   }
@@ -437,22 +424,20 @@ function render(){
     var diff=tot-prev;
     var cls=diff>0?"pos":"neg";
     var sign=diff>0?"+":"";
-    fbH+="<div class='frow g7f'>"+
-      "<span>"+res[i].name+"</span>"+
+    fbH+="<div class='frow g7f'><span>"+res[i].name+"</span>"+
       "<span>"+fmt2(res[i].score)+" %</span>"+
       "<span class='eu'>"+fmtE(res[i].varFee)+"</span>"+
       "<span>"+fmtE(FF)+"</span>"+
       "<span style='font-weight:700;color:var(--deep)'>"+fmtE(tot)+"</span>"+
       "<span>"+fmtE(prev)+"</span>"+
-      "<span class='"+cls+"'>"+sign+fmtE(diff)+"</span>"+
-      "</div>";
+      "<span class='"+cls+"'>"+sign+fmtE(diff)+"</span></div>";
   }
   document.getElementById("fbody").innerHTML=fbH;
 
   var tTot=0;
-  for(i=0;i<res.length;i++) tTot+=res[i].varFee+FF;
+  for(i=0;i<res.length;i++)tTot+=res[i].varFee+FF;
   var tPrev=0;
-  for(i=0;i<PREV.length;i++) tPrev+=PREV[i];
+  for(i=0;i<PREV.length;i++)tPrev+=PREV[i];
   var tDiff=tTot-tPrev;
   document.getElementById("ftot").innerHTML=
     "<span><strong>"+t.total+"</strong></span>"+
@@ -462,6 +447,40 @@ function render(){
     "<span style='font-weight:700;color:var(--deep)'><strong>"+fmtE(tTot)+"</strong></span>"+
     "<span><strong>"+fmtE(tPrev)+"</strong></span>"+
     "<span class='"+(tDiff>0?"pos":"neg")+"'><strong>"+(tDiff>0?"+":"")+fmtE(tDiff)+"</strong></span>";
+
+  var IVA = 0.22;
+  // tabella organizzazioni
+  var orgH="";
+  var tOrgVF=0,tOrgFF=0,tOrgTot=0;
+  var rowCount=0;
+  for(i=0;i<ORGS.length;i++){
+    var regEntry=ORGS[i];
+    var regVF=0;
+    for(var j=0;j<res.length;j++){if(res[j].name===regEntry.reg){regVF=res[j].varFee;break;}}
+    for(var k=0;k<regEntry.list.length;k++){
+      var org=regEntry.list[k];
+      var orgVF=regVF*org[2];
+      var orgFF=org[1];
+      var orgTot2=orgVF+orgFF;
+      tOrgVF+=orgVF;tOrgFF+=orgFF;tOrgTot+=orgTot2;
+      var evenCls=rowCount%2===1?" class='orrow even'":" class='orrow'";
+      orgH+="<div"+evenCls+" style='display:grid;grid-template-columns:190px 170px 90px 78px 90px;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border);align-items:center'>"+
+        "<span style='font-size:11px;font-weight:600;color:var(--deep)'>"+org[0]+"</span>"+
+        "<span style='font-size:11px;text-align:right;color:var(--muted)'>"+(k===0?regEntry.reg:"")+"</span>"+
+        "<span style='font-size:11px;text-align:right' class='eu'>"+fmtE(orgVF)+"</span>"+
+        "<span style='font-size:11px;text-align:right'>"+fmtE(orgFF)+"</span>"+
+        "<span style='font-size:11px;text-align:right;font-weight:700;color:var(--deep)'>"+fmtE(orgTot2)+"</span>"+
+        "</div>";
+      rowCount++;
+    }
+  }
+  document.getElementById("orgBody").innerHTML=orgH;
+  document.getElementById("orgTot").innerHTML=
+    "<span style='font-size:11px;font-weight:700'>"+t.total+"</span>"+
+    "<span></span>"+
+    "<span style='font-size:11px;font-weight:700;text-align:right;color:#1a5c2e'>"+fmtE(tOrgVF)+"</span>"+
+    "<span style='font-size:11px;font-weight:700;text-align:right'>"+fmtE(tOrgFF)+"</span>"+
+    "<span style='font-size:11px;font-weight:700;text-align:right;color:var(--deep)'>"+fmtE(tOrgTot)+"</span>";
 
   document.getElementById("fdate").textContent=
     new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
