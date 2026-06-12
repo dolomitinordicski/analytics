@@ -47,32 +47,21 @@ input[type=number]:focus{outline:none;border-color:var(--mid)}
 input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 .prem-badge{font-size:9px;background:#fff8e6;color:#a07000;border:1px solid #ffd966;border-radius:3px;padding:1px 4px;margin-left:3px;vertical-align:middle}
 .tfoot-row td{background:var(--lighter);font-weight:700;color:var(--deep);border-top:2px solid var(--light);padding:7px 10px}
-/* score table */
 .g7{display:grid;grid-template-columns:200px 62px 70px 62px 62px 80px 90px;gap:4px}
-.rhead{background:var(--mid);color:white;padding:8px 10px;font-size:11px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.rhead span:not(:first-child){text-align:right}
-.rrow{padding:7px 10px;border-bottom:1px solid var(--border);align-items:center}
-.rrow:nth-child(even){background:var(--accent)}
-.rrow:last-child{border-bottom:none}
-.rrow span{font-size:11px;text-align:right}
-.rrow span:first-child{font-weight:600;color:var(--deep);text-align:left}
-.rtot{padding:8px 10px;background:var(--lighter);border-top:2px solid var(--light)}
-.rtot span{font-size:11px;font-weight:700;color:var(--deep);text-align:right}
-.rtot span:first-child{text-align:left}
-.rwrap{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
-/* final table — colonne: Partner | Score% | VarFee | FixedFee | Tot.2027 | Quote2026 | +/- */
 .g7f{display:grid;grid-template-columns:200px 72px 90px 78px 90px 90px 72px;gap:4px}
-.fhead{background:var(--deep);color:white;padding:8px 10px;font-size:11px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.fhead span:not(:first-child){text-align:right}
-.frow{padding:7px 10px;border-bottom:1px solid var(--border);align-items:center}
-.frow:nth-child(even){background:var(--accent)}
-.frow:last-child{border-bottom:none}
-.frow span{font-size:11px;text-align:right}
-.frow span:first-child{font-weight:600;color:var(--deep);text-align:left}
-.ftot{padding:8px 10px;background:var(--lighter);border-top:2px solid var(--light)}
-.ftot span{font-size:11px;font-weight:700;color:var(--deep);text-align:right}
-.ftot span:first-child{text-align:left}
-.fwrap{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
+.rhead,.fhead{padding:8px 10px;font-size:11px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rhead{background:var(--mid);color:white}
+.fhead{background:var(--deep);color:white}
+.rhead span:not(:first-child),.fhead span:not(:first-child){text-align:right}
+.rrow,.frow{padding:7px 10px;border-bottom:1px solid var(--border);align-items:center}
+.rrow:nth-child(even),.frow:nth-child(even){background:var(--accent)}
+.rrow:last-child,.frow:last-child{border-bottom:none}
+.rrow span,.frow span{font-size:11px;text-align:right}
+.rrow span:first-child,.frow span:first-child{font-weight:600;color:var(--deep);text-align:left}
+.rtot,.ftot{padding:8px 10px;background:var(--lighter);border-top:2px solid var(--light)}
+.rtot span,.ftot span{font-size:11px;font-weight:700;color:var(--deep);text-align:right}
+.rtot span:first-child,.ftot span:first-child{text-align:left}
+.rwrap,.fwrap{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
 .hl{color:var(--deep);font-weight:700}
 .eu{color:#1a5c2e;font-weight:700}
 .pos{color:#b85000;font-weight:700}
@@ -87,6 +76,9 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 .btn{padding:7px 16px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px}
 .btnp{background:var(--deep);color:white}.btnp:hover{background:var(--mid)}
 .btns{background:white;color:var(--deep);border:1px solid var(--border)}.btns:hover{background:var(--accent)}
+.wpbox{background:white;border-radius:8px;border:1px solid var(--border);padding:18px 22px;margin-bottom:18px;line-height:1.7;font-size:12px;color:var(--text)}
+.wpbox p{margin-bottom:10px}
+.wpbox p:last-child{margin-bottom:0}
 .footer{background:var(--deep);color:white;padding:7px 26px;font-size:10px;opacity:0.75;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 @media print{
   body{background:white}.btn-row,.lang-btn{display:none!important}
@@ -112,23 +104,23 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 
 <div class="main">
   <div class="btn-row">
-    <button class="btn btnp" onclick="window.print()">⬇ <span id="bPrint">PDF drucken</span></button>
-    <button class="btn btns" onclick="resetData()">↺ <span id="bReset">Zurücksetzen</span></button>
+    <button class="btn btnp" onclick="window.print()">&#8595; <span id="bPrint">PDF drucken</span></button>
+    <button class="btn btns" onclick="resetData()">&#8635; <span id="bReset">Zurucksetzen</span></button>
   </div>
 
   <div class="sec" id="secW">Parameter &amp; Gewichtung (fix)</div>
   <div class="wgrid">
-    <div class="wcard"><div class="wsigla">PN</div><div class="wname" id="wPN">Winterliche Übernachtungen</div><div class="wpct">15%</div><div class="wbadge dir" id="wDirPN">▲ direkt</div><div class="wlock" id="wL1">🔒 Nicht änderbar</div></div>
-    <div class="wcard"><div class="wsigla">SWDNS</div><div class="wname" id="wSW">DNS-Tickets (SK + WK)</div><div class="wpct">55%</div><div class="wbadge dir" id="wDirSW">▲ direkt</div><div class="wlock" id="wL2">🔒 Nicht änderbar</div></div>
-    <div class="wcard"><div class="wsigla">KP</div><div class="wname" id="wKP">Kunstschnee-Index (%)</div><div class="wpct">20%</div><div class="wbadge prem" id="wPremKP">★ Prämienfaktor</div><div class="wlock" id="wL3">🔒 Nicht änderbar</div></div>
-    <div class="wcard"><div class="wsigla">SA</div><div class="wname" id="wSA">Assoziierte Strukturen</div><div class="wpct">10%</div><div class="wbadge prem" id="wPremSA">★ Prämienfaktor</div><div class="wlock" id="wL4">🔒 Nicht änderbar</div></div>
+    <div class="wcard"><div class="wsigla">PN</div><div class="wname" id="wPN">Winterliche Ubernachtungen</div><div class="wpct">15%</div><div class="wbadge dir" id="wDirPN">&#9650; direkt</div><div class="wlock" id="wL1">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">SWDNS</div><div class="wname" id="wSW">DNS-Tickets (SK + WK)</div><div class="wpct">55%</div><div class="wbadge dir" id="wDirSW">&#9650; direkt</div><div class="wlock" id="wL2">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">KP</div><div class="wname" id="wKP">Kunstschnee-Index (%)</div><div class="wpct">20%</div><div class="wbadge prem" id="wPremKP">&#9733; Pramienfaktor</div><div class="wlock" id="wL3">Nicht anderbar</div></div>
+    <div class="wcard"><div class="wsigla">SA</div><div class="wname" id="wSA">Assoziierte Strukturen</div><div class="wpct">10%</div><div class="wbadge prem" id="wPremSA">&#9733; Pramienfaktor</div><div class="wlock" id="wL4">Nicht anderbar</div></div>
   </div>
-  <div class="note" id="noteBox">PN, SWDNS: direkte Normalisierung (Wert/Max)×Gewicht — Basis der Fee. KP und SA: Prämienfaktoren (direkt) — wer mehr investiert zahlt weniger. 10% des Pools (€3.300) werden als Prämie auf KP+SA verteilt.</div>
+  <div class="note" id="noteBox">PN, SWDNS: direkte Normalisierung. KP: 9,80 EUR/Punkt Pramie. SA: 8,82 EUR/Struktur Pramie. Pramen werden intern umverteilt.</div>
 
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-lbl" id="k1l">Variable Fee gesamt</div><div class="kpi-val">€ 45.000</div><div class="kpi-sub" id="k1s">Vollständig zu verteilen</div></div>
+    <div class="kpi"><div class="kpi-lbl" id="k1l">Variable Fee gesamt</div><div class="kpi-val">&#8364; 45.000</div><div class="kpi-sub" id="k1s">Vollstandig zu verteilen</div></div>
     <div class="kpi"><div class="kpi-lbl" id="k2l">Aktive Partner</div><div class="kpi-val" id="k2v">8</div><div class="kpi-sub" id="k2s">mit Score &gt; 0</div></div>
-    <div class="kpi"><div class="kpi-lbl" id="k3l">Höchster Anteil</div><div class="kpi-val" id="k3v">—</div><div class="kpi-sub" id="k3s">—</div></div>
+    <div class="kpi"><div class="kpi-lbl" id="k3l">Hochster Anteil</div><div class="kpi-val" id="k3v">--</div><div class="kpi-sub" id="k3s">--</div></div>
   </div>
 
   <div class="sec" id="secIn">Dateneingabe je Partner</div>
@@ -138,8 +130,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
         <th id="thN">Partner</th>
         <th style="text-align:right" id="thPN">PN</th>
         <th style="text-align:right" id="thSW">SWDNS</th>
-        <th style="text-align:right">KP % <span class="prem-badge">★</span></th>
-        <th style="text-align:right">SA <span class="prem-badge">★</span></th>
+        <th style="text-align:right">KP % <span class="prem-badge">&#9733;</span></th>
+        <th style="text-align:right">SA <span class="prem-badge">&#9733;</span></th>
       </tr></thead>
       <tbody id="tbody"></tbody>
       <tfoot><tr class="tfoot-row" id="tfoot"></tr></tfoot>
@@ -156,22 +148,19 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
   <div class="sec" id="secC">Variable Fee Verteilung</div>
   <div class="bwrap" id="bchart"></div>
 
-  <div class="sec" id="secFinal">Jahresbeitrag / Quota annuale</div>
+  <div class="sec" id="secFinal">Jahresbeitrag 2027</div>
   <div class="fwrap">
-    <!-- colonne: Partner | Score% | VarFee | FixedFee | Tot.2027 | Quote2026 | +/- -->
     <div class="fhead g7f">
-      <span>Partner</span>
-      <span>Score %</span>
-      <span>Variable Fee</span>
-      <span>Fixed Fee</span>
-      <span>Tot. 2027</span>
-      <span>Quote 2026</span>
-      <span>+/−</span>
+      <span>Partner</span><span>Score %</span><span>Variable Fee</span>
+      <span>Fixed Fee</span><span>Tot. 2027</span><span>Quote 2026</span><span>+/-</span>
     </div>
     <div id="fbody"></div>
     <div class="ftot g7f" id="ftot"></div>
   </div>
   <div class="note" id="noteIVA">zzgl. MWST · escl. IVA</div>
+
+  <div class="sec" id="secWP">FAIR Model -- Grundlagen</div>
+  <div class="wpbox" id="wpBox"></div>
 </div>
 
 <div class="footer">
@@ -180,61 +169,69 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.3}
 </div>
 
 <script>
-const VF           = 45000;
-const FF           = 7500;
-const BF           = 1500;
-const N            = 8;
-const POOL         = VF - N * BF;        // 33.000
-const DISCOUNT     = POOL * 0.10;        // 3.300 premio KP+SA
-const BASE_POOL    = POOL - DISCOUNT;    // 29.700 base PN+SW
-const WW           = {PN:15,SW:55,KP:20,SA:10};
+var VF      = 45000;
+var FF      = 7500;
+var BF      = 1500;
+var N       = 8;
+var POOL    = VF - N * BF;
+var CAP_VAR = 20000;
+var KP_MULT = 35.00;
+var SA_MULT = 31.00;
+var WW      = {PN:15, SW:55, KP:20, SA:10};
+var PREV    = [12344,21447,11261,9185,13162,12383,11291,13925];
 
-// Quote fatturate WS 2026 (anno in corso)
-const PREV = [12344,21447,11261,9185,13162,12383,11291,13925];
-
-// Dati WS 2025-26: SWDNS reali da analytics, KP da Drive, PN proxy 2024-25
-const DEF = [
+var DEF = [
   {name:"Osttirol",                        PN:800690,  SW:691,  KP:24, SA:11},
   {name:"3 Zinnen Dolomites",              PN:964968,  SW:2971, KP:27, SA:51},
-  {name:"Cortina d'Ampezzo",               PN:362135,  SW:60,   KP:0,  SA:5 },
+  {name:"Cortina d'Ampezzo",               PN:362135,  SW:60,   KP:3,  SA:5 },
   {name:"Comelico",                        PN:34514,   SW:108,  KP:29, SA:5 },
   {name:"Gsiesertal / Welsberg / Taisten", PN:194461,  SW:944,  KP:85, SA:11},
   {name:"Antholzertal",                    PN:188788,  SW:722,  KP:79, SA:9 },
   {name:"Ahrntal / Sand in Taufers",       PN:678847,  SW:230,  KP:9,  SA:10},
-  {name:"Seiser Alm / Val Gardena",        PN:2426065, SW:35,   KP:3,  SA:9 },
+  {name:"Seiser Alm / Val Gardena",        PN:2426065, SW:35,   KP:3,  SA:9 }
 ];
 
-let lang    = "de";
-let regions = DEF.map(r=>({...r}));
+var WP_DE = "<p><strong>Ziele</strong><br>Das FAIR-System verteilt die Beitrage proportional und ausgewogen, belohnt leistungsstarke Gebiete und unterstutzt weniger wettbewerbsfahige Partner.</p>" +
+  "<p><strong>Struktur</strong><br><b>Fixed Fee</b> (7.500 EUR): gleich fur alle Partner. <b>Variable Fee</b> (45.000 EUR): abhangig von der Leistung des Partners, berechnet anhand von vier gewichteten Parametern.</p>" +
+  "<p><strong>Parameter</strong><br><b>PN</b> (15%) und <b>SWDNS</b> (55%) bestimmen den Grundbeitrag. <b>KP</b> (20%) und <b>SA</b> (10%) sind <b>Pramienfaktoren</b>: Gebiete mit hoherem Engagement in Infrastruktur und Partnernetzwerk erhalten eine Beitragsreduktion.</p>" +
+  "<p><strong>Hochstbetrag</strong><br>Der Gesamtbeitrag ist auf <b>105.000 EUR</b> begrenzt und kann nur mit einstimmiger Zustimmung erhoht werden.</p>";
 
-const TR = {
+var WP_IT = "<p><strong>Obiettivi</strong><br>Il sistema FAIR distribuisce i contributi in modo proporzionale ed equilibrato, premia le aree piu performanti e sostiene i partner meno competitivi.</p>" +
+  "<p><strong>Struttura</strong><br><b>Fixed Fee</b> (7.500 EUR): uguale per tutti i partner. <b>Variable Fee</b> (45.000 EUR): proporzionale alle prestazioni del partner, calcolata su quattro parametri ponderati.</p>" +
+  "<p><strong>Parametri</strong><br><b>PN</b> (15%) e <b>SWDNS</b> (55%) determinano il contributo base. <b>KP</b> (20%) e <b>SA</b> (10%) sono <b>fattori premianti</b>: le aree con maggiore impegno in infrastrutture e nella rete di partner ottengono una riduzione del contributo.</p>" +
+  "<p><strong>Importo massimo</strong><br>Il contributo totale e limitato a <b>105.000 EUR</b>, superabile solo con consenso unanime.</p>";
+
+var lang    = "de";
+var regions = DEF.map(function(r){return {name:r.name,PN:r.PN,SW:r.SW,KP:r.KP,SA:r.SA};});
+
+var TR = {
   de:{
     secW:"Parameter & Gewichtung (fix)", secIn:"Dateneingabe je Partner",
     secR:"Ergebnis: FAIR-Verteilung", secC:"Variable Fee Verteilung",
-    secFinal:"Jahresbeitrag 2027",
-    wPN:"Winterliche Übernachtungen", wSW:"DNS-Tickets (SK + WK)",
+    secFinal:"Jahresbeitrag 2027", secWP:"FAIR Model -- Grundlagen",
+    wPN:"Winterliche Ubernachtungen", wSW:"DNS-Tickets (SK + WK)",
     wKP:"Kunstschnee-Index (%)", wSA:"Assoziierte Strukturen",
-    wL:"🔒 Nicht änderbar", wDir:"▲ direkt", wPrem:"★ Prämienfaktor",
-    note:"PN, SWDNS: direkte Normalisierung (Wert/Max)×Gewicht — Basis der Fee. KP und SA: Prämienfaktoren — wer mehr investiert zahlt weniger. 10% des Pools (€3.300) als Prämie auf KP+SA verteilt.",
-    bPrint:"PDF drucken", bReset:"Zurücksetzen",
+    wL:"Nicht anderbar", wDir:"direkt", wPrem:"Pramienfaktor",
+    note:"PN, SWDNS: direkte Normalisierung. KP: 9,80 EUR/Punkt Pramie. SA: 8,82 EUR/Struktur Pramie. Pramen werden intern umverteilt.",
+    bPrint:"PDF drucken", bReset:"Zurucksetzen",
     thN:"Partner", thPN:"PN", thSW:"SWDNS",
-    k1l:"Variable Fee gesamt", k1s:"Vollständig zu verteilen",
-    k2l:"Aktive Partner", k2s:"mit Score > 0", k3l:"Höchster Anteil",
-    total:"Total",
+    k1l:"Variable Fee gesamt", k1s:"Vollstandig zu verteilen",
+    k2l:"Aktive Partner", k2s:"mit Score > 0", k3l:"Hochster Anteil",
+    noteIVA:"zzgl. MWST - escl. IVA", total:"Total"
   },
   it:{
     secW:"Parametri & Pesi (fissi)", secIn:"Inserimento dati per Partner",
     secR:"Risultato: Distribuzione FAIR", secC:"Distribuzione Variable Fee",
-    secFinal:"Quota annuale 2027",
+    secFinal:"Quota annuale 2027", secWP:"FAIR Model -- Principi",
     wPN:"Pernottamenti invernali", wSW:"Biglietti DNS (SK + WK)",
     wKP:"Indice neve artificiale (%)", wSA:"Strutture associate",
-    wL:"🔒 Non modificabile", wDir:"▲ diretto", wPrem:"★ Fattore premiante",
-    note:"PN, SWDNS: normalizzazione diretta (valore/max)×peso — base della fee. KP e SA: fattori premianti — chi investe di più paga meno. 10% del pool (€3.300) distribuito come premio su KP+SA.",
+    wL:"Non modificabile", wDir:"diretto", wPrem:"Fattore premiante",
+    note:"PN, SWDNS: normalizzazione diretta. KP: 9,80 EUR/punto premio. SA: 8,82 EUR/struttura premio. I premi vengono redistribuiti internamente.",
     bPrint:"Stampa PDF", bReset:"Ripristina",
     thN:"Partner", thPN:"PN", thSW:"SWDNS",
     k1l:"Variable Fee totale", k1s:"Distribuita interamente",
-    k2l:"Partner attivi", k2s:"con score > 0", k3l:"Quota più alta",
-    total:"Totale",
+    k2l:"Partner attivi", k2s:"con score > 0", k3l:"Quota piu alta",
+    noteIVA:"escl. IVA - zzgl. MWST", total:"Totale"
   }
 };
 
@@ -242,141 +239,239 @@ function setLang(l){
   lang=l;
   document.getElementById("btnDE").classList.toggle("active",l==="de");
   document.getElementById("btnIT").classList.toggle("active",l==="it");
-  applyLang(); render();
+  applyLang();
+  render();
 }
 
 function applyLang(){
-  const t=TR[lang];
-  ["secW","secIn","secR","secC","secFinal",
-   "wPN","wSW","wKP","wSA","bPrint","bReset","thN","thPN","thSW",
-   "k1l","k1s","k2l","k2s","k3l","noteBox","noteIVA"
-  ].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t[id]||"";});
-  ["wL1","wL2","wL3","wL4"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t.wL;});
-  ["wDirPN","wDirSW"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t.wDir;});
-  ["wPremKP","wPremSA"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t.wPrem;});
+  var t=TR[lang];
+  var ids=["secW","secIn","secR","secC","secFinal","secWP","wPN","wSW","wKP","wSA",
+    "bPrint","bReset","thN","thPN","thSW","k1l","k1s","k2l","k2s","k3l","noteBox","noteIVA"];
+  for(var j=0;j<ids.length;j++){
+    var el=document.getElementById(ids[j]);
+    if(el&&t[ids[j]])el.textContent=t[ids[j]];
+  }
+  var wlids=["wL1","wL2","wL3","wL4"];
+  for(var j=0;j<wlids.length;j++){var el=document.getElementById(wlids[j]);if(el)el.textContent=t.wL;}
+  var wdids=["wDirPN","wDirSW"];
+  for(var j=0;j<wdids.length;j++){var el=document.getElementById(wdids[j]);if(el)el.textContent=t.wDir;}
+  var wpids=["wPremKP","wPremSA"];
+  for(var j=0;j<wpids.length;j++){var el=document.getElementById(wpids[j]);if(el)el.textContent=t.wPrem;}
+  var wpBox=document.getElementById("wpBox");
+  if(wpBox)wpBox.innerHTML=lang==="de"?WP_DE:WP_IT;
 }
 
-function gv(id){return parseFloat(document.getElementById(id)?.value)||0;}
-function readInputs(){regions.forEach((r,i)=>{r.PN=gv("pn"+i);r.SW=gv("sw"+i);r.KP=gv("kp"+i);r.SA=gv("sa"+i);});}
+function gv(id){
+  var el=document.getElementById(id);
+  if(!el)return 0;
+  return parseFloat(el.value)||0;
+}
+
+function readInputs(){
+  for(var i=0;i<regions.length;i++){
+    regions[i].PN=gv("pn"+i);
+    regions[i].SW=gv("sw"+i);
+    regions[i].KP=gv("kp"+i);
+    regions[i].SA=gv("sa"+i);
+  }
+}
 
 function compute(){
-  const maxPN=Math.max(...regions.map(r=>r.PN))||1;
-  const maxSW=Math.max(...regions.map(r=>r.SW))||1;
-  const maxKP=Math.max(...regions.map(r=>r.KP))||1;
-  const maxSA=Math.max(...regions.map(r=>r.SA))||1;
+  var i;
+  var maxPN=0,maxSW=0,maxKP=0,maxSA=0;
+  for(i=0;i<regions.length;i++){
+    if(regions[i].PN>maxPN)maxPN=regions[i].PN;
+    if(regions[i].SW>maxSW)maxSW=regions[i].SW;
+    if(regions[i].KP>maxKP)maxKP=regions[i].KP;
+    if(regions[i].SA>maxSA)maxSA=regions[i].SA;
+  }
+  if(!maxPN)maxPN=1;
+  if(!maxSW)maxSW=1;
+  if(!maxKP)maxKP=1;
+  if(!maxSA)maxSA=1;
 
-  const rows=regions.map(r=>({
-    pnW:(r.PN/maxPN)*WW.PN,
-    swW:(r.SW/maxSW)*WW.SW,
-    kpW:r.KP>0?(100/r.KP)/maxKP*WW.KP:0,
-    saW:r.SA>0?(1/r.SA)/maxSA*WW.SA:0,
-    kpD:(r.KP/maxKP)*WW.KP,
-    saD:(r.SA/maxSA)*WW.SA,
-  }));
+  var rows=[];
+  for(i=0;i<regions.length;i++){
+    var r=regions[i];
+    rows.push({
+      pnW:(r.PN/maxPN)*WW.PN,
+      swW:(r.SW/maxSW)*WW.SW,
+      kpW:(r.KP/maxKP)*WW.KP,
+      saW:(r.SA/maxSA)*WW.SA
+    });
+  }
 
-  const totBase=rows.reduce((s,r)=>s+r.pnW+r.swW,0)||1;
-  const totKPSA=rows.reduce((s,r)=>s+r.kpD+r.saD,0)||1;
+  var totRaw=0;
+  for(i=0;i<rows.length;i++) totRaw+=rows[i].pnW+rows[i].swW;
+  if(!totRaw)totRaw=1;
 
-  return rows.map((r,i)=>({
-    name:   regions[i].name,
-    pnW:    r.pnW, swW: r.swW, kpW: r.kpW, saW: r.saW,
-    score:  (r.pnW+r.swW)/totBase*100,
-    varFee: BF + (r.pnW+r.swW)/totBase*BASE_POOL + (r.kpD+r.saD)/totKPSA*DISCOUNT,
-  }));
+  var fees=[];
+  for(i=0;i<regions.length;i++){
+    var r=regions[i];
+    var row=rows[i];
+    var base=row.pnW+row.swW;
+    var baseVF=BF+base/totRaw*POOL;
+    var sconto=r.KP*KP_MULT+r.SA*SA_MULT;
+    fees.push({
+      name:r.name,
+      pnW:row.pnW,swW:row.swW,kpW:row.kpW,saW:row.saW,
+      score:base/totRaw*100,
+      sconto:sconto,
+      varFee:baseVF-sconto,
+      capped:false
+    });
+  }
+
+  var totSconto=0;
+  for(i=0;i<fees.length;i++) totSconto+=fees[i].sconto;
+  var redistrib=totSconto/N;
+  for(i=0;i<fees.length;i++) fees[i].varFee+=redistrib;
+
+  var excess=0;
+  for(i=0;i<fees.length;i++){
+    if(fees[i].varFee>CAP_VAR){
+      excess+=fees[i].varFee-CAP_VAR;
+      fees[i].varFee=CAP_VAR;
+      fees[i].capped=true;
+    }
+  }
+
+  var iter=0;
+  while(excess>0.01&&iter<100){
+    var totUncapped=0;
+    for(i=0;i<fees.length;i++) if(!fees[i].capped) totUncapped+=fees[i].score;
+    if(!totUncapped)break;
+    var newExcess=0;
+    for(i=0;i<fees.length;i++){
+      if(fees[i].capped)continue;
+      var add=(fees[i].score/totUncapped)*excess;
+      if(fees[i].varFee+add>CAP_VAR){
+        newExcess+=fees[i].varFee+add-CAP_VAR;
+        fees[i].varFee=CAP_VAR;
+        fees[i].capped=true;
+      } else {
+        fees[i].varFee+=add;
+      }
+    }
+    excess=newExcess;
+    iter++;
+  }
+  return fees;
 }
 
 function fmt2(n){return n.toFixed(2).replace(".",",");}
-function fmtE(n){return "€\u202f"+Math.round(n).toLocaleString("de-DE");}
+function fmtE(n){return "EUR "+Math.round(n).toLocaleString("de-DE");}
 
 function render(){
-  const t=TR[lang];
+  var i,t=TR[lang];
 
-  document.getElementById("tbody").innerHTML=regions.map((r,i)=>`
-    <tr>
-      <td>${r.name}</td>
-      <td style="text-align:right"><input type="number" id="pn${i}" value="${r.PN}" min="0" onchange="onInput()"></td>
-      <td style="text-align:right"><input type="number" id="sw${i}" value="${r.SW}" min="0" onchange="onInput()"></td>
-      <td style="text-align:right"><input type="number" id="kp${i}" value="${r.KP}" min="0" max="100" step="1" onchange="onInput()"></td>
-      <td style="text-align:right"><input type="number" id="sa${i}" value="${r.SA}" min="0" onchange="onInput()"></td>
-    </tr>`).join("");
+  var tbH="";
+  for(i=0;i<regions.length;i++){
+    var r=regions[i];
+    tbH+="<tr><td>"+r.name+"</td>"+
+      "<td style='text-align:right'><input type='number' id='pn"+i+"' value='"+r.PN+"' min='0' onchange='onInput()'></td>"+
+      "<td style='text-align:right'><input type='number' id='sw"+i+"' value='"+r.SW+"' min='0' onchange='onInput()'></td>"+
+      "<td style='text-align:right'><input type='number' id='kp"+i+"' value='"+r.KP+"' min='1' max='100' step='1' onchange='onInput()'></td>"+
+      "<td style='text-align:right'><input type='number' id='sa"+i+"' value='"+r.SA+"' min='0' onchange='onInput()'></td>"+
+      "</tr>";
+  }
+  document.getElementById("tbody").innerHTML=tbH;
 
-  const tPN=regions.reduce((s,r)=>s+r.PN,0);
-  const tSW=regions.reduce((s,r)=>s+r.SW,0);
-  const tSA=regions.reduce((s,r)=>s+r.SA,0);
+  var tPN=0,tSW=0,tSA=0;
+  for(i=0;i<regions.length;i++){tPN+=regions[i].PN;tSW+=regions[i].SW;tSA+=regions[i].SA;}
   document.getElementById("tfoot").innerHTML=
-    `<td><strong>${t.total}</strong></td>
-     <td style="text-align:right"><strong>${tPN.toLocaleString("de-DE")}</strong></td>
-     <td style="text-align:right"><strong>${tSW.toLocaleString("de-DE")}</strong></td>
-     <td style="text-align:right">—</td>
-     <td style="text-align:right"><strong>${tSA}</strong></td>`;
+    "<td><strong>"+t.total+"</strong></td>"+
+    "<td style='text-align:right'><strong>"+tPN.toLocaleString("de-DE")+"</strong></td>"+
+    "<td style='text-align:right'><strong>"+tSW.toLocaleString("de-DE")+"</strong></td>"+
+    "<td style='text-align:right'>--</td>"+
+    "<td style='text-align:right'><strong>"+tSA+"</strong></td>";
 
-  const res=compute();
-  document.getElementById("k2v").textContent=res.filter(r=>r.score>0).length;
-  const maxR=res.reduce((a,b)=>b.varFee>a.varFee?b:a,res[0]);
+  var res=compute();
+
+  var active=0;
+  for(i=0;i<res.length;i++) if(res[i].score>0) active++;
+  document.getElementById("k2v").textContent=active;
+  var maxR=res[0];
+  for(i=1;i<res.length;i++) if(res[i].varFee>maxR.varFee) maxR=res[i];
   document.getElementById("k3v").textContent=fmtE(maxR.varFee);
   document.getElementById("k3s").textContent=maxR.name;
 
-  document.getElementById("rbody").innerHTML=res.map(r=>`
-    <div class="rrow g7">
-      <span>${r.name}</span>
-      <span>${fmt2(r.pnW)}</span><span>${fmt2(r.swW)}</span>
-      <span>${fmt2(r.kpW)}</span><span>${fmt2(r.saW)}</span>
-      <span class="hl">${fmt2(r.score)} %</span>
-      <span class="eu">${fmtE(r.varFee)}</span>
-    </div>`).join("");
+  var rbH="";
+  for(i=0;i<res.length;i++){
+    var r=res[i];
+    rbH+="<div class='rrow g7'>"+
+      "<span>"+r.name+"</span>"+
+      "<span>"+fmt2(r.pnW)+"</span>"+
+      "<span>"+fmt2(r.swW)+"</span>"+
+      "<span>"+fmt2(r.kpW)+"</span>"+
+      "<span>"+fmt2(r.saW)+"</span>"+
+      "<span class='hl'>"+fmt2(r.score)+" %</span>"+
+      "<span class='eu'>"+fmtE(r.varFee)+"</span>"+
+      "</div>";
+  }
+  document.getElementById("rbody").innerHTML=rbH;
 
-  const tScore=res.reduce((s,r)=>s+r.score,0);
-  const tVF=res.reduce((s,r)=>s+r.varFee,0);
+  var tScore=0,tVF=0;
+  for(i=0;i<res.length;i++){tScore+=res[i].score;tVF+=res[i].varFee;}
   document.getElementById("rtot").innerHTML=
-    `<span><strong>${t.total}</strong></span>
-     <span>—</span><span>—</span><span>—</span><span>—</span>
-     <span class="hl">${fmt2(tScore)} %</span>
-     <span class="eu">${fmtE(tVF)}</span>`;
+    "<span><strong>"+t.total+"</strong></span>"+
+    "<span>--</span><span>--</span><span>--</span><span>--</span>"+
+    "<span class='hl'>"+fmt2(tScore)+" %</span>"+
+    "<span class='eu'>"+fmtE(tVF)+"</span>";
 
-  const maxVF=Math.max(...res.map(r=>r.varFee),1);
-  document.getElementById("bchart").innerHTML=res.map(r=>`
-    <div class="brow">
-      <div class="blbl">${r.name}</div>
-      <div class="btrack"><div class="bfill" style="width:${(r.varFee/maxVF*100).toFixed(1)}%"></div></div>
-      <div class="bval">${fmtE(r.varFee)}</div>
-    </div>`).join("");
+  var maxVF=0;
+  for(i=0;i<res.length;i++) if(res[i].varFee>maxVF) maxVF=res[i].varFee;
+  var bH="";
+  for(i=0;i<res.length;i++){
+    bH+="<div class='brow'>"+
+      "<div class='blbl'>"+res[i].name+"</div>"+
+      "<div class='btrack'><div class='bfill' style='width:"+(res[i].varFee/maxVF*100).toFixed(1)+"%'></div></div>"+
+      "<div class='bval'>"+fmtE(res[i].varFee)+"</div></div>";
+  }
+  document.getElementById("bchart").innerHTML=bH;
 
-  // tabella finale: Tot.2027 | Quote2026 | +/-
-  document.getElementById("fbody").innerHTML=res.map((r,i)=>{
-    const tot=r.varFee+FF;
-    const prev=PREV[i];
-    const diff=tot-prev;
-    const cls=diff>0?"pos":"neg";
-    const sign=diff>0?"+":"";
-    return `<div class="frow g7f">
-      <span>${r.name}</span>
-      <span>${fmt2(r.score)} %</span>
-      <span class="eu">${fmtE(r.varFee)}</span>
-      <span>${fmtE(FF)}</span>
-      <span style="font-weight:700;color:var(--deep)">${fmtE(tot)}</span>
-      <span>${fmtE(prev)}</span>
-      <span class="${cls}">${sign}${fmtE(diff)}</span>
-    </div>`;
-  }).join("");
+  var fbH="";
+  for(i=0;i<res.length;i++){
+    var tot=res[i].varFee+FF;
+    var prev=PREV[i];
+    var diff=tot-prev;
+    var cls=diff>0?"pos":"neg";
+    var sign=diff>0?"+":"";
+    fbH+="<div class='frow g7f'>"+
+      "<span>"+res[i].name+"</span>"+
+      "<span>"+fmt2(res[i].score)+" %</span>"+
+      "<span class='eu'>"+fmtE(res[i].varFee)+"</span>"+
+      "<span>"+fmtE(FF)+"</span>"+
+      "<span style='font-weight:700;color:var(--deep)'>"+fmtE(tot)+"</span>"+
+      "<span>"+fmtE(prev)+"</span>"+
+      "<span class='"+cls+"'>"+sign+fmtE(diff)+"</span>"+
+      "</div>";
+  }
+  document.getElementById("fbody").innerHTML=fbH;
 
-  const tTot=res.reduce((s,r)=>s+r.varFee+FF,0);
-  const tPrev=PREV.reduce((s,v)=>s+v,0);
-  const tDiff=tTot-tPrev;
+  var tTot=0;
+  for(i=0;i<res.length;i++) tTot+=res[i].varFee+FF;
+  var tPrev=0;
+  for(i=0;i<PREV.length;i++) tPrev+=PREV[i];
+  var tDiff=tTot-tPrev;
   document.getElementById("ftot").innerHTML=
-    `<span><strong>${t.total}</strong></span>
-     <span class="hl"><strong>${fmt2(tScore)} %</strong></span>
-     <span class="eu"><strong>${fmtE(tVF)}</strong></span>
-     <span><strong>${fmtE(FF*N)}</strong></span>
-     <span style="font-weight:700;color:var(--deep)"><strong>${fmtE(tTot)}</strong></span>
-     <span><strong>${fmtE(tPrev)}</strong></span>
-     <span class="${tDiff>0?"pos":"neg"}"><strong>${tDiff>0?"+":""}${fmtE(tDiff)}</strong></span>`;
+    "<span><strong>"+t.total+"</strong></span>"+
+    "<span class='hl'><strong>"+fmt2(tScore)+" %</strong></span>"+
+    "<span class='eu'><strong>"+fmtE(tVF)+"</strong></span>"+
+    "<span><strong>"+fmtE(FF*N)+"</strong></span>"+
+    "<span style='font-weight:700;color:var(--deep)'><strong>"+fmtE(tTot)+"</strong></span>"+
+    "<span><strong>"+fmtE(tPrev)+"</strong></span>"+
+    "<span class='"+(tDiff>0?"pos":"neg")+"'><strong>"+(tDiff>0?"+":"")+fmtE(tDiff)+"</strong></span>";
 
   document.getElementById("fdate").textContent=
     new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
 }
 
 function onInput(){readInputs();render();}
-function resetData(){regions=DEF.map(r=>({...r}));render();}
+function resetData(){
+  regions=DEF.map(function(r){return {name:r.name,PN:r.PN,SW:r.SW,KP:r.KP,SA:r.SA};});
+  render();
+}
 
 applyLang();
 render();
