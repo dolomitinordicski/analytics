@@ -303,8 +303,8 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
   <div style="font-size:10px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.07em">Legende / Legenda:</div>
   <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#0D4D5E"></span><strong>KS</strong> = Kunstschnee / neve artificiale</div>
   <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#AAD0D1"></span><strong>NS</strong> = Naturschnee / neve naturale</div>
-  <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(65,116,131,.15)"></span>Nicht geöffnete Km-Loipen / km di piste non aperti </div>
-  <div style="font-family:'Roboto',sans-serif;font-size:10px;color:#5a7f8a;font-style:italic">KP INDEX = KS-km am 20.01 / potenzielle Gesamt-km (max. 100%) / km KS al 20.01 / km potenziali totali (max 100%)</div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--d)"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(65,116,131,.15)"></span>Loipe non aperte / nicht geöffnet</div>
+  <div style="font-family:'Roboto',sans-serif;font-size:10px;color:#5a7f8a;font-style:italic">KP = km KS al 20.01 / km potenziali totali (max 100%)</div>
 </div>
 <div class="metrics">
   <div class="metric top"><div class="ml-de">Netzöffnung al 20.01</div><div class="ml-it">% rete aperta al 20.01.2026</div><div class="mv">52,3%</div><div class="ms">384,8 km su 736 km potenziali</div></div>
@@ -324,11 +324,11 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
     <div style="position:relative;height:260px"><canvas id="cKpBar"></canvas></div>
   </div>
   <div class="card a2">
-    <div class="ch"><div class="ch-de">Geöffnete Loipenkm ohne KS · Nicht geöffnetes Potential am 20.01.2026</div><div class="ch-it">km di piste aperte senza KS · potenziale non aperto — km assoluti al 20.01.2026</div></div>
+    <div class="ch"><div class="ch-de">KS · aperti senza KS · potenziale non aperto — al 20.01.2026</div><div class="ch-it">KS · aperti senza KS · potenziale non aperto — km assoluti</div></div>
     <div class="leg">
-      <span><span class="dot" style="background:#0D4D5E"></span>KS</span>
-      <span><span class="dot" style="background:#AAD0D1"></span>geöffnet ohne KS/Aperti senza KS</span>
-      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Nicht geöffnetes Potential/Potenziale non aperto</span>
+      <span><span class="dot" style="background:#0D4D5E"></span>KS — neve artificiale</span>
+      <span><span class="dot" style="background:#AAD0D1"></span>Aperti senza KS</span>
+      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Potenziale non aperto</span>
     </div>
     <div style="position:relative;height:260px"><canvas id="cKpStacked"></canvas></div>
   </div>
@@ -366,8 +366,8 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
     <div class="ch"><div class="ch-de">DNS — KS · offen ohne KS · nicht geöffnet (20.01)</div><div class="ch-it">DNS — KS · aperte senza KS · non aperte (20.01)</div></div>
     <div class="leg">
       <span><span class="dot" style="background:#0D4D5E"></span>KS — neve artificiale 207,7 km</span>
-      <span><span class="dot" style="background:#AAD0D1"></span>Geöffnet ohne KS/Aperte senza KS 177,1 km</span>
-      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Nicht geöffnet/Non aperte 351,2 km</span>
+      <span><span class="dot" style="background:#AAD0D1"></span>Aperte senza KS 177,1 km</span>
+      <span><span class="dot" style="background:rgba(65,116,131,.2)"></span>Non aperte 351,2 km</span>
     </div>
     <div style="position:relative;height:170px"><canvas id="cKpDonut"></canvas></div>
   </div>
@@ -415,7 +415,12 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
 
 <div class="footer">
   <p>Dolomiti NordicSki · DNS Analyse + Jahresvergleich + Performance Regionen + Network Reliability WS 2025-26</p>
-  <p>© 2026 DNS · Be Vietnam Pro / Roboto · Fonte: VERKAUFSTATISTIK + KP Artificial vs. natural snow 2025-26</p>
+  <p style="display:flex;align-items:center;gap:12px">
+    <span>© 2026 DNS · Be Vietnam Pro / Roboto · Fonte: VERKAUFSTATISTIK + KP Artificial vs. natural snow 2025-26</span>
+    <span style="background:rgba(255,255,255,.12);border-radius:20px;padding:3px 12px;font-size:10px;letter-spacing:.04em">
+      👁 Aufrufe · Accessi: <strong id="accessCount" style="color:#AAD0D1">—</strong>
+    </span>
+  </p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
