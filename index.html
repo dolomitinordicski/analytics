@@ -10,6 +10,9 @@
 body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)}
 .hdr{background:var(--d);padding:1.15rem 1.8rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:60;box-shadow:0 1px 0 rgba(255,255,255,.08)}
 .hdr-left{display:flex;align-items:center;gap:18px}
+.dns-core-status{font-family:'Roboto',sans-serif;font-size:10px;font-weight:500;letter-spacing:.04em;color:rgba(255,255,255,.65);white-space:nowrap}
+.dns-core-status[data-state="ready"]{color:#d8f0e7}
+.dns-core-status[data-state="error"]{color:#ffd7d0}
 .hdr-de{font-size:22px;color:#fff;line-height:1;text-transform:uppercase;letter-spacing:.035em;white-space:nowrap}
 .hdr-it{font-family:'Roboto',sans-serif;font-weight:400;font-size:13px;color:var(--l);margin-top:6px;text-transform:uppercase;letter-spacing:.035em}
 
@@ -96,6 +99,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--d)
       <div class="hdr-it">Statistics & Reporting</div>
     </div>
   </div>
+  <div id="dnsCoreStatus" class="dns-core-status" data-state="loading">DNS_Core · connecting…</div>
 </div>
 
 <div class="tab-nav">
@@ -631,5 +635,6 @@ kpPartner.forEach(d=>{
   p16body.appendChild(tr);
 });
 </script>
+<script type="module" src="./dns-core.js"></script>
 </body>
 </html>
