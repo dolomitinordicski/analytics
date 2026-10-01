@@ -1,0 +1,40 @@
+import { DNS_DESIGN_SYSTEM } from '@dolomitinordicski/dns-shared-data/design-system';
+import { initDNSInteractionRuntime } from '@dolomitinordicski/dns-shared-data/ui/interaction';
+import { initDNSRevealRuntime } from '@dolomitinordicski/dns-shared-data/ui/motion';
+import { initDNSPrintRuntime } from '@dolomitinordicski/dns-shared-data/ui/print';
+
+export const DNS_ANALYTICS_FOUNDATION_VERSION = DNS_DESIGN_SYSTEM.version;
+export const DNS_SHARED_WEB_LOGO_URL =
+  'https://dolomitinordicski.github.io/dns-shared-data/brand/logo-web.png';
+
+let printRuntime: ReturnType<typeof initDNSPrintRuntime> | null = null;
+
+export function applyDNSFoundation() {
+  const ds = DNS_DESIGN_SYSTEM;
+  const root = document.documentElement;
+  root.style.setProperty('--color-dns-deep', ds.colors.deep);
+  root.style.setProperty('--color-dns-mid', ds.colors.mid);
+  root.style.setProperty('--color-dns-light', ds.colors.light);
+  root.style.setProperty('--color-dns-bg', ds.colors.background);
+  root.style.setProperty('--color-dns-surface', ds.colors.surface);
+  root.style.setProperty('--color-dns-muted', ds.colors.mutedText);
+  root.style.setProperty('--color-dns-border', ds.colors.border);
+  root.style.setProperty('--dns-card-radius', `${ds.shape.cardRadiusPx}px`);
+  root.style.setProperty('--dns-control-radius', `${ds.shape.controlRadiusPx}px`);
+
+  const interaction = initDNSInteractionRuntime({ interaction: ds.interaction, motion: ds.motion });
+  const reveal = initDNSRevealRuntime({ motion: ds.motion });
+  printRuntime = initDNSPrintRuntime({ print: ds.print });
+
+  document.body.dataset.dnsDesignVersion = ds.version;
+  return () => {
+    interaction.disconnect();
+    reveal.disconnect();
+    printRuntime?.disconnect();
+    printRuntime = null;
+  };
+}
+
+export function printDNSDocument() {
+  printRuntime?.printNow();
+}
