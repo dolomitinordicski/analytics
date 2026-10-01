@@ -17,15 +17,6 @@ const metrics = read('src/data/metrics.ts');
 const scopes = read('src/data/scopes.ts');
 const architecture = read('src/data/architecture.ts');
 const boundary = read('src/services/analyticsBoundary.ts');
-const auth = read('src/services/auth.ts');
-const liveAnalytics = read('src/services/liveAnalytics.ts');
-const parity = read('src/services/parity.ts');
-const livePanel = read('src/components/LiveSourcePanel.tsx');
-const liveContext = read('src/components/AnalyticsLiveContext.tsx');
-const overviewSelector = read('src/services/overviewSelector.ts');
-const regionalSelector = read('src/services/regionalSelector.ts');
-const reliabilitySelector = read('src/services/reliabilitySelector.ts');
-const kpPartnerSelector = read('src/services/kpPartnerSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -126,55 +117,6 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.2.3 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.2.3 metric/scope/layer/boundary architecture is present');
-
-for (const [label, content, tokens] of [
-  ['auth layer', auth, ['signInWithEmailAndPassword','ticketSales.read','kp.read']],
-  ['live adapter', liveAnalytics, ['ticketSales','kpEntries','kpFairValidations','aggregateSales','aggregateKp']],
-  ['parity diagnostics', parity, ['compareLiveToCompatibility','tickets-total','revenue-total']],
-  ['live source UI', livePanel, ['LiveSourcePanel','Compatibility-Datensatz','paritySummary']],
-]) {
-  for (const token of tokens) if (!content.includes(token)) fail(`A.3.1 ${label} missing: ${token}`);
-}
-if (!process.exitCode) ok('A.3.1 authenticated operational layer and parity diagnostics are present');
-
-for (const [label, content, tokens] of [
-  ['live runtime context', liveContext, ['AnalyticsLiveProvider','overviewLiveReady']],
-  ['Overview selector', overviewSelector, ['selectOverviewDataset','source:\'live\'','byReportingArea','byProduct']],
-  ['Overview live switch', modules, ['useAnalyticsLive','selectOverviewDataset','analytics-source-badge']],
-]) {
-  for (const token of tokens) if (!content.includes(token)) fail(`A.3.2 ${label} missing: ${token}`);
-}
-if (!process.exitCode) ok('A.3.2 guarded Overview live switch is present');
-
-for (const [label, content, tokens] of [
-  ['regional matrix aggregate', liveAnalytics, ['byReportingAreaProduct']],
-  ['regional parity gate', parity, ['compareRegionalToCompatibility','regionalParitySummary','regional-qty-','regional-revenue-']],
-  ['Regional selector', regionalSelector, ['selectRegionalDataset','source:\'live\'','totalRevenue']],
-  ['Regional live switch', modules, ['regionalLiveReady','selectRegionalDataset','regional parity verified']],
-]) {
-  for (const token of tokens) if (!content.includes(token)) fail(`A.3.3 ${label} missing: ${token}`);
-}
-if (!process.exitCode) ok('A.3.3 guarded Regional live switch is present');
-
-for (const [label, content, tokens] of [
-  ['KP milestone aggregate', liveAnalytics, ['kpMilestones','byAreaMilestone','source:\'validation\'','source:\'entries\'']],
-  ['KP parity gate', parity, ['compareKpToCompatibility','kpParitySummary','kp-potential-','kp-opened-','kp-artificial-']],
-  ['Reliability selector', reliabilitySelector, ['selectReliabilityDataset','source:\'live\'','MILESTONE_DATES']],
-  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP parity verified','Partner detail · Compatibility dataset']],
-]) {
-  for (const token of tokens) if (!content.includes(token)) fail(`A.3.4 ${label} missing: ${token}`);
-}
-if (!process.exitCode) ok('A.3.4 guarded Reliability/KP live switch is present');
-
-for (const [label, content, tokens] of [
-  ['historical adapter', liveAnalytics, ['historicalSeasonRecords','historicalSalesRows','historicalKpSnapshot','historical-season-records']],
-  ['KP partner parity', parity, ['compareKpPartnersToCompatibility','kpPartnerParitySummary','kp-partner-pot-','kp-partner-open3-']],
-  ['KP partner selector', kpPartnerSelector, ['selectKpPartnerDataset','item.label===legacy.p','source:\'live\'']],
-  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historical · partner parity verified']],
-]) {
-  for (const token of tokens) if (!content.includes(token)) fail(`A.3.5 ${label} missing: ${token}`);
-}
-if (!process.exitCode) ok('A.3.5 immutable historical adapter and KP partner switch are present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');

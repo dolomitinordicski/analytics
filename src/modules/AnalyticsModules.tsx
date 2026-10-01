@@ -2,11 +2,6 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
 import { Card, Insight, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
-import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
-import { selectOverviewDataset } from '../services/overviewSelector';
-import { selectRegionalDataset } from '../services/regionalSelector';
-import { selectReliabilityDataset } from '../services/reliabilitySelector';
-import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
 import {
   COLORS,
   REGIONS,
@@ -15,8 +10,12 @@ import {
   advancedDefaults,
   annual,
   intensityAreas,
+  kpPartners,
+  kpRegions,
   overnightAreas,
   overviewInsights,
+  regional,
+  seasonOverview,
 } from '../data/analyticsData';
 
 const euro = (v:number) => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
@@ -34,28 +33,22 @@ function stackedPercent(values:number[][]){
 }
 
 export function OverviewModule(){
-  const {snapshot,overviewLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady),[snapshot,overviewLiveReady]);
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
-    <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : 'Compatibility dataset · A.2.1'}
-    </div>
-
     <div className="analytics-metrics">
-      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note="↓ 10,9% vs. WS 2024-25"/>
-      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value={`€ ${(data.totalRevenue/1e6).toFixed(2).replace('.',',')} Mio`} note="↓ 7,8% vs. WS 2024-25"/>
-      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value={`€ ${data.avgPrice.toFixed(2).replace('.',',')}`} note="↑ +2,8% vs. WS 2024-25"/>
-      <Metric label="Top Leistung" sublabel="Top performance" value={data.topRegion} note={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} Tkts`} top/>
+      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(seasonOverview.totalTickets)} note="↓ 10,9% vs. WS 2024-25"/>
+      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value="€ 1,89 Mio" note="↓ 7,8% vs. WS 2024-25"/>
+      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value="€ 24,40" note="↑ +2,8% vs. WS 2024-25"/>
+      <Metric label="Top Leistung" sublabel="Top performance" value={seasonOverview.topRegion} note={`${euro(seasonOverview.topRegionRevenue)} · ${integer(seasonOverview.topRegionTickets)} Tkts`} top/>
     </div>
 
     <SectionHeading de="Verkäufe nach Region" it="Vendite per regione"/>
     <div className="analytics-grid-2">
       <Card title="Anzahl Tickets / Quantità" subtitle="nach Region · per regione">
-        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionQty],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...seasonOverview.regionQty],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
       <Card title="Einnahmen / Entrate (€)" subtitle="nach Region · per regione">
-        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionRevenue],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...seasonOverview.regionRevenue],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
     </div>
 
@@ -63,29 +56,29 @@ export function OverviewModule(){
     <div className="analytics-grid-3">
       <Card title="Jahresvergleich Tickets" subtitle="Confronto annuale biglietti">
         <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[
-          {label:'2025-26',data:[...data.ticketQty],backgroundColor:COLORS.year1},
+          {label:'2025-26',data:[65017,4032,3458,2600,2355],backgroundColor:COLORS.year1},
           {label:'2024-25',data:[74038,4448,4003,3597,1927],backgroundColor:COLORS.year2},
           {label:'2023-24',data:[71264,4716,3693,1974,2139],backgroundColor:COLORS.year3},
           {label:'2022-23',data:[66242,4371,1759,2422,1801],backgroundColor:COLORS.year4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,color:COLORS.mid,font:{size:9}}}},scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
       <Card title="Tickettyp — Menge" subtitle="Tipo biglietto — quantità">
-        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketQty],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[{data:[...seasonOverview.ticketQty],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
       <Card title="Vertriebskanal" subtitle="Canale di vendita">
-        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...seasonOverview.channels.labels],datasets:[{data:[...seasonOverview.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Einnahmen nach Tickettyp" it="Entrate per tipo"/>
     <div className="analytics-grid-2">
       <Card title="Einnahmen nach Tickettyp" subtitle="Entrate per tipo biglietto">
-        <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:0,borderRadius:4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[{data:[...seasonOverview.ticketRevenue],backgroundColor:palette,borderWidth:0,borderRadius:4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
       <Card title="Einnahmen (%) vs. Menge (%)" subtitle="Entrate (%) vs. quantità (%)">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[
-          {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
-          {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
+          {label:'Entrate',data:[...seasonOverview.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
+          {label:'Menge',data:[...seasonOverview.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
         ]},options:{...baseOptions,cutout:'40%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>
@@ -174,22 +167,16 @@ export function AnnualModule(){
 }
 
 export function RegionalModule(){
-  const {snapshot,regionalLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectRegionalDataset(snapshot,regionalLiveReady),[snapshot,regionalLiveReady]);
-  const qty=data.qty;
-  const rev=data.revenue;
+  const qty=[regional.dayQ,regional.wkaQ,regional.wkdQ,regional.skaQ,regional.skdQ] as unknown as number[][];
+  const rev=[regional.dayR,regional.wkaR,regional.wkdR,regional.skaR,regional.skdR] as unknown as number[][];
   const pctQ=stackedPercent(qty);
   const pctR=stackedPercent(rev);
   const datasetsFrom=(p:number[][])=>TICKET_TYPES.map((label,j)=>({label,data:p.map(x=>x[j]),backgroundColor:palette[j],borderWidth:0}));
   return <Module>
-    <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · regional parity verified' : 'Compatibility dataset · A.2.1'}
-    </div>
-
     <div className="analytics-metrics">
       <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value="Ahrntal+Sand" note="92,1% delle vendite in DAY" top/>
-      <Metric label="SK Area Schwerpunkt" sublabel="Focus SK Area" value="Osttirol" note={`${integer(qty[3][3])} SK Area`}/>
-      <Metric label="DNS WK Kerngebiet" sublabel="Area chiave DNS WK" value="3 Zinnen" note={`${integer(qty[2][2])} DNS WK`}/>
+      <Metric label="SK Area Schwerpunkt" sublabel="Focus SK Area" value="Osttirol" note="1.474 SK Area"/>
+      <Metric label="DNS WK Kerngebiet" sublabel="Area chiave DNS WK" value="3 Zinnen" note="2.162 DNS WK"/>
       <Metric label="Ausgewogenes Profil" sublabel="Profilo equilibrato" value="Gsiesertal" note="Mix prodotti DNS/Area"/>
     </div>
 
@@ -209,48 +196,37 @@ export function RegionalModule(){
         <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...qty[i]],backgroundColor:qty[i].map(v=>v===Math.max(...qty[i])?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
       <Card title="Gesamteinnahmen nach Region" subtitle="Entrate totali per regione">
-        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.totalRevenue],backgroundColor:data.totalRevenue.map(v=>v===Math.max(...data.totalRevenue)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
+        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...regional.totalR],backgroundColor:regional.totalR.map(v=>v===Math.max(...regional.totalR)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Heatmap — Menge pro Region & Tickettyp" it="Heatmap — quantità per regione e tipo"/>
     <Card title="Regionale Verteilung" subtitle="Distribuzione regionale">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Region</th>{TICKET_TYPES.map(t=><th key={t}>{t}</th>)}<th>Entrate</th></tr></thead><tbody>
-        {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(data.totalRevenue[i])}</td></tr>)}
+        {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(regional.totalR[i])}</td></tr>)}
       </tbody></table></div>
     </Card>
 
     <SectionHeading de="Regionale Erkenntnisse" it="Insights regionali"/>
     <div className="analytics-insights">
-      <Insight n="I" de="Seiser Alm/Val Gardena — starkes WK Area Profil" it="Seiser Alm/Val Gardena — forte profilo WK Area" bodyDe={`Mit ${integer(qty[1][5])} WK Area-Tickets weist das Gebiet den höchsten Wert im Network auf.`} bodyIt={`Con ${integer(qty[1][5])} WK Area è il territorio con il valore più alto del network.`} tag="↗ DNS-Potenzial · Potenziale DNS"/>
-      <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} Tickets und ${euro(data.totalRevenue[2])} Umsatz machen die Region zum stärksten Einzelgebiet.`} bodyIt={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} ticket e ${euro(data.totalRevenue[2])} di entrate: è l'area singola più forte.`} tag="Top contribution"/>
+      <Insight n="I" de="Seiser Alm/Val Gardena — starkes WK Area Profil" it="Seiser Alm/Val Gardena — forte profilo WK Area" bodyDe="Mit 1.309 WK Area-Tickets weist das Gebiet den höchsten Wert im Network auf." bodyIt="Con 1.309 WK Area è il territorio con il valore più alto del network." tag="↗ DNS-Potenzial · Potenziale DNS"/>
+      <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe="28.023 Tickets und € 702.623 Umsatz machen die Region zum stärksten Einzelgebiet." bodyIt="28.023 ticket e € 702.623 di entrate: è l'area singola più forte." tag="Top contribution"/>
       <Insight n="III" de="Gsiesertal — ausgewogenes DNS-Profil" it="Gsiesertal — profilo DNS equilibrato" bodyDe="Der ausgewogenste Produktmix im Network." bodyIt="Il mix prodotti più equilibrato del network." tag="Pilotgebiet · Territorio pilota"/>
     </div>
   </Module>;
 }
 
 export function ReliabilityModule(){
-  const {snapshot,reliabilityLiveReady,kpPartnerLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady),[snapshot,reliabilityLiveReady]);
-  const partnerData=useMemo(()=>selectKpPartnerDataset(snapshot,kpPartnerLiveReady),[snapshot,kpPartnerLiveReady]);
-  const rows=data.rows;
-  const sorted=[...rows].sort((a,b)=>b.kp-a.kp);
-  const totalPot=rows.reduce((s,d)=>s+d.pot,0);
-  const totalOpen=rows.reduce((s,d)=>s+d.tot3,0);
-  const totalOpen1=rows.reduce((s,d)=>s+d.tot1,0);
-  const totalKs=rows.reduce((s,d)=>s+d.ks3,0);
-  const mostReliable=[...rows].sort((a,b)=>b.pct3-a.pct3)[0];
-
+  const sorted=[...kpRegions].sort((a,b)=>b.kp-a.kp);
+  const totalPot=kpRegions.reduce((s,d)=>s+d.pot,0);
+  const totalOpen=kpRegions.reduce((s,d)=>s+d.tot3,0);
+  const totalKs=kpRegions.reduce((s,d)=>s+d.ks3,0);
   return <Module>
-    <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : 'Compatibility dataset · A.2.1'}
-    </div>
-
     <div className="analytics-metrics">
       <Metric label="Netzöffnung am 20.01.2026" sublabel="Rete aperta" value={pct(totalOpen/totalPot*100)} note={`${totalOpen.toFixed(1)} / ${totalPot.toFixed(0)} km`}/>
-      <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalOpen ? totalKs/totalOpen*100 : 0)} note={`${totalKs.toFixed(1)} km KS`}/>
-      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} note="Milestone 1"/>
-      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} note={mostReliable ? `${pct(mostReliable.pct3,0)} am 20.01` : '—'} top/>
+      <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalKs/totalOpen*100)} note={`${totalKs.toFixed(1)} km KS`}/>
+      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value="30,0%" note="Milestone 1"/>
+      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value="Gsiesertal" note="100% alle 3 milestone" top/>
     </div>
 
     <SectionHeading de="KP — Kunstschnee-Index pro Region" it="KP per regione — indice neve artificiale"/>
@@ -259,10 +235,10 @@ export function ReliabilityModule(){
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(d=>d.r),datasets:[{data:sorted.map(d=>d.kp),backgroundColor:sorted.map(d=>d.kp>=70?COLORS.deep:d.kp>=30?COLORS.mid:COLORS.light),borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}},y:axis}}} as any}/>
       </Card>
       <Card title="KS · NS · nicht geöffnet — al 20.01.2026">
-        <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
-          {label:'KS',data:rows.map(d=>d.ks3),backgroundColor:COLORS.deep},
-          {label:'Aperti senza KS',data:rows.map(d=>Math.max(0,d.tot3-d.ks3)),backgroundColor:COLORS.light},
-          {label:'Potenziale non aperto',data:rows.map(d=>Math.max(0,d.pot-d.tot3)),backgroundColor:'rgba(65,116,131,.15)'},
+        <ChartCanvas config={{type:'bar',data:{labels:kpRegions.map(d=>d.r),datasets:[
+          {label:'KS',data:kpRegions.map(d=>d.ks3),backgroundColor:COLORS.deep},
+          {label:'Aperti senza KS',data:kpRegions.map(d=>Math.max(0,d.tot3-d.ks3)),backgroundColor:COLORS.light},
+          {label:'Potenziale non aperto',data:kpRegions.map(d=>Math.max(0,d.pot-d.tot3)),backgroundColor:'rgba(65,116,131,.15)'},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true}}}} as any}/>
       </Card>
     </div>
@@ -270,26 +246,23 @@ export function ReliabilityModule(){
     <SectionHeading de="% Pistenöffnung — 3 Meilensteine pro Region" it="% piste aperte per regione — nelle 3 milestone"/>
     <div className="analytics-grid-2">
       <Card title="% Pistenöffnung pro Region & Meilenstein">
-        <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
-          {label:'23.12.2025',data:rows.map(d=>d.pct1),backgroundColor:COLORS.year4},
-          {label:'06.01.2026',data:rows.map(d=>d.pct2),backgroundColor:COLORS.wkDns},
-          {label:'20.01.2026',data:rows.map(d=>d.pct3),backgroundColor:COLORS.deep},
+        <ChartCanvas config={{type:'bar',data:{labels:kpRegions.map(d=>d.r),datasets:[
+          {label:'23.12.2025',data:kpRegions.map(d=>d.pct1),backgroundColor:COLORS.year4},
+          {label:'06.01.2026',data:kpRegions.map(d=>d.pct2),backgroundColor:COLORS.wkDns},
+          {label:'20.01.2026',data:kpRegions.map(d=>d.pct3),backgroundColor:COLORS.deep},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
       <Card title="Tabelle — KP pro Region WS 2025-26">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Regione</th><th>Pot.</th><th>23.12</th><th>06.01</th><th>20.01</th><th>KP</th></tr></thead><tbody>
-          {rows.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
+          {kpRegions.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
     </div>
 
     <SectionHeading de="Detailansicht — 16 Partner einzeln" it="Dettaglio — 16 partner"/>
-    <div className={`analytics-source-badge is-${partnerData.source}`}>
-      {partnerData.source==='live' ? 'DNS_Core historical · partner parity verified' : 'Partner detail · Compatibility dataset · A.2.1'}
-    </div>
     <Card title="KP pro Partner — km KS / km potenziali individuali">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th>Aperto</th><th>KP</th></tr></thead><tbody>
-        {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
+        {kpPartners.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
       </tbody></table></div>
     </Card>
   </Module>;
