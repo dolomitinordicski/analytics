@@ -7,7 +7,9 @@ import {
   compareKpPartnersToCompatibility,
   compareAnnualToCompatibility,
   compareAdvancedObservedInputs,
+  compareFairOvernightsToCompatibility,
   advancedObservedParitySummary,
+  overnightParitySummary,
   annualParitySummary,
   kpPartnerParitySummary,
   kpParitySummary,
@@ -23,6 +25,7 @@ type AnalyticsLiveContextValue = {
   kpPartnerLiveReady: boolean;
   annualLiveReady: boolean;
   advancedLiveReady: boolean;
+  overnightLiveReady: boolean;
 };
 
 const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
@@ -33,6 +36,7 @@ const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
   kpPartnerLiveReady: false,
   annualLiveReady: false,
   advancedLiveReady: false,
+  overnightLiveReady: false,
 });
 
 export function AnalyticsLiveProvider({
@@ -48,6 +52,7 @@ export function AnalyticsLiveProvider({
   const kpPartnerSummary = kpPartnerParitySummary(compareKpPartnersToCompatibility(snapshot));
   const annualSummary = annualParitySummary(compareAnnualToCompatibility(snapshot));
   const advancedSummary = advancedObservedParitySummary(compareAdvancedObservedInputs(snapshot));
+  const overnightSummary = overnightParitySummary(compareFairOvernightsToCompatibility(snapshot));
   return <AnalyticsLiveContext.Provider value={{
     snapshot,
     overviewLiveReady: summary.ready,
@@ -56,6 +61,7 @@ export function AnalyticsLiveProvider({
     kpPartnerLiveReady: kpPartnerSummary.ready,
     annualLiveReady: annualSummary.ready,
     advancedLiveReady: advancedSummary.ready,
+    overnightLiveReady: overnightSummary.ready,
   }}>
     {children}
   </AnalyticsLiveContext.Provider>;
