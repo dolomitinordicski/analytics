@@ -26,6 +26,7 @@ const overviewSelector = read('src/services/overviewSelector.ts');
 const regionalSelector = read('src/services/regionalSelector.ts');
 const reliabilitySelector = read('src/services/reliabilitySelector.ts');
 const kpPartnerSelector = read('src/services/kpPartnerSelector.ts');
+const annualSelector = read('src/services/annualSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -175,6 +176,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.5 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.5 immutable historical adapter and KP partner switch are present');
+
+for (const [label, content, tokens] of [
+  ['annual historical loader', liveAnalytics, ['LiveAnnualSeries','annualFrom2024Record','annual2025FromSales','loadHistoricalAnnualSeries','DNS SK']],
+  ['annual parity gate', parity, ['compareAnnualToCompatibility','annualParitySummary','annual-total-qty-','annual-total-revenue-']],
+  ['Annual selector', annualSelector, ['selectAnnualDataset','source:\'live\'','revenueByType']],
+  ['Annual module switch', modules, ['annualLiveReady','selectAnnualDataset','annual parity verified']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.6 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.6 immutable four-season Annual switch is present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
