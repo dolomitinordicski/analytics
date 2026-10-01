@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
-import { Card, Insight, Metric, SectionHeading } from '../components/Ui';
+import { Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
@@ -22,6 +22,13 @@ import {
   overnightAreas,
   overviewInsights,
 } from '../data/analyticsData';
+import {
+  advancedMethodology,
+  editorialSummaries,
+  intensityMethodology,
+  overnightMethodology,
+  reliabilityMethodology,
+} from '../data/editorial';
 
 const euro = (v:number) => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
 const integer = (v:number) => new Intl.NumberFormat('de-DE').format(Math.round(v));
@@ -98,6 +105,7 @@ export function OverviewModule(){
     <div className="analytics-insights">
       {overviewInsights.map(x=><Insight key={x[0]} n={x[0]} de={x[1]} it={x[2]} bodyDe={x[3]} bodyIt={x[4]} tag={x[5]}/>)}
     </div>
+    <EditorialSummary {...editorialSummaries.overview}/>
   </Module>;
 }
 
@@ -179,6 +187,7 @@ export function AnnualModule(){
         <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
       </Card>
     </div>
+    <EditorialSummary {...editorialSummaries.annual}/>
   </Module>;
 }
 
@@ -235,6 +244,7 @@ export function RegionalModule(){
       <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} Tickets und ${euro(data.totalRevenue[2])} Umsatz machen die Region zum stärksten Einzelgebiet.`} bodyIt={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} ticket e ${euro(data.totalRevenue[2])} di entrate: è l'area singola più forte.`} tag="Top contribution"/>
       <Insight n="III" de="Gsiesertal — ausgewogenes DNS-Profil" it="Gsiesertal — profilo DNS equilibrato" bodyDe="Der ausgewogenste Produktmix im Network." bodyIt="Il mix prodotti più equilibrato del network." tag="Pilotgebiet · Territorio pilota"/>
     </div>
+    <EditorialSummary {...editorialSummaries.regional}/>
   </Module>;
 }
 
@@ -301,6 +311,8 @@ export function ReliabilityModule(){
         {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
       </tbody></table></div>
     </Card>
+    <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen" titleIt="Note metodologiche & fonti" items={reliabilityMethodology}/>
+    <EditorialSummary {...editorialSummaries.reliability}/>
   </Module>;
 }
 
@@ -381,6 +393,7 @@ export function AdvancedModule(){
       <Metric label="Zusätzl. Wertschöpfung" sublabel="Valore aggiuntivo" value={`€ ${(derived.dayDirect/1e6).toFixed(2)} Mio`}/>
       <Metric label="Total WK + Tageskarten · Szenario" sublabel="Totale scenario" value={`€ ${(derived.grand/1e6).toFixed(2)} Mio`} top/>
     </div>
+    <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen" titleIt="Note metodologiche & fonti" items={advancedMethodology}/>
   </Module>;
 }
 
@@ -489,6 +502,7 @@ export function IntensityModule(){
       <Insight n="II" de="Comelico — überraschend hohe Intensität" it="Comelico — intensità sorprendentemente alta" bodyDe="Kleines Gebiet, aber der Langlauf ist relativ dominant." bodyIt="Area piccola, ma il fondo vi è relativamente dominante." tag="↑ Strukturelle Relevanz"/>
       <Insight n="III" de="Niedrige % ≠ wirtschaftlich irrelevant" it="% bassa ≠ irrilevante economicamente" bodyDe="Auch kleine Prozentwerte können hunderte direkt zurechenbare Übernachtungen bedeuten." bodyIt="Anche percentuali ridotte possono corrispondere a centinaia di pernottamenti attribuibili." tag="Kontext · Contesto"/>
     </div>
+    <MethodologyPanel titleDe="KPI-Protokoll & Quellen" titleIt="Protocollo KPI & fonti" items={intensityMethodology}/>
   </Module>;
 }
 
