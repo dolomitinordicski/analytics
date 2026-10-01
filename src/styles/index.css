@@ -83,6 +83,29 @@
     @apply font-alt text-[9px] uppercase tracking-[.04em] text-dns-muted;
   }
 
+  .analytics-runtime-state {
+    @apply mb-5 flex flex-col items-start justify-between gap-3 rounded-[10px] border border-dns-mid/20 bg-white px-4 py-3 text-[11px] leading-relaxed text-dns-mid sm:flex-row sm:items-center;
+  }
+
+  .analytics-runtime-state strong { @apply text-dns-deep; }
+
+  .analytics-runtime-state.is-loading {
+    @apply border-dns-light/70 bg-dns-light/10;
+  }
+
+  .analytics-runtime-state.is-error {
+    @apply border-[#B86B52]/35 bg-[#B86B52]/[.06];
+  }
+
+  .analytics-runtime-state button {
+    @apply inline-flex min-h-9 flex-none items-center justify-center rounded-md border border-dns-mid/30 bg-white px-3 text-[10px] font-semibold uppercase tracking-[.05em] text-dns-deep hover:bg-dns-bg;
+  }
+
+  html[data-analytics-language="de"] .analytics-lang-it,
+  html[data-analytics-language="it"] .analytics-lang-de {
+    display: none;
+  }
+
   .analytics-module { @apply min-w-0; }
 
   .analytics-metrics {
@@ -253,9 +276,34 @@
 }
 
 @media (max-width: 767px) {
-  .analytics-header-inner { min-height: 62px; }
-  .analytics-logo { height: 34px; }
-  .analytics-title { font-size: 17px; }
+  .analytics-header-inner {
+    min-height: 62px;
+    align-items: flex-start;
+    gap: .65rem;
+    padding-left: .9rem;
+    padding-right: .9rem;
+  }
+  .analytics-brand { gap: .65rem; }
+  .analytics-logo { height: 32px; }
+  .analytics-title { font-size: 16px; }
   .analytics-subtitle { font-size: 9px; }
+  .analytics-header-actions { gap: .5rem; }
+  .analytics-lang { gap: .25rem; }
+  .analytics-page { padding-left: .9rem; padding-right: .9rem; }
   .analytics-print-button { position: sticky; right: .5rem; }
+  .analytics-card { padding: .85rem; }
+  .analytics-metric { padding: .85rem; }
+  .analytics-insight { padding: .85rem; }
+  .analytics-table { min-width: 620px; }
+  .analytics-region-logos img { height: 20px; width: 32px; }
+}
+
+@media (max-width: 420px) {
+  .analytics-logo { height: 28px; }
+  .analytics-title { font-size: 14px; }
+  .analytics-subtitle { display: none; }
+  .analytics-header-inner { padding-top: .7rem; padding-bottom: .7rem; }
+  .analytics-metric-value { font-size: 19px; }
+  .analytics-big-impact { font-size: 25px; }
+  .analytics-big-impact.secondary { font-size: 20px; }
 }
