@@ -27,6 +27,11 @@ for (const token of ['role="tablist"','role="tab"','aria-selected','role="tabpan
 }
 if (!process.exitCode) ok('tab navigation supports semantics, keyboard control and deep links');
 
+for (const token of ['dns-analytics-language','localStorage','dataset.analyticsLanguage','aria-pressed','refreshCore','analytics-runtime-state']) {
+  if (!app.includes(token)) fail(`language/runtime state contract missing: ${token}`);
+}
+if (!process.exitCode) ok('language persistence and DNS_Core loading/error behavior are wired');
+
 const requiredExports = [
   'OverviewModule','AnnualModule','RegionalModule','ReliabilityModule',
   'AdvancedModule','OvernightModule','IntensityModule',
@@ -70,6 +75,11 @@ for (const [label, pattern] of prohibited) {
   if (pattern.test(activeText)) fail(`legacy pattern found: ${label}`);
 }
 if (!process.exitCode) ok('no prohibited legacy runtime patterns found');
+
+for (const token of ['data-analytics-language','analytics-runtime-state','@media (max-width: 420px)']) {
+  if (!css.includes(token)) fail(`responsive/language CSS guardrail missing: ${token}`);
+}
+if (!process.exitCode) ok('responsive and language CSS guardrails are present');
 
 if (!app.includes('printActive') || !printSheet.includes('if (!active) return null')) {
   fail('print portal must mount only during an active print cycle');
