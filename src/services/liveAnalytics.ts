@@ -34,6 +34,7 @@ export type KpEntryLive = {
   id: string;
   seasonId: string;
   entityId: string;
+  label?: string;
   reportingAreaId: string;
   referenceKm: { potentialOperationalKm?: number; uniqueNetworkKm?: number };
   milestones: KpMilestoneLive[];
@@ -84,13 +85,28 @@ export type LiveKpAggregate = {
 export type LiveAnalyticsSnapshot = {
   seasonId: string;
   loadedAt: string;
-  sales?: { rows:TicketSalesLive[]; aggregate:LiveSalesAggregate };
+  sales?: {
+    source:'operational'|'historical-season-records';
+    rows:TicketSalesLive[];
+    aggregate:LiveSalesAggregate;
+  };
   kp?: {
+    source:'operational'|'historical-season-records';
     milestones:KpMilestoneDefinitionLive[];
     rows:KpEntryLive[];
     validations:KpValidationLive[];
     aggregate:LiveKpAggregate;
   };
+};
+
+type HistoricalSeasonRecord = {
+  id:string;
+  seasonId:string;
+  domain:'sales'|'kp'|string;
+  organizationId:string;
+  reportingAreaId:string;
+  label?:string;
+  facts:readonly Record<string,unknown>[];
 };
 
 function effectiveAmount(row: TicketSalesLive) {
@@ -213,6 +229,77 @@ function aggregateKp(
   };
 }
 
+async function readHistoricalRecords(
+  seasonId:string,
+  domain:'sales'|'kp',
+):Promise<HistoricalSeasonRecord[]> {
+  const snap=await getDocs(query(
+    collection(db,'historicalSeasonRecords'),
+    where('seasonId','==',seasonId),
+    where('domain','==',domain),
+  ));
+  return snap.docs.map(d=>({id:d.id,...d.data()} as HistoricalSeasonRecord));
+}
+
+function historicalSalesRows(records:HistoricalSeasonRecord[]):TicketSalesLive[] {
+  return records.flatMap(record=>(record.facts ?? []).map((fact,index)=>({
+    id:`${record.id}__${index}`,
+    seasonId:record.seasonId,
+    organizationId:record.organizationId,
+    reportingAreaId:record.reportingAreaId,
+    productCode:String(fact.productCode ?? ''),
+    salesChannel:String(fact.salesChannel ?? ''),
+    salesPeriod:fact.salesPeriod == null ? undefined : String(fact.salesPeriod),
+    quantity:Number(fact.quantity ?? 0),
+    calculatedAmount:Number(fact.amount ?? 0),
+  })));
+}
+
+function historicalKpSnapshot(records:HistoricalSeasonRecord[],seasonId:string) {
+  const dates=[...new Set(records.flatMap(record=>
+    (record.facts ?? []).map(fact=>String(fact.date ?? '')).filter(Boolean)
+  ))].sort();
+  const milestones:KpMilestoneDefinitionLive[]=dates.map((date,index)=>({
+    id:`${seasonId}__history__m${index+1}`,
+    seasonId,
+    date,
+    label:date,
+    order:index+1,
+  }));
+  const milestoneIdByDate=new Map(milestones.map(m=>[m.date,m.id]));
+
+  const rows:KpEntryLive[]=records.map(record=>{
+    const facts=record.facts ?? [];
+    const referenceKm=Number(facts[0]?.referenceKm ?? 0);
+    return {
+      id:record.id,
+      seasonId:record.seasonId,
+      entityId:record.organizationId,
+      label:record.label,
+      reportingAreaId:record.reportingAreaId,
+      referenceKm:{
+        uniqueNetworkKm:referenceKm,
+        potentialOperationalKm:referenceKm,
+      },
+      milestones:facts.map(fact=>{
+        const date=String(fact.date ?? '');
+        const natural=Number(fact.naturalKm ?? 0);
+        const artificial=Number(fact.artificialKm ?? 0);
+        return {
+          milestoneId:milestoneIdByDate.get(date) ?? date,
+          openedKm:natural+artificial,
+          naturalSnowKm:natural,
+          artificialSnowKm:artificial,
+        };
+      }),
+      includeInKp:record.organizationId!=='biathlon-antholz',
+      exclusionReason:record.organizationId==='biathlon-antholz' ? 'Milano Cortina 2026 / historical exclusion' : undefined,
+    };
+  });
+
+  return {milestones,rows};
+}
+
 async function readSeason<T>(collectionName:string, seasonId:string):Promise<T[]> {
   const snap=await getDocs(query(collection(db,collectionName),where('seasonId','==',seasonId)));
   return snap.docs.map(d=>({id:d.id,...d.data()} as T));
@@ -225,17 +312,45 @@ export async function loadLiveAnalyticsSnapshot(
   const snapshot:LiveAnalyticsSnapshot={seasonId,loadedAt:new Date().toISOString()};
 
   if (access.canReadTicketSales) {
-    const rows=await readSeason<TicketSalesLive>('ticketSales',seasonId);
-    snapshot.sales={rows,aggregate:aggregateSales(rows)};
+    if (seasonId==='2025-26') {
+      const records=await readHistoricalRecords(seasonId,'sales');
+      const rows=historicalSalesRows(records);
+      snapshot.sales={
+        source:'historical-season-records',
+        rows,
+        aggregate:aggregateSales(rows),
+      };
+    } else {
+      const rows=await readSeason<TicketSalesLive>('ticketSales',seasonId);
+      snapshot.sales={source:'operational',rows,aggregate:aggregateSales(rows)};
+    }
   }
 
   if (access.canReadKp) {
-    const [milestones,rows,validations]=await Promise.all([
-      readSeason<KpMilestoneDefinitionLive>('kpMilestones',seasonId),
-      readSeason<KpEntryLive>('kpEntries',seasonId),
-      readSeason<KpValidationLive>('kpFairValidations',seasonId),
-    ]);
-    snapshot.kp={milestones,rows,validations,aggregate:aggregateKp(rows,validations,milestones)};
+    if (seasonId==='2025-26') {
+      const records=await readHistoricalRecords(seasonId,'kp');
+      const historical=historicalKpSnapshot(records,seasonId);
+      snapshot.kp={
+        source:'historical-season-records',
+        milestones:historical.milestones,
+        rows:historical.rows,
+        validations:[],
+        aggregate:aggregateKp(historical.rows,[],historical.milestones),
+      };
+    } else {
+      const [milestones,rows,validations]=await Promise.all([
+        readSeason<KpMilestoneDefinitionLive>('kpMilestones',seasonId),
+        readSeason<KpEntryLive>('kpEntries',seasonId),
+        readSeason<KpValidationLive>('kpFairValidations',seasonId),
+      ]);
+      snapshot.kp={
+        source:'operational',
+        milestones,
+        rows,
+        validations,
+        aggregate:aggregateKp(rows,validations,milestones),
+      };
+    }
   }
 
   return snapshot;
