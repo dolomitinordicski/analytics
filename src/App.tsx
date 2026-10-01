@@ -19,6 +19,7 @@ import {
   printDNSDocument,
 } from './services/foundation';
 import { loadDNSCoreMaster, type DNSCoreStatus } from './services/dnsCore';
+import { getAnalyticsBoundaryMode } from './services/analyticsBoundary';
 
 const TABS = [
   { id:'overview', label:'WS 2025-26', component:OverviewModule },
@@ -84,6 +85,7 @@ export default function App() {
   const tab = useMemo(() => TABS.find(t=>t.id===active) ?? TABS[0],[active]);
   const ActiveComponent = tab.component;
   const analyticsContract = DNS_DATA_CONTRACTS.find(c=>c.id==='analytics');
+  const boundaryMode = getAnalyticsBoundaryMode(core);
 
   return <div className="min-h-screen bg-dns-bg text-dns-deep">
     <header id="dns-analytics-header" className="sticky top-0 z-30 bg-dns-deep text-white">
@@ -168,8 +170,8 @@ export default function App() {
         <div><strong>WS 2025-26</strong><span> · {tab.label}</span></div>
         <div className="analytics-context-meta">
           {language === 'de'
-            ? 'Datenbasis A.2.1 · lokale Datensätze erhalten · DNS_Core Stammdaten verbunden'
-            : 'Base dati A.2.1 · dataset locali preservati · anagrafiche DNS_Core collegate'}
+            ? `A.2.3 · Datenlayer: ${boundaryMode} · lokale Analysedaten erhalten`
+            : `A.2.3 · data layer: ${boundaryMode} · dati analitici locali preservati`}
         </div>
       </div>
 
