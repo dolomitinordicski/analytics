@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
 import { Card, Insight, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
@@ -436,6 +436,6 @@ function Slider({label,value,min,max,step,onChange,prefix='',suffix=''}:{label:s
   return <label className="analytics-slider"><span>{label}</span><input type="range" min={min} max={max} step={step} value={value} onChange={e=>onChange(Number(e.target.value))}/><strong>{prefix}{value}{suffix}</strong></label>;
 }
 
-function Module({children}:{children:React.ReactNode}){
+function Module({children}:{children:ReactNode}){
   return <div className="analytics-module">{children}</div>;
 }
