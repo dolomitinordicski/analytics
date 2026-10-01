@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
+import { LiveSourcePanel } from './components/LiveSourcePanel';
+import { AnalyticsLiveProvider } from './components/AnalyticsLiveContext';
+import type { LiveAnalyticsSnapshot } from './services/liveAnalytics';
 import {
   AdvancedModule,
   AnnualModule,
@@ -50,6 +53,7 @@ export default function App() {
   const [language,setLanguage] = useState<Language>(detectLanguage);
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
   const [printActive,setPrintActive] = useState(false);
+  const [liveSnapshot,setLiveSnapshot] = useState<LiveAnalyticsSnapshot|null>(null);
 
   const refreshCore = useCallback(async () => {
     setCore({state:'loading',text:'DNS_Core · connecting…'});
@@ -86,7 +90,7 @@ export default function App() {
   const analyticsContract = DNS_DATA_CONTRACTS.find(c=>c.id==='analytics');
   const boundaryMode = getAnalyticsBoundaryMode(core);
 
-  return <div className="min-h-screen bg-dns-bg text-dns-deep">
+  return <AnalyticsLiveProvider snapshot={liveSnapshot}><div className="min-h-screen bg-dns-bg text-dns-deep">
     <header data-dns-tool-header id="dns-analytics-header" className="bg-dns-deep text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
       <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
         <div className="flex min-w-0 items-center gap-4">
@@ -187,6 +191,8 @@ export default function App() {
         </div>
       </div>
 
+      <LiveSourcePanel language={language} seasonId="2025-26" onSnapshot={setLiveSnapshot}/>
+
       {core.state !== 'ready' && <div className={`analytics-runtime-state is-${core.state}`} role={core.state === 'error' ? 'alert' : 'status'} aria-live="polite">
         <div>
           <strong>{core.state === 'loading'
@@ -217,5 +223,5 @@ export default function App() {
     </footer>
 
     <AnalyticsPrintSheet active={printActive} title={tab.label}><ActiveComponent/></AnalyticsPrintSheet>
-  </div>;
+  </div></AnalyticsLiveProvider>;
 }

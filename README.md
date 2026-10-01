@@ -67,3 +67,62 @@ A.2.3 introduces the canonical analytical boundary without changing the visible 
 - preserved A.2.1 values remain the source of truth for the live UI during A.2.3
 
 A.3 is explicitly outside this phase: no production analytical fact is switched to a new source in A.2.3.
+
+
+## A.3 live operational migration
+
+- A.3.1 introduces authenticated DNS_Core reads for ticket sales and KP.
+- A.3.2 migrates WS 2025-26 Overview only after full live-vs-compatibility parity.
+- A.3.3 migrates Regional Performance only after complete area × product parity.
+- A.3.4 migrates area-level Network Reliability / KP only after all 8 reporting areas × 3 milestones × 3 values (potential, opened, artificial-snow km) match the preserved compatibility dataset.
+- KP source priority is validation-first: `kpFairValidations` overrides reconstructed area values from included `kpEntries` for the same area/milestone.
+- Partner-level KP detail remains explicitly on the A.2.1 compatibility dataset until a separate organization-level parity gate is implemented.
+
+
+### A.3.5 historical source routing
+
+- Season 2025-26 is read from immutable `historicalSeasonRecords`, not from editable operational collections.
+- Historical sales facts feed the same live aggregation/parity pipeline as operational ticket sales.
+- Historical KP facts are converted into dated milestone observations and retain original source labels.
+- From 2026-27 onward Analytics continues to use operational `ticketSales`, `kpMilestones`, `kpEntries` and `kpFairValidations`.
+- Historical source discrepancies are surfaced by parity checks and do not silently overwrite the preserved A.2.1 dashboard.
+- KP partner detail is eligible for live historical display only when all 16 partners × 5 checks match the preserved partner table.
+
+
+### A.3.6 annual historical series
+
+- Annual Comparison resolves 2022-23, 2023-24 and 2024-25 from the immutable 2024-25 `annual-network-comparison` record.
+- 2025-26 is derived from its immutable historical sales facts.
+- The historical DNS SK series maps `DNS SK incl. Langlauflehrer` to one analytical group; for 2025-26 this means `sk-dns + sk-instructor`.
+- Annual switches from A.2.1 only when all 48 checks (4 seasons × totals plus 5 product quantity/revenue pairs) match.
+- Historical discrepancies remain visible and do not trigger automatic normalization.
+
+A.3 integration validation runs on pull requests targeting `a3-integration` before any reconciliation with `main`.
+
+
+### A.3.7 Advanced Analytics observed inputs
+
+- Advanced Analytics now separates observed ticket volumes from model assumptions.
+- Observed inputs are DNS weekly tickets, South Tyrol weekly tickets, and DAY tickets from the same verified historical sales source used by Overview/Regional.
+- The economic model assumptions remain explicit and user-adjustable: nights per weekly guest, overnight-share assumption, spend per night, multiplier, and DAY overnight-share assumption.
+- The module switches observed inputs only after all three source checks match the preserved A.2.1 values.
+- Overnight totals are not duplicated into Advanced Analytics. The next overnight/intensity migration will source PN from the FAIR model (fairModel/ws-2026-27 and canonical successors) without changing the FAIR calculation engine.
+
+
+### A.3.8 Overnights from FAIR
+
+- Overnight PN values for WS 2025-26 are read from DNS FAIR document fairModel/ws-2026-27.
+- FAIR remains the canonical source for PN; Analytics reads it without modifying the FAIR calculation engine or persistence behavior.
+- The old 9-row destination presentation is normalized to 8 canonical DNS reporting areas. Seiser Alm and Val Gardena are combined because FAIR stores one reporting-area PN and their preserved A.2.1 values reconcile exactly to that area total.
+- The FAIR switch is guarded by 8 PN parity checks, one per reporting area.
+- The 2024-25 comparison remains the preserved Analytics historical baseline.
+- Monthly December–March context remains explicitly compatibility-sourced because FAIR does not provide monthly PN.
+
+
+### A.3.9 Langlauf intensity
+
+- Intensity inputs are now assembled from DNS_Core sales by reporting area plus PN from DNS FAIR.
+- Weekly input = WK Area + WK DNS ticket quantities; DAY input = DAY ticket quantity; PN = FAIR overnight value.
+- The source switch is guarded by 24 checks: 8 reporting areas × WK, DAY, and PN.
+- Existing model assumptions are preserved explicitly: 75% overnight share and 6 nights for weekly-ticket guests; 45% overnight share for the exploratory DAY scenario.
+- No FAIR calculation logic is modified and no new assumptions are introduced.
