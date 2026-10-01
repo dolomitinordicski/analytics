@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
-import { NavigationRuntimeMount } from './components/NavigationRuntimeMount';
 import {
   AdvancedModule,
   AnnualModule,
@@ -88,7 +87,7 @@ export default function App() {
   const boundaryMode = getAnalyticsBoundaryMode(core);
 
   return <div className="min-h-screen bg-dns-bg text-dns-deep">
-    <header id="dns-analytics-header" className="sticky top-0 z-30 bg-dns-deep text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
+    <header data-dns-tool-header id="dns-analytics-header" className="bg-dns-deep text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
       <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
         <div className="flex min-w-0 items-center gap-4">
           <img src={DNS_SHARED_WEB_LOGO_URL} alt="Dolomiti NordicSki" className="h-10 w-auto shrink-0 object-contain"/>
@@ -131,10 +130,7 @@ export default function App() {
       </div>
     </header>
 
-    <nav id="dns-analytics-nav" className="dns-tab-nav" aria-label="DNS Analytics">
-      <div id="dns-scroll-progress" className="dns-scroll-progress-track" role="progressbar" aria-label="Page scroll progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
-        <span id="dns-scroll-progress-bar" className="dns-scroll-progress-bar"/>
-      </div>
+    <nav data-dns-tool-nav id="dns-analytics-nav" className="dns-tab-nav" aria-label="DNS Analytics">
       <div className="dns-tab-nav-inner analytics-nav-inner" role="tablist" aria-label="DNS Analytics modules">
         {TABS.map((t,index)=><button
           key={t.id}
@@ -180,7 +176,6 @@ export default function App() {
         </button>
       </div>
     </nav>
-    <NavigationRuntimeMount/>
 
     <main className="analytics-page">
       <div className="analytics-context">
