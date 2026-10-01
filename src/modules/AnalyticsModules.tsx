@@ -6,6 +6,7 @@ import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
 import { selectRegionalDataset } from '../services/regionalSelector';
 import { selectReliabilityDataset } from '../services/reliabilitySelector';
+import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
 import {
   COLORS,
   REGIONS,
@@ -14,7 +15,6 @@ import {
   advancedDefaults,
   annual,
   intensityAreas,
-  kpPartners,
   overnightAreas,
   overviewInsights,
 } from '../data/analyticsData';
@@ -230,8 +230,9 @@ export function RegionalModule(){
 }
 
 export function ReliabilityModule(){
-  const {snapshot,reliabilityLiveReady}=useAnalyticsLive();
+  const {snapshot,reliabilityLiveReady,kpPartnerLiveReady}=useAnalyticsLive();
   const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady),[snapshot,reliabilityLiveReady]);
+  const partnerData=useMemo(()=>selectKpPartnerDataset(snapshot,kpPartnerLiveReady),[snapshot,kpPartnerLiveReady]);
   const rows=data.rows;
   const sorted=[...rows].sort((a,b)=>b.kp-a.kp);
   const totalPot=rows.reduce((s,d)=>s+d.pot,0);
@@ -283,10 +284,12 @@ export function ReliabilityModule(){
     </div>
 
     <SectionHeading de="Detailansicht — 16 Partner einzeln" it="Dettaglio — 16 partner"/>
-    <div className="analytics-source-badge is-compatibility">Partner detail · Compatibility dataset · A.2.1</div>
+    <div className={`analytics-source-badge is-${partnerData.source}`}>
+      {partnerData.source==='live' ? 'DNS_Core historical · partner parity verified' : 'Partner detail · Compatibility dataset · A.2.1'}
+    </div>
     <Card title="KP pro Partner — km KS / km potenziali individuali">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th>Aperto</th><th>KP</th></tr></thead><tbody>
-        {kpPartners.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
+        {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
       </tbody></table></div>
     </Card>
   </Module>;
