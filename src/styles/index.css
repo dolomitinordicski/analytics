@@ -173,6 +173,18 @@
 
   .analytics-module { @apply min-w-0; }
 
+  .analytics-source-badge {
+    @apply mb-3 inline-flex rounded-full border px-2.5 py-1 font-alt text-[9px] font-semibold uppercase tracking-[.05em];
+  }
+
+  .analytics-source-badge.is-live {
+    @apply border-[#0F6E56]/25 bg-[#0F6E56]/[.06] text-[#0F6E56];
+  }
+
+  .analytics-source-badge.is-compatibility {
+    @apply border-dns-mid/20 bg-white text-dns-muted;
+  }
+
   .analytics-metrics {
     @apply mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4;
   }
