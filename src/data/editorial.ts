@@ -6,6 +6,8 @@ export type MethodologyItem = {
   value:string;
   classification:'observed'|'external-source'|'assumption'|'derived'|'limitation';
   source:string;
+  sourceYear?:string;
+  sourceUrl?:string;
   noteDe:string;
   noteIt:string;
 };
@@ -53,21 +55,24 @@ export const advancedMethodology:MethodologyItem[]=[
   },
   {
     key:'spend',labelDe:'Tagesausgabe pro Gast',labelIt:'Spesa giornaliera per ospite',
-    value:'€117',classification:'external-source',source:'ASTAT — Winterhalbjahr Südtirol (as cited in legacy Analytics)',
-    noteDe:'Im Legacy-Dashboard als ASTAT-Referenzwert geführt; Network-Anwendung ist eine Vereinfachung.',
-    noteIt:'Nel dashboard legacy è indicato come valore ASTAT; applicarlo all’intero network è una semplificazione.',
+    value:'€117',classification:'external-source',source:'ASTAT + EURAC — Spesa turistica in Alto Adige, stagione invernale 2004/05',
+    sourceYear:'2005',sourceUrl:'https://www.provincia.bz.it/agricoltura-foreste/servizio-forestale-forestali/news.asp?aktuelles_action=4&aktuelles_article_id=112862',
+    noteDe:'Verifizierter historischer Referenzwert: €117 pro Kopf/Tag im Winter 2004/05; Italien €124, Deutschland €115. Für 2025-26 kein aktueller ASTAT-Wert nachgewiesen; Network-Anwendung ist daher ein Szenario.',
+    noteIt:'Riferimento storico verificato: €117 pro capite/giorno nell’inverno 2004/05; Italia €124, Germania €115. Non è stato verificato un valore ASTAT aggiornato al 2025-26; l’applicazione al network resta quindi uno scenario.',
   },
   {
     key:'multiplier',labelDe:'Wirtschaftsmultiplikator',labelIt:'Moltiplicatore economico',
-    value:'1,5',classification:'assumption',source:'I-O/TSA literature / UNWTO (as cited in legacy Analytics)',
-    noteDe:'Exogener prudenter Szenariowert; 1,0 entspricht nur direkter Wirkung.',
-    noteIt:'Valore esogeno prudenziale di scenario; 1,0 equivale al solo impatto diretto.',
+    value:'1,5',classification:'assumption',source:'UNSD / UNWTO — Tourism Satellite Account: Recommended Methodological Framework 2008',
+    sourceYear:'2008',sourceUrl:'https://unstats.un.org/unsd/publication/seriesf/seriesf_80rev1e.pdf',
+    noteDe:'Die TSA-Methodik beschreibt exogene Multiplikatoren als vereinfachte Näherung, liefert aber keinen DNS-spezifischen Wert 1,5. 1,5 bleibt deshalb ein transparenter Szenarioparameter; 1,0 = nur direkte Wirkung.',
+    noteIt:'La metodologia TSA descrive i moltiplicatori esogeni come approssimazioni semplificate, ma non fornisce un valore 1,5 specifico per DNS. 1,5 resta quindi un parametro di scenario trasparente; 1,0 = solo effetto diretto.',
   },
   {
     key:'day-share',labelDe:'DAY = Übernachtungsgäste',labelIt:'DAY = ospiti pernottanti',
-    value:'45%',classification:'assumption',source:'Prudential scenario; Seilbahnen Österreich dwif/Manova used as reference',
-    noteDe:'Explorativ. Legacy-Referenz nennt 66,8% Übernachtungsgäste und 21,4% Tagesgäste.',
-    noteIt:'Esplorativo. Il riferimento legacy indica 66,8% pernottanti e 21,4% giornalieri.',
+    value:'45%',classification:'assumption',source:'Seilbahnen Österreich — Wertschöpfungsstudie, Wintersaison 2004/05 (historical reference)',
+    sourceYear:'2006',sourceUrl:'https://www.mountain-manager.com/wp-content/uploads/2019/01/mountain_manager_0106.pdf',
+    noteDe:'Explorativ. Die historische österreichische Studie nennt 66,8% Übernachtungsgäste, 21,4% Tagesgäste und 11,8% Saisonkartenbesitzer; sie belegt den DNS-Wert 45% nicht.',
+    noteIt:'Esplorativo. Lo studio austriaco storico indica 66,8% pernottanti, 21,4% giornalieri e 11,8% stagionali; non dimostra il valore DNS del 45%.',
   },
   {
     key:'economic-impact-limit',labelDe:'Grenze der Wertschöpfung',labelIt:'Limite del valore economico',
