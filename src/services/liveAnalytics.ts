@@ -427,7 +427,7 @@ export async function loadLiveAnalyticsSnapshot(
         rows,
         aggregate,
       };
-      snapshot.annual=await loadHistoricalAnnualSeries(aggregate);
+      snapshot.annual=(await loadHistoricalAnnualSeries(aggregate)) ?? undefined;
     } else {
       const rows=await readSeason<TicketSalesLive>('ticketSales',seasonId);
       snapshot.sales={source:'operational',rows,aggregate:aggregateSales(rows)};
