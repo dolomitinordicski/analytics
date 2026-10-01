@@ -11,7 +11,7 @@
     "validate": "npm run check:parity && npm run build"
   },
   "dependencies": {
-    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#ca176d844dafcf85ced1eba700abeefa82fbf0a7",
+    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#032c9b355955f1a62e401133ece681cbf05a4eb9",
     "chart.js": "^4.4.8",
     "firebase": "^12.6.0",
     "react": "^18.3.1",
