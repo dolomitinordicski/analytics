@@ -11,6 +11,7 @@ const app = read('src/App.tsx');
 const modules = read('src/modules/AnalyticsModules.tsx');
 const data = read('src/data/analyticsData.ts');
 const css = read('src/styles/index.css');
+const printSheet = read('src/components/AnalyticsPrintSheet.tsx');
 const pkg = JSON.parse(read('package.json'));
 
 const requiredTabs = [
@@ -64,6 +65,18 @@ for (const [label, pattern] of prohibited) {
   if (pattern.test(activeText)) fail(`legacy pattern found: ${label}`);
 }
 if (!process.exitCode) ok('no prohibited legacy runtime patterns found');
+
+if (!app.includes('printActive') || !printSheet.includes('if (!active) return null')) {
+  fail('print portal must mount only during an active print cycle');
+} else {
+  ok('print portal does not duplicate hidden Chart.js instances during normal use');
+}
+
+if (!printSheet.includes('DNS_SHARED_PRINT_LOGO_URL')) {
+  fail('print sheet does not use the canonical DNS print logo');
+} else {
+  ok('print sheet uses the canonical DNS print logo');
+}
 
 for (const path of ['dns-core.js','fairmodel.html','logo.png','DNS_Guida_Aggiornamento_Dati.md.pdf']) {
   if (fs.existsSync(path)) fail(`legacy repository file still present: ${path}`);
