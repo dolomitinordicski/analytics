@@ -10,6 +10,7 @@ import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
 import { selectAnnualDataset } from '../services/annualSelector';
 import { selectAdvancedObservedInputs } from '../services/advancedSelector';
 import { selectOvernightDataset } from '../services/overnightSelector';
+import { selectIntensityDataset } from '../services/intensitySelector';
 import {
   COLORS,
   REGIONS,
@@ -430,7 +431,9 @@ export function OvernightModule(){
 
 
 export function IntensityModule(){
-  const areas=intensityAreas.map(a=>({
+  const {snapshot,intensityLiveReady}=useAnalyticsLive();
+  const dataset=useMemo(()=>selectIntensityDataset(snapshot,intensityLiveReady),[snapshot,intensityLiveReady]);
+  const areas=dataset.rows.map(a=>({
     ...a,
     pnWK:a.wk*.75*6,
     pnDAY:a.day*.45,
@@ -442,6 +445,12 @@ export function IntensityModule(){
   const totalPn=areas.reduce((s,a)=>s+a.pn,0);
   const netInt=totalFondo/totalPn*100;
   return <Module>
+    <div className={`analytics-source-badge is-${dataset.source}`}>
+      {dataset.source==='live' ? 'DNS_Core Sales + DNS FAIR PN · parity verified' : 'Compatibility dataset · intensity inputs A.2.1'}
+    </div>
+    <div className="analytics-assumption-note">
+      Model assumptions preserved: 75% overnight share × 6 nights for weekly tickets; 45% overnight share for DAY scenario.
+    </div>
     <div className="analytics-metrics">
       <Metric label="Intensivste Region (WK)" sublabel="Regione più intensa" value={sorted[0].area.split('/')[0].trim()} note={pct(sorted[0].intWK,2)} top/>
       <Metric label="Ø Intensität WK-basiert" sublabel="Intensità media" value={pct(areas.reduce((s,a)=>s+a.intWK,0)/areas.length,2)}/>
