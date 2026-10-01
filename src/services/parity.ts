@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, advancedDefaults, annual, kpPartners, kpRegions, overnightAreas, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, advancedDefaults, annual, intensityAreas, kpPartners, kpRegions, overnightAreas, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -360,6 +360,49 @@ export function overnightParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=8;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+export function compareIntensityInputsToCompatibility(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const sales=snapshot?.sales?.aggregate.byReportingAreaProduct;
+  const fair=snapshot?.fair;
+  const fairByArea=new Map<string,number>();
+  for (const region of fair?.regions ?? []) {
+    const areaId=resolveAnalyticsReportingAreaId(region.name);
+    if (areaId) fairByArea.set(areaId,Number(region.PN));
+  }
+
+  const checks:ParityCheck[]=[];
+  intensityAreas.forEach((legacy,index)=>{
+    const areaId=resolveAnalyticsReportingAreaId(legacy.area);
+    const products=areaId ? sales?.[areaId] : undefined;
+    const wk=products
+      ? Number(products['wk-area']?.quantity ?? 0)+Number(products['wk-dns']?.quantity ?? 0)
+      : null;
+    const day=products ? Number(products.day?.quantity ?? 0) : null;
+    const pn=areaId ? (fairByArea.get(areaId) ?? null) : null;
+    checks.push(
+      check(`intensity-wk-${areaId ?? index}`,`${legacy.area} WK`,legacy.wk,wk,0),
+      check(`intensity-day-${areaId ?? index}`,`${legacy.area} DAY`,legacy.day,day,0),
+      check(`intensity-pn-${areaId ?? index}`,`${legacy.area} PN`,legacy.pn,pn,0),
+    );
+  });
+  return checks;
+}
+
+export function intensityParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=intensityAreas.length*3;
   return {
     available:available.length,
     expected,
