@@ -27,6 +27,7 @@ const regionalSelector = read('src/services/regionalSelector.ts');
 const reliabilitySelector = read('src/services/reliabilitySelector.ts');
 const kpPartnerSelector = read('src/services/kpPartnerSelector.ts');
 const annualSelector = read('src/services/annualSelector.ts');
+const advancedSelector = read('src/services/advancedSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -186,6 +187,15 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.6 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.6 immutable four-season Annual switch is present');
+
+for (const [label, content, tokens] of [
+  ['Advanced observed selector', advancedSelector, ['selectAdvancedObservedInputs','weeklyTicketsNetwork','weeklyTicketsSouthTyrol','dayTickets']],
+  ['Advanced observed parity', parity, ['compareAdvancedObservedInputs','advancedObservedParitySummary','advanced-weekly-network','advanced-day']],
+  ['Advanced module switch', modules, ['advancedLiveReady','selectAdvancedObservedInputs','observed inputs verified','Assumptions: nights/guest']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.7 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.7 Advanced Analytics observed inputs are guarded and assumptions remain explicit');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');

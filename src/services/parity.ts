@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, annual, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, advancedDefaults, annual, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -256,6 +256,50 @@ export function annualParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=ANNUAL_SEASONS.length*(2+5*2);
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+const ADVANCED_SOUTH_TYROL_AREAS = [
+  'drei-zinnen',
+  'gsiesertal-welsberg-taisten',
+  'antholzertal',
+  'ahrntal',
+  'seiser-alm-dolomites-val-gardena',
+] as const;
+
+export function compareAdvancedObservedInputs(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const sales=snapshot?.sales?.aggregate;
+  const weeklyNetwork=sales
+    ? Number(sales.byProduct['wk-area']?.quantity ?? 0)+Number(sales.byProduct['wk-dns']?.quantity ?? 0)
+    : null;
+  const weeklySouthTyrol=sales
+    ? ADVANCED_SOUTH_TYROL_AREAS.reduce((sum,areaId)=>{
+        const area=sales.byReportingAreaProduct[areaId] ?? {};
+        return sum+Number(area['wk-area']?.quantity ?? 0)+Number(area['wk-dns']?.quantity ?? 0);
+      },0)
+    : null;
+  const day=sales ? Number(sales.byProduct.day?.quantity ?? 0) : null;
+
+  return [
+    check('advanced-weekly-network','Advanced weekly tickets network',advancedDefaults.weeklyTicketsNetwork,weeklyNetwork,0),
+    check('advanced-weekly-south-tyrol','Advanced weekly tickets South Tyrol',advancedDefaults.weeklyTicketsSouthTyrol,weeklySouthTyrol,0),
+    check('advanced-day','Advanced DAY tickets',advancedDefaults.dayTickets,day,0),
+  ];
+}
+
+export function advancedObservedParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=3;
   return {
     available:available.length,
     expected,

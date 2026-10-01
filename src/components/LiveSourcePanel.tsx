@@ -14,6 +14,8 @@ import {
   compareKpToCompatibility,
   compareKpPartnersToCompatibility,
   compareAnnualToCompatibility,
+  compareAdvancedObservedInputs,
+  advancedObservedParitySummary,
   annualParitySummary,
   kpPartnerParitySummary,
   kpParitySummary,
@@ -80,6 +82,8 @@ export function LiveSourcePanel({
   const kpPartnerSummary=useMemo(()=>kpPartnerParitySummary(kpPartnerChecks),[kpPartnerChecks]);
   const annualChecks=useMemo(()=>compareAnnualToCompatibility(snapshot),[snapshot]);
   const annualSummary=useMemo(()=>annualParitySummary(annualChecks),[annualChecks]);
+  const advancedChecks=useMemo(()=>compareAdvancedObservedInputs(snapshot),[snapshot]);
+  const advancedSummary=useMemo(()=>advancedObservedParitySummary(advancedChecks),[advancedChecks]);
 
   async function login(){
     setBusy(true);
@@ -129,17 +133,17 @@ export function LiveSourcePanel({
           : `Parità: ${summary.matches}/${summary.available} corrispondenti`}
       </span>
       <span>
-        Overview {summary.ready?'✓':'—'} · Annual {annualSummary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
+        Overview {summary.ready?'✓':'—'} · Annual {annualSummary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Advanced {advancedSummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
       </span>
       <button type="button" onClick={()=>void signOutAnalytics()}>
         {language==='de'?'Abmelden':'Esci'}
       </button>
     </div>
 
-    {(summary.different>0 || annualSummary.different>0 || regionalSummary.different>0 || kpSummary.different>0 || kpPartnerSummary.different>0) && <details className="analytics-live-diagnostics">
+    {(summary.different>0 || annualSummary.different>0 || regionalSummary.different>0 || advancedSummary.different>0 || kpSummary.different>0 || kpPartnerSummary.different>0) && <details className="analytics-live-diagnostics">
       <summary>{language==='de'?'Abweichungen anzeigen':'Mostra differenze'}</summary>
       <div className="analytics-live-diagnostic-grid">
-        {[...checks,...annualChecks,...regionalChecks,...kpChecks,...kpPartnerChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
+        {[...checks,...annualChecks,...regionalChecks,...advancedChecks,...kpChecks,...kpPartnerChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
           <span>{c.label}</span>
           <strong>{c.live?.toLocaleString('de-DE')}</strong>
           <small>legacy {c.legacy.toLocaleString('de-DE')} · Δ {c.delta?.toLocaleString('de-DE')}</small>
