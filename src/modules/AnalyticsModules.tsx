@@ -15,11 +15,8 @@ import {
   annual,
   intensityAreas,
   kpPartners,
-  kpRegions,
   overnightAreas,
   overviewInsights,
-  regional,
-  seasonOverview,
 } from '../data/analyticsData';
 
 const euro = (v:number) => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
