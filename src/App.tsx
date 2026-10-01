@@ -88,27 +88,44 @@ export default function App() {
   const boundaryMode = getAnalyticsBoundaryMode(core);
 
   return <div className="min-h-screen bg-dns-bg text-dns-deep">
-    <header id="dns-analytics-header" className="sticky top-0 z-30 bg-dns-deep text-white">
-      <div className="analytics-header-inner">
-        <div className="analytics-brand">
-          <img src={DNS_SHARED_WEB_LOGO_URL} alt="Dolomiti NordicSki" className="analytics-logo"/>
-          <div>
-            <div className="analytics-title"><strong>DNS</strong> <span>ANALYTICS</span></div>
-            <div className="analytics-subtitle">Statistics & Reporting</div>
+    <header id="dns-analytics-header" className="sticky top-0 z-30 bg-dns-deep text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
+      <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
+        <div className="flex min-w-0 items-center gap-4">
+          <img src={DNS_SHARED_WEB_LOGO_URL} alt="Dolomiti NordicSki" className="h-10 w-auto shrink-0 object-contain"/>
+          <div className="min-w-0">
+            <div className="whitespace-nowrap text-[22px] uppercase leading-none tracking-[.035em] text-white"><strong>DNS</strong> <span className="font-normal">ANALYTICS</span></div>
+            <div className="mt-1.5 truncate font-alt text-[11px] font-normal uppercase leading-tight tracking-[.06em] text-dns-light">Statistics & Reporting</div>
           </div>
         </div>
-        <div className="analytics-header-actions">
-          <div className={`analytics-core-status is-${core.state}`} aria-live="polite">{core.text}</div>
-          <AccessibilityMount language={language}/>
-          <div className="analytics-lang" role="group" aria-label={language === 'de' ? 'Sprache' : 'Lingua'}>
-            {(['de','it'] as const).map(l=><button
-              key={l}
-              type="button"
-              data-dns-press
-              className={language===l?'is-active':''}
-              aria-pressed={language===l}
-              onClick={()=>setLanguage(l)}
-            >{l.toUpperCase()}</button>)}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <AccessibilityMount language={language}/>
+            <div className="flex gap-3 text-[10px] font-bold uppercase tracking-[.06em]" role="group" aria-label={language === 'de' ? 'Sprache' : 'Lingua'}>
+              {(['de','it'] as const).map(l=><button
+                key={l}
+                type="button"
+                data-dns-press
+                className={['border-0 border-b-2 bg-transparent px-1 py-1 text-white',language===l?'border-white':'border-transparent opacity-60'].join(' ')}
+                aria-pressed={language===l}
+                onClick={()=>setLanguage(l)}
+              >{l.toUpperCase()}</button>)}
+            </div>
+          </div>
+          <div className={[
+            'hidden items-center gap-2 text-[10px] font-semibold uppercase tracking-[.05em] xl:flex',
+            core.state === 'ready' ? 'text-[#d8f0e7]' : '',
+            core.state === 'error' ? 'text-[#ffd7d0]' : 'text-white/65',
+          ].join(' ')} aria-live="polite">
+            <span className={[
+              'h-2 w-2 rounded-full',
+              core.state === 'ready' ? 'bg-emerald-400' : '',
+              core.state === 'error' ? 'bg-orange-400' : 'bg-dns-light',
+            ].join(' ')}/>
+            {core.state === 'ready'
+              ? `${language==='de'?'DNS_Core verbunden':'DNS_Core connesso'} · ${core.counts.reportingAreas}/${core.counts.organizations}`
+              : core.state === 'error'
+                ? (language==='de'?'DNS_Core nicht erreichbar':'DNS_Core non raggiungibile')
+                : (language==='de'?'DNS_Core verbindet…':'Connessione a DNS_Core…')}
           </div>
         </div>
       </div>
