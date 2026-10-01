@@ -22,6 +22,11 @@ for (const id of requiredTabs) {
 }
 if (!process.exitCode) ok('all 7 Analytics modules are registered');
 
+for (const token of ['role="tablist"','role="tab"','aria-selected','role="tabpanel"','hashchange','ArrowRight','ArrowLeft']) {
+  if (!app.includes(token)) fail(`tab navigation contract missing: ${token}`);
+}
+if (!process.exitCode) ok('tab navigation supports semantics, keyboard control and deep links');
+
 const requiredExports = [
   'OverviewModule','AnnualModule','RegionalModule','ReliabilityModule',
   'AdvancedModule','OvernightModule','IntensityModule',

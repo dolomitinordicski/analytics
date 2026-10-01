@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
@@ -34,13 +34,29 @@ type TabId = typeof TABS[number]['id'];
 type Language = 'de' | 'it';
 
 export default function App() {
-  const [active,setActive] = useState<TabId>('overview');
+  const [active,setActive] = useState<TabId>(() => {
+    const hash = window.location.hash.replace(/^#/, '') as TabId;
+    return TABS.some(tab => tab.id === hash) ? hash : 'overview';
+  });
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [language,setLanguage] = useState<Language>('de');
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
   const [printActive,setPrintActive] = useState(false);
 
   useEffect(() => applyDNSFoundation(),[]);
   useEffect(() => { void loadDNSCoreMaster().then(setCore); },[]);
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace(/^#/, '') as TabId;
+      if (TABS.some(tab => tab.id === hash)) setActive(hash);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  },[]);
+  useEffect(() => {
+    const button = tabRefs.current[active];
+    button?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  },[active]);
   useEffect(() => {
     const handleAfterPrint = () => setPrintActive(false);
     window.addEventListener('afterprint', handleAfterPrint);
@@ -75,8 +91,37 @@ export default function App() {
       <div id="dns-scroll-progress" className="dns-scroll-progress-track" role="progressbar" aria-label="Page scroll progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
         <span id="dns-scroll-progress-bar" className="dns-scroll-progress-bar"/>
       </div>
-      <div className="dns-tab-nav-inner analytics-nav-inner">
-        {TABS.map(t=><button key={t.id} type="button" className={`dns-tab ${active===t.id?'dns-tab-active':''}`} onClick={()=>{setActive(t.id);window.scrollTo({top:0,behavior:'smooth'})}}>{t.label}</button>)}
+      <div className="dns-tab-nav-inner analytics-nav-inner" role="tablist" aria-label="DNS Analytics modules">
+        {TABS.map((t,index)=><button
+          key={t.id}
+          ref={(node)=>{ tabRefs.current[t.id]=node; }}
+          id={`analytics-tab-${t.id}`}
+          type="button"
+          role="tab"
+          aria-selected={active===t.id}
+          aria-controls="analytics-active-panel"
+          tabIndex={active===t.id ? 0 : -1}
+          className={`dns-tab ${active===t.id?'dns-tab-active':''}`}
+          onClick={()=>{
+            setActive(t.id);
+            history.replaceState(null,'',`#${t.id}`);
+            window.scrollTo({top:0,behavior:'smooth'});
+          }}
+          onKeyDown={(event)=>{
+            if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+            event.preventDefault();
+            let nextIndex=index;
+            if (event.key==='ArrowRight') nextIndex=(index+1)%TABS.length;
+            if (event.key==='ArrowLeft') nextIndex=(index-1+TABS.length)%TABS.length;
+            if (event.key==='Home') nextIndex=0;
+            if (event.key==='End') nextIndex=TABS.length-1;
+            const next=TABS[nextIndex];
+            setActive(next.id);
+            history.replaceState(null,'',`#${next.id}`);
+            tabRefs.current[next.id]?.focus();
+            window.scrollTo({top:0,behavior:'smooth'});
+          }}
+        >{t.label}</button>)}
         <button
           type="button"
           className="analytics-print-button"
@@ -100,7 +145,14 @@ export default function App() {
           Data source A.2.1: preserved local datasets · DNS_Core master data connected
         </div>
       </div>
-      <ActiveComponent/>
+      <section
+        id="analytics-active-panel"
+        role="tabpanel"
+        aria-labelledby={`analytics-tab-${active}`}
+        tabIndex={0}
+      >
+        <ActiveComponent/>
+      </section>
     </main>
 
     <footer className="analytics-footer">
