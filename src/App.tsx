@@ -37,9 +37,15 @@ export default function App() {
   const [active,setActive] = useState<TabId>('overview');
   const [language,setLanguage] = useState<Language>('de');
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
+  const [printActive,setPrintActive] = useState(false);
 
   useEffect(() => applyDNSFoundation(),[]);
   useEffect(() => { void loadDNSCoreMaster().then(setCore); },[]);
+  useEffect(() => {
+    const handleAfterPrint = () => setPrintActive(false);
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  },[]);
 
   const tab = useMemo(() => TABS.find(t=>t.id===active) ?? TABS[0],[active]);
   const ActiveComponent = tab.component;
@@ -71,7 +77,18 @@ export default function App() {
       </div>
       <div className="dns-tab-nav-inner analytics-nav-inner">
         {TABS.map(t=><button key={t.id} type="button" className={`dns-tab ${active===t.id?'dns-tab-active':''}`} onClick={()=>{setActive(t.id);window.scrollTo({top:0,behavior:'smooth'})}}>{t.label}</button>)}
-        <button type="button" className="analytics-print-button" onClick={printDNSDocument}>Drucken · Stampa PDF</button>
+        <button
+          type="button"
+          className="analytics-print-button"
+          onClick={() => {
+            setPrintActive(true);
+            window.requestAnimationFrame(() => {
+              window.requestAnimationFrame(() => printDNSDocument());
+            });
+          }}
+        >
+          Drucken · Stampa PDF
+        </button>
       </div>
     </nav>
     <NavigationRuntimeMount/>
@@ -91,6 +108,6 @@ export default function App() {
       <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
     </footer>
 
-    <AnalyticsPrintSheet title={tab.label}><ActiveComponent/></AnalyticsPrintSheet>
+    <AnalyticsPrintSheet active={printActive} title={tab.label}><ActiveComponent/></AnalyticsPrintSheet>
   </div>;
 }

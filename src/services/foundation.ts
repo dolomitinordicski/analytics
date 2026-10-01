@@ -6,6 +6,8 @@ import { initDNSPrintRuntime } from '@dolomitinordicski/dns-shared-data/ui/print
 export const DNS_ANALYTICS_FOUNDATION_VERSION = DNS_DESIGN_SYSTEM.version;
 export const DNS_SHARED_WEB_LOGO_URL =
   'https://dolomitinordicski.github.io/dns-shared-data/brand/logo-web.png';
+export const DNS_SHARED_PRINT_LOGO_URL =
+  'https://dolomitinordicski.github.io/dns-shared-data/brand/logo.png';
 
 let printRuntime: ReturnType<typeof initDNSPrintRuntime> | null = null;
 
