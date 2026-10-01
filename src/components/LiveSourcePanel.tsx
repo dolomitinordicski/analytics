@@ -12,7 +12,11 @@ import { compareLiveToCompatibility, paritySummary } from '../services/parity';
 
 type Language = 'de' | 'it';
 
-export function LiveSourcePanel({language,seasonId}:{language:Language;seasonId:string}) {
+export function LiveSourcePanel({
+  language,
+  seasonId,
+  onSnapshot,
+}:{language:Language;seasonId:string;onSnapshot?:(snapshot:LiveAnalyticsSnapshot|null)=>void}) {
   const [user,setUser]=useState<User|null>(null);
   const [access,setAccess]=useState<AnalyticsAccessContext|null>(null);
   const [snapshot,setSnapshot]=useState<LiveAnalyticsSnapshot|null>(null);
@@ -30,6 +34,7 @@ export function LiveSourcePanel({language,seasonId}:{language:Language;seasonId:
         if (live) {
           setAccess(null);
           setSnapshot(null);
+          onSnapshot?.(null);
           setBusy(false);
         }
         return;
@@ -42,6 +47,7 @@ export function LiveSourcePanel({language,seasonId}:{language:Language;seasonId:
         if (live) {
           setAccess(nextAccess);
           setSnapshot(nextSnapshot);
+          onSnapshot?.(nextSnapshot);
         }
       } catch (cause:any) {
         if (live) setError(cause?.code ?? cause?.message ?? 'LIVE_SOURCE_FAILED');
@@ -51,7 +57,7 @@ export function LiveSourcePanel({language,seasonId}:{language:Language;seasonId:
     }
     void refresh();
     return()=>{live=false};
-  },[user,seasonId]);
+  },[user,seasonId,onSnapshot]);
 
   const checks=useMemo(()=>compareLiveToCompatibility(snapshot),[snapshot]);
   const summary=useMemo(()=>paritySummary(checks),[checks]);
