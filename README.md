@@ -51,3 +51,5 @@ A.2.1 keeps the source values in `src/data/analyticsData.ts` as a controlled com
 The existing `ticketSales` operational contract contains season, organization, reporting area, destination, product, quantity, pricing and calculated amount, but does not yet expose the sales channel needed for Büro / Online / Loipe analytics. That contract must be extended before the channel chart can become fully DNS_Core-driven.
 
 Chart colors are intentionally preserved from the existing Analytics application.
+
+A.2.1 validation runs through the repository GitHub Pages workflow before merge.
