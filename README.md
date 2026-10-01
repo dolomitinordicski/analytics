@@ -96,3 +96,5 @@ A.3 is explicitly outside this phase: no production analytical fact is switched 
 - The historical DNS SK series maps `DNS SK incl. Langlauflehrer` to one analytical group; for 2025-26 this means `sk-dns + sk-instructor`.
 - Annual switches from A.2.1 only when all 48 checks (4 seasons × totals plus 5 product quantity/revenue pairs) match.
 - Historical discrepancies remain visible and do not trigger automatic normalization.
+
+A.3 integration validation runs on pull requests targeting `a3-integration` before any reconciliation with `main`.
