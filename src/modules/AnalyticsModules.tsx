@@ -211,7 +211,7 @@ export function RegionalModule(){
         <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...qty[i]],backgroundColor:qty[i].map(v=>v===Math.max(...qty[i])?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
       <Card title="Gesamteinnahmen nach Region" subtitle="Entrate totali per regione">
-        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.totalRevenue],backgroundColor:data.totalRevenue.map(v=>v===Math.max(...data.totalRevenue)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}}} as any}/>
+        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.totalRevenue],backgroundColor:data.totalRevenue.map(v=>v===Math.max(...data.totalRevenue)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
     </div>
 
