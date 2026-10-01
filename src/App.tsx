@@ -102,7 +102,7 @@ export default function App() {
           <img src={DNS_SHARED_WEB_LOGO_URL} alt="Dolomiti NordicSki" className="dns-tool-header-logo"/>
           <div className="dns-tool-header-identity">
             <div className="dns-tool-header-title"><strong>DNS</strong> <span>ANALYTICS</span></div>
-            <div className="dns-tool-header-subtitle">Statistics & Reporting</div>
+            <div className="dns-tool-header-subtitle">{language === 'de' ? 'Statistik & Reporting' : 'Statistiche & Reporting'}</div>
           </div>
         </div>
         <div className="dns-tool-header-actions">
