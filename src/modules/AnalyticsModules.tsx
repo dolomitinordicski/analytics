@@ -8,6 +8,7 @@ import { selectRegionalDataset } from '../services/regionalSelector';
 import { selectReliabilityDataset } from '../services/reliabilitySelector';
 import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
 import { selectAnnualDataset } from '../services/annualSelector';
+import { selectAdvancedObservedInputs } from '../services/advancedSelector';
 import {
   COLORS,
   REGIONS,
@@ -302,6 +303,8 @@ export function ReliabilityModule(){
 }
 
 export function AdvancedModule(){
+  const {snapshot,advancedLiveReady}=useAnalyticsLive();
+  const observed=useMemo(()=>selectAdvancedObservedInputs(snapshot,advancedLiveReady),[snapshot,advancedLiveReady]);
   const [nights,setNights]=useState<number>(advancedDefaults.nightsPerWeeklyGuest);
   const [share,setShare]=useState<number>(advancedDefaults.overnightShare*100);
   const [spend,setSpend]=useState<number>(advancedDefaults.spendPerNight);
@@ -309,18 +312,24 @@ export function AdvancedModule(){
   const [dayShare,setDayShare]=useState<number>(advancedDefaults.dayOvernightShare);
   const derived=useMemo(()=>{
     const q=share/100;
-    const nightsNet=advancedDefaults.weeklyTicketsNetwork*q*nights;
-    const nightsAA=advancedDefaults.weeklyTicketsSouthTyrol*q*nights;
+    const nightsNet=observed.weeklyTicketsNetwork*q*nights;
+    const nightsAA=observed.weeklyTicketsSouthTyrol*q*nights;
     const directNet=nightsNet*spend;
     const directAA=nightsAA*spend;
     const totalNet=directNet*mult;
-    const dayNights=advancedDefaults.dayTickets*(dayShare/100);
+    const dayNights=observed.dayTickets*(dayShare/100);
     const dayDirect=dayNights*spend;
     return {nightsNet,nightsAA,directNet,directAA,totalNet,dayNights,dayDirect,grand:directNet+dayDirect};
   },[nights,share,spend,mult,dayShare]);
   return <Module>
+    <div className={`analytics-source-badge is-${observed.source}`}>
+      {observed.source==='live' ? 'DNS_Core historical · observed inputs verified' : 'Compatibility dataset · observed inputs A.2.1'}
+    </div>
+    <div className="analytics-assumption-note">
+      Observed: ticket volumes · Assumptions: nights/guest, overnight share, spend/night, multiplier, DAY overnight share.
+    </div>
     <div className="analytics-metrics">
-      <Metric label="Wochenkarten gesamt" sublabel="Settimanali totali" value={integer(advancedDefaults.weeklyTicketsNetwork)} note="Network"/>
+      <Metric label="Wochenkarten gesamt" sublabel="Settimanali totali" value={integer(observed.weeklyTicketsNetwork)} note="Network"/>
       <Metric label="Geschätzte Übernachtungen" sublabel="Pernottamenti stimati" value={integer(derived.nightsNet)} note={`${share}% · ${nights} Nächte`}/>
       <Metric label="Direkte Wertschöpfung" sublabel="Valore diretto" value={`€ ${(derived.directNet/1e6).toFixed(2)} Mio`} note={`€ ${spend}/Nacht`}/>
       <Metric label="Gesamtwirkung" sublabel="Impatto totale" value={`€ ${(derived.totalNet/1e6).toFixed(2)} Mio`} note={`× ${mult.toFixed(2)} Multiplikator`} top/>
@@ -365,7 +374,7 @@ export function AdvancedModule(){
 
     <SectionHeading de="Szenario Tageskarten (explorativ)" it="Scenario giornalieri (esplorativo)"/>
     <div className="analytics-metrics">
-      <Metric label="Tageskarten gesamt" sublabel="Giornalieri totali" value={integer(advancedDefaults.dayTickets)}/>
+      <Metric label="Tageskarten gesamt" sublabel="Giornalieri totali" value={integer(observed.dayTickets)}/>
       <Metric label="Davon Übernachtungsgäste" sublabel="Quota ospiti" value={integer(derived.dayNights)} note={`${dayShare}%`}/>
       <Metric label="Zusätzl. Wertschöpfung" sublabel="Valore aggiuntivo" value={`€ ${(derived.dayDirect/1e6).toFixed(2)} Mio`}/>
       <Metric label="Total WK + Tageskarten · Szenario" sublabel="Totale scenario" value={`€ ${(derived.grand/1e6).toFixed(2)} Mio`} top/>
