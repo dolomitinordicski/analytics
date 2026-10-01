@@ -269,11 +269,11 @@ export function ReliabilityModule(){
 }
 
 export function AdvancedModule(){
-  const [nights,setNights]=useState(advancedDefaults.nightsPerWeeklyGuest);
-  const [share,setShare]=useState(advancedDefaults.overnightShare*100);
-  const [spend,setSpend]=useState(advancedDefaults.spendPerNight);
-  const [mult,setMult]=useState(advancedDefaults.multiplier);
-  const [dayShare,setDayShare]=useState(advancedDefaults.dayOvernightShare);
+  const [nights,setNights]=useState<number>(advancedDefaults.nightsPerWeeklyGuest);
+  const [share,setShare]=useState<number>(advancedDefaults.overnightShare*100);
+  const [spend,setSpend]=useState<number>(advancedDefaults.spendPerNight);
+  const [mult,setMult]=useState<number>(advancedDefaults.multiplier);
+  const [dayShare,setDayShare]=useState<number>(advancedDefaults.dayOvernightShare);
   const derived=useMemo(()=>{
     const q=share/100;
     const nightsNet=advancedDefaults.weeklyTicketsNetwork*q*nights;
