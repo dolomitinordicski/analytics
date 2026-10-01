@@ -53,3 +53,5 @@ The existing `ticketSales` operational contract contains season, organization, r
 Chart colors are intentionally preserved from the existing Analytics application.
 
 A.2.1 validation runs through the repository GitHub Pages workflow before merge.
+
+Validation checkpoint: A.2.1 rebased on current main.
