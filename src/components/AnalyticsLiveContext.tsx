@@ -5,6 +5,8 @@ import {
   compareRegionalToCompatibility,
   compareKpToCompatibility,
   compareKpPartnersToCompatibility,
+  compareAnnualToCompatibility,
+  annualParitySummary,
   kpPartnerParitySummary,
   kpParitySummary,
   paritySummary,
@@ -17,6 +19,7 @@ type AnalyticsLiveContextValue = {
   regionalLiveReady: boolean;
   reliabilityLiveReady: boolean;
   kpPartnerLiveReady: boolean;
+  annualLiveReady: boolean;
 };
 
 const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
@@ -25,6 +28,7 @@ const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
   regionalLiveReady: false,
   reliabilityLiveReady: false,
   kpPartnerLiveReady: false,
+  annualLiveReady: false,
 });
 
 export function AnalyticsLiveProvider({
@@ -38,12 +42,14 @@ export function AnalyticsLiveProvider({
   const regionalSummary = regionalParitySummary(compareRegionalToCompatibility(snapshot));
   const kpSummary = kpParitySummary(compareKpToCompatibility(snapshot));
   const kpPartnerSummary = kpPartnerParitySummary(compareKpPartnersToCompatibility(snapshot));
+  const annualSummary = annualParitySummary(compareAnnualToCompatibility(snapshot));
   return <AnalyticsLiveContext.Provider value={{
     snapshot,
     overviewLiveReady: summary.ready,
     regionalLiveReady: regionalSummary.ready,
     reliabilityLiveReady: kpSummary.ready,
     kpPartnerLiveReady: kpPartnerSummary.ready,
+    annualLiveReady: annualSummary.ready,
   }}>
     {children}
   </AnalyticsLiveContext.Provider>;
