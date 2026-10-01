@@ -1,4 +1,4 @@
-export type AnalyticsScopeType = 'network' | 'reportingArea' | 'destination' | 'organization';
+import type { AnalyticsScopeType } from './catalog';
 
 export interface AnalyticsRawMeasurement {
   seasonId: string;
