@@ -87,3 +87,12 @@ A.3 is explicitly outside this phase: no production analytical fact is switched 
 - From 2026-27 onward Analytics continues to use operational `ticketSales`, `kpMilestones`, `kpEntries` and `kpFairValidations`.
 - Historical source discrepancies are surfaced by parity checks and do not silently overwrite the preserved A.2.1 dashboard.
 - KP partner detail is eligible for live historical display only when all 16 partners × 5 checks match the preserved partner table.
+
+
+### A.3.6 annual historical series
+
+- Annual Comparison resolves 2022-23, 2023-24 and 2024-25 from the immutable 2024-25 `annual-network-comparison` record.
+- 2025-26 is derived from its immutable historical sales facts.
+- The historical DNS SK series maps `DNS SK incl. Langlauflehrer` to one analytical group; for 2025-26 this means `sk-dns + sk-instructor`.
+- Annual switches from A.2.1 only when all 48 checks (4 seasons × totals plus 5 product quantity/revenue pairs) match.
+- Historical discrepancies remain visible and do not trigger automatic normalization.
