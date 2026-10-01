@@ -77,3 +77,13 @@ A.3 is explicitly outside this phase: no production analytical fact is switched 
 - A.3.4 migrates area-level Network Reliability / KP only after all 8 reporting areas × 3 milestones × 3 values (potential, opened, artificial-snow km) match the preserved compatibility dataset.
 - KP source priority is validation-first: `kpFairValidations` overrides reconstructed area values from included `kpEntries` for the same area/milestone.
 - Partner-level KP detail remains explicitly on the A.2.1 compatibility dataset until a separate organization-level parity gate is implemented.
+
+
+### A.3.5 historical source routing
+
+- Season 2025-26 is read from immutable `historicalSeasonRecords`, not from editable operational collections.
+- Historical sales facts feed the same live aggregation/parity pipeline as operational ticket sales.
+- Historical KP facts are converted into dated milestone observations and retain original source labels.
+- From 2026-27 onward Analytics continues to use operational `ticketSales`, `kpMilestones`, `kpEntries` and `kpFairValidations`.
+- Historical source discrepancies are surfaced by parity checks and do not silently overwrite the preserved A.2.1 dashboard.
+- KP partner detail is eligible for live historical display only when all 16 partners × 5 checks match the preserved partner table.
