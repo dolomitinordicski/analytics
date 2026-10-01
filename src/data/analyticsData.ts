@@ -99,7 +99,7 @@ export const kpRegions = [
   kp:Math.min(100,d.ks3/d.pot*100),
 }));
 
-export const kpPartners: Array<{p:string;pot:number;ks1:number;ks2:number;ks3:number;tot3:number;excluded?:boolean}> = [
+export const kpPartners = [
   {p:'Antholzertal',pot:45,ks1:23.2,ks2:24.3,ks3:33.5,tot3:35.9},
   {p:'Biathlon Antholz',pot:16,ks1:22.3,ks2:22.3,ks3:22.3,tot3:22.3,excluded:true},
   {p:'Gsiesertal',pot:40,ks1:42.7,ks2:42.7,ks3:42.7,tot3:43.2},
@@ -116,7 +116,7 @@ export const kpPartners: Array<{p:string;pot:number;ks1:number;ks2:number;ks3:nu
   {p:'Sand in Taufers',pot:29,ks1:4.0,ks2:4.0,ks3:4.0,tot3:29.0},
   {p:'Seiser Alm',pot:56,ks1:2.1,ks2:2.1,ks3:1.5,tot3:77.3},
   {p:'Val Gardena',pot:34,ks1:1.5,ks2:1.5,ks3:1.5,tot3:34.5},
-];
+] as const;
 
 export const advancedDefaults = {
   weeklyTicketsNetwork: 7490,
