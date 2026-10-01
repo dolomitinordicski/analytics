@@ -25,6 +25,7 @@ const liveContext = read('src/components/AnalyticsLiveContext.tsx');
 const overviewSelector = read('src/services/overviewSelector.ts');
 const regionalSelector = read('src/services/regionalSelector.ts');
 const reliabilitySelector = read('src/services/reliabilitySelector.ts');
+const kpPartnerSelector = read('src/services/kpPartnerSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -164,6 +165,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.4 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.4 guarded Reliability/KP live switch is present');
+
+for (const [label, content, tokens] of [
+  ['historical adapter', liveAnalytics, ['historicalSeasonRecords','historicalSalesRows','historicalKpSnapshot','historical-season-records']],
+  ['KP partner parity', parity, ['compareKpPartnersToCompatibility','kpPartnerParitySummary','kp-partner-pot-','kp-partner-open3-']],
+  ['KP partner selector', kpPartnerSelector, ['selectKpPartnerDataset','item.label===legacy.p','source:\'live\'']],
+  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historical · partner parity verified']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.5 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.5 immutable historical adapter and KP partner switch are present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
