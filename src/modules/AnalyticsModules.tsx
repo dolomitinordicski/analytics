@@ -2,6 +2,8 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
 import { Card, Insight, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
+import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
+import { selectOverviewDataset } from '../services/overviewSelector';
 import {
   COLORS,
   REGIONS,
@@ -33,22 +35,28 @@ function stackedPercent(values:number[][]){
 }
 
 export function OverviewModule(){
+  const {snapshot,overviewLiveReady}=useAnalyticsLive();
+  const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady),[snapshot,overviewLiveReady]);
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
+    <div className={`analytics-source-badge is-${data.source}`}>
+      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : 'Compatibility dataset · A.2.1'}
+    </div>
+
     <div className="analytics-metrics">
-      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(seasonOverview.totalTickets)} note="↓ 10,9% vs. WS 2024-25"/>
-      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value="€ 1,89 Mio" note="↓ 7,8% vs. WS 2024-25"/>
-      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value="€ 24,40" note="↑ +2,8% vs. WS 2024-25"/>
-      <Metric label="Top Leistung" sublabel="Top performance" value={seasonOverview.topRegion} note={`${euro(seasonOverview.topRegionRevenue)} · ${integer(seasonOverview.topRegionTickets)} Tkts`} top/>
+      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note="↓ 10,9% vs. WS 2024-25"/>
+      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value={`€ ${(data.totalRevenue/1e6).toFixed(2).replace('.',',')} Mio`} note="↓ 7,8% vs. WS 2024-25"/>
+      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value={`€ ${data.avgPrice.toFixed(2).replace('.',',')}`} note="↑ +2,8% vs. WS 2024-25"/>
+      <Metric label="Top Leistung" sublabel="Top performance" value={data.topRegion} note={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} Tkts`} top/>
     </div>
 
     <SectionHeading de="Verkäufe nach Region" it="Vendite per regione"/>
     <div className="analytics-grid-2">
       <Card title="Anzahl Tickets / Quantità" subtitle="nach Region · per regione">
-        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...seasonOverview.regionQty],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionQty],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
       <Card title="Einnahmen / Entrate (€)" subtitle="nach Region · per regione">
-        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...seasonOverview.regionRevenue],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionRevenue],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
     </div>
 
@@ -56,29 +64,29 @@ export function OverviewModule(){
     <div className="analytics-grid-3">
       <Card title="Jahresvergleich Tickets" subtitle="Confronto annuale biglietti">
         <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[
-          {label:'2025-26',data:[65017,4032,3458,2600,2355],backgroundColor:COLORS.year1},
+          {label:'2025-26',data:[...data.ticketQty],backgroundColor:COLORS.year1},
           {label:'2024-25',data:[74038,4448,4003,3597,1927],backgroundColor:COLORS.year2},
           {label:'2023-24',data:[71264,4716,3693,1974,2139],backgroundColor:COLORS.year3},
           {label:'2022-23',data:[66242,4371,1759,2422,1801],backgroundColor:COLORS.year4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,color:COLORS.mid,font:{size:9}}}},scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
       <Card title="Tickettyp — Menge" subtitle="Tipo biglietto — quantità">
-        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[{data:[...seasonOverview.ticketQty],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketQty],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
       <Card title="Vertriebskanal" subtitle="Canale di vendita">
-        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...seasonOverview.channels.labels],datasets:[{data:[...seasonOverview.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Einnahmen nach Tickettyp" it="Entrate per tipo"/>
     <div className="analytics-grid-2">
       <Card title="Einnahmen nach Tickettyp" subtitle="Entrate per tipo biglietto">
-        <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[{data:[...seasonOverview.ticketRevenue],backgroundColor:palette,borderWidth:0,borderRadius:4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
+        <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:0,borderRadius:4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
       <Card title="Einnahmen (%) vs. Menge (%)" subtitle="Entrate (%) vs. quantità (%)">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[
-          {label:'Entrate',data:[...seasonOverview.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
-          {label:'Menge',data:[...seasonOverview.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
+          {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
+          {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
         ]},options:{...baseOptions,cutout:'40%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>

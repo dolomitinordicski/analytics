@@ -1,4 +1,5 @@
 import { REGIONS, TICKET_TYPES, seasonOverview } from '../data/analyticsData';
+import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
 const PRODUCT_CODES = ['day','wk-area','wk-dns','sk-area','sk-dns'] as const;
@@ -26,19 +27,18 @@ export function compareLiveToCompatibility(snapshot:LiveAnalyticsSnapshot|null):
   ];
 
   PRODUCT_CODES.forEach((code,index)=>{
-    checks.push(check(
-      `product-${code}`,
-      `Product ${TICKET_TYPES[index]}`,
-      seasonOverview.ticketQty[index],
-      sales?.byProduct[code]?.quantity ?? null,
-      0,
-    ));
+    checks.push(
+      check(`product-qty-${code}`,`Product ${TICKET_TYPES[index]} qty`,seasonOverview.ticketQty[index],sales?.byProduct[code]?.quantity ?? null,0),
+      check(`product-revenue-${code}`,`Product ${TICKET_TYPES[index]} revenue`,seasonOverview.ticketRevenue[index],sales?.byProduct[code]?.revenue ?? null,0.02),
+    );
   });
 
   REGIONS.forEach((label,index)=>{
-    // reporting-area canonical IDs are intentionally not guessed here.
-    // Area parity is activated after master-data ID mapping in A.3.2.
-    checks.push(check(`area-${index}`,`Area ${label}`,seasonOverview.regionQty[index],null,0));
+    const areaId=resolveAnalyticsReportingAreaId(label);
+    checks.push(
+      check(`area-qty-${areaId ?? index}`,`Area ${label} qty`,seasonOverview.regionQty[index],areaId ? (sales?.byReportingArea[areaId]?.quantity ?? null) : null,0),
+      check(`area-revenue-${areaId ?? index}`,`Area ${label} revenue`,seasonOverview.regionRevenue[index],areaId ? (sales?.byReportingArea[areaId]?.revenue ?? null) : null,0.02),
+    );
   });
 
   return checks;
@@ -48,5 +48,13 @@ export function paritySummary(checks:ParityCheck[]) {
   const available=checks.filter(c=>c.status!=='unavailable');
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
-  return {available:available.length,matches,different,ready:available.length>0 && different===0};
+  const expected=2 + PRODUCT_CODES.length*2 + REGIONS.length*2;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
 }
