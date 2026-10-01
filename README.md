@@ -53,3 +53,17 @@ The existing `ticketSales` operational contract contains season, organization, r
 Chart colors are intentionally preserved from the existing Analytics application.
 
 A.2.1 validation runs through the repository GitHub Pages workflow before merge.
+
+
+## A.2.3 — architecture consolidation
+
+A.2.3 introduces the canonical analytical boundary without changing the visible calculations:
+
+- canonical metric IDs in `src/data/metrics.ts`
+- canonical scope resolution in `src/data/scopes.ts`
+- compatibility aggregates, model registry and explicit assumptions in `src/data/architecture.ts`
+- DNS_Core / compatibility boundary policy in `src/services/analyticsBoundary.ts`
+- `analyticsRaw` remains intentionally empty until operational facts are migrated in A.3
+- preserved A.2.1 values remain the source of truth for the live UI during A.2.3
+
+A.3 is explicitly outside this phase: no production analytical fact is switched to a new source in A.2.3.
