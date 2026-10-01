@@ -30,6 +30,8 @@ const annualSelector = read('src/services/annualSelector.ts');
 const advancedSelector = read('src/services/advancedSelector.ts');
 const overnightSelector = read('src/services/overnightSelector.ts');
 const intensitySelector = read('src/services/intensitySelector.ts');
+const editorial = read('src/data/editorial.ts');
+const ui = read('src/components/Ui.tsx');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -217,6 +219,15 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.9 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.9 Langlauf intensity is sourced from DNS_Core sales plus FAIR PN');
+
+for (const [label, content, tokens] of [
+  ['Editorial protocol', editorial, ['classification:\'observed\'','classification:\'external-source\'','classification:\'assumption\'','classification:\'limitation\'','ASTAT','Seilbahnen Österreich','DNS FAIR Model']],
+  ['Editorial UI', ui, ['EditorialSummary','MethodologyPanel','Quelle · Fonte']],
+  ['Editorial module integration', modules, ['editorialSummaries.overview','editorialSummaries.annual','editorialSummaries.regional','reliabilityMethodology','advancedMethodology','overnightMethodology','intensityMethodology']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.10 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.10 editorial analyses and methodology/source protocol are integrated');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
