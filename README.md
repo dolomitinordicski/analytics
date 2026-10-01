@@ -117,3 +117,12 @@ A.3 integration validation runs on pull requests targeting `a3-integration` befo
 - The FAIR switch is guarded by 8 PN parity checks, one per reporting area.
 - The 2024-25 comparison remains the preserved Analytics historical baseline.
 - Monthly December–March context remains explicitly compatibility-sourced because FAIR does not provide monthly PN.
+
+
+### A.3.9 Langlauf intensity
+
+- Intensity inputs are now assembled from DNS_Core sales by reporting area plus PN from DNS FAIR.
+- Weekly input = WK Area + WK DNS ticket quantities; DAY input = DAY ticket quantity; PN = FAIR overnight value.
+- The source switch is guarded by 24 checks: 8 reporting areas × WK, DAY, and PN.
+- Existing model assumptions are preserved explicitly: 75% overnight share and 6 nights for weekly-ticket guests; 45% overnight share for the exploratory DAY scenario.
+- No FAIR calculation logic is modified and no new assumptions are introduced.
