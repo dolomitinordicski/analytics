@@ -178,7 +178,7 @@ for (const [label, content, tokens] of [
 if (!process.exitCode) ok('A.3.5 immutable historical adapter and KP partner switch are present');
 
 for (const [label, content, tokens] of [
-  ['annual historical loader', liveAnalytics, ['LiveAnnualSeries','annualFrom2024Record','annual2025FromSales','loadHistoricalAnnualSeries','DNS SK']],
+  ['annual historical loader', liveAnalytics, ['LiveAnnualSeries','annualCategoryCode','annualFrom2024Record','annual2025FromSales','loadHistoricalAnnualSeries','sk-instructor']],
   ['annual parity gate', parity, ['compareAnnualToCompatibility','annualParitySummary','annual-total-qty-','annual-total-revenue-']],
   ['Annual selector', annualSelector, ['selectAnnualDataset','source:\'live\'','revenueByType']],
   ['Annual module switch', modules, ['annualLiveReady','selectAnnualDataset','annual parity verified']],
