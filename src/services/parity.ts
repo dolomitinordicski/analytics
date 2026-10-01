@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, annual, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -204,6 +204,58 @@ export function kpPartnerParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=kpPartners.length*5;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+const ANNUAL_SEASONS = ['2022-23','2023-24','2024-25','2025-26'] as const;
+
+export function compareAnnualToCompatibility(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const series=snapshot?.annual?.points ?? [];
+  const checks:ParityCheck[]=[];
+  const qtySeries={
+    day:annual.qty.day,
+    wka:annual.qty.wka,
+    wkd:annual.qty.wkd,
+    ska:annual.qty.ska,
+    skd:annual.qty.skd,
+  } as const;
+  const revenueSeries={
+    day:annual.revenueByType.day,
+    wka:annual.revenueByType.wka,
+    wkd:annual.revenueByType.wkd,
+    ska:annual.revenueByType.ska,
+    skd:annual.revenueByType.skd,
+  } as const;
+
+  ANNUAL_SEASONS.forEach((seasonId,index)=>{
+    const point=series.find(item=>item.seasonId===seasonId);
+    checks.push(
+      check(`annual-total-qty-${seasonId}`,`${seasonId} total tickets`,annual.totalTickets[index],point?.totalTickets ?? null,0),
+      check(`annual-total-revenue-${seasonId}`,`${seasonId} total revenue`,annual.totalRevenue[index],point?.totalRevenue ?? null,0.02),
+    );
+    (['day','wka','wkd','ska','skd'] as const).forEach(code=>{
+      checks.push(
+        check(`annual-${code}-qty-${seasonId}`,`${seasonId} ${code} qty`,qtySeries[code][index],point?.qty[code] ?? null,0),
+        check(`annual-${code}-revenue-${seasonId}`,`${seasonId} ${code} revenue`,revenueSeries[code][index],point?.revenue[code] ?? null,0.02),
+      );
+    });
+  });
+  return checks;
+}
+
+export function annualParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=ANNUAL_SEASONS.length*(2+5*2);
   return {
     available:available.length,
     expected,

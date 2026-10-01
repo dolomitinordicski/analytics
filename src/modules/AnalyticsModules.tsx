@@ -7,6 +7,7 @@ import { selectOverviewDataset } from '../services/overviewSelector';
 import { selectRegionalDataset } from '../services/regionalSelector';
 import { selectReliabilityDataset } from '../services/reliabilitySelector';
 import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
+import { selectAnnualDataset } from '../services/annualSelector';
 import {
   COLORS,
   REGIONS,
@@ -98,10 +99,15 @@ export function OverviewModule(){
 }
 
 export function AnnualModule(){
+  const {snapshot,annualLiveReady}=useAnalyticsLive();
+  const data=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady),[snapshot,annualLiveReady]);
   const idx=(arr:readonly number[])=>arr.map(v=>v/arr[0]*100);
-  const dnsTotal=annual.qty.wkd.map((v,i)=>v+annual.qty.skd[i]);
-  const areaTotal=annual.qty.wka.map((v,i)=>v+annual.qty.ska[i]);
+  const dnsTotal=data.qty.wkd.map((v,i)=>v+data.qty.skd[i]);
+  const areaTotal=data.qty.wka.map((v,i)=>v+data.qty.ska[i]);
   return <Module>
+    <div className={`analytics-source-badge is-${data.source}`}>
+      {data.source==='live' ? 'DNS_Core historical · annual parity verified' : 'Compatibility dataset · A.2.1'}
+    </div>
     <div className="analytics-metrics">
       <Metric label="DNS SK — Rekord" sublabel="DNS SK — record" value="2.355" note="↑ +31% vs. 2022-23" top/>
       <Metric label="DNS WK Wachstum" sublabel="DNS WK crescita" value="+97%" note="vs. 2022-23 (1.759→3.458)"/>
@@ -113,11 +119,11 @@ export function AnnualModule(){
     <div className="analytics-grid-2">
       <Card title="Trendentwicklung pro Tickettyp — Index 100" subtitle="Sviluppo per tipo biglietto — indice base 100" accent>
         <ChartCanvas config={{type:'line',data:{labels:[...SEASONS],datasets:[
-          {label:'DAY',data:idx(annual.qty.day),borderColor:COLORS.day,backgroundColor:'transparent',tension:.4},
-          {label:'WK Area',data:idx(annual.qty.wka),borderColor:COLORS.wkArea,backgroundColor:'transparent',tension:.4},
-          {label:'WK DNS',data:idx(annual.qty.wkd),borderColor:COLORS.wkDns,backgroundColor:'transparent',tension:.4},
-          {label:'SK Area',data:idx(annual.qty.ska),borderColor:COLORS.skArea,backgroundColor:'transparent',tension:.4,borderDash:[4,3]},
-          {label:'SK DNS',data:idx(annual.qty.skd),borderColor:COLORS.skDns,backgroundColor:'transparent',tension:.4},
+          {label:'DAY',data:idx(data.qty.day),borderColor:COLORS.day,backgroundColor:'transparent',tension:.4},
+          {label:'WK Area',data:idx(data.qty.wka),borderColor:COLORS.wkArea,backgroundColor:'transparent',tension:.4},
+          {label:'WK DNS',data:idx(data.qty.wkd),borderColor:COLORS.wkDns,backgroundColor:'transparent',tension:.4},
+          {label:'SK Area',data:idx(data.qty.ska),borderColor:COLORS.skArea,backgroundColor:'transparent',tension:.4,borderDash:[4,3]},
+          {label:'SK DNS',data:idx(data.qty.skd),borderColor:COLORS.skDns,backgroundColor:'transparent',tension:.4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:axis}}} as any}/>
       </Card>
       <Card title="DNS-Produkte vs. Area-Produkte — Index 100" subtitle="Prodotti DNS vs. Area — indice base 100" accent>
@@ -131,9 +137,9 @@ export function AnnualModule(){
     <SectionHeading de="DNS-Produkte im Fokus · Gesamttickets" it="Focus prodotti DNS · Totale biglietti"/>
     <div className="analytics-grid-3">
       {[
-        ['DNS SK — Serienentwicklung',annual.qty.skd],
-        ['DNS WK — Serienentwicklung',annual.qty.wkd],
-        ['Gesamttickets — 4 Saisons',annual.totalTickets],
+        ['DNS SK — Serienentwicklung',data.qty.skd],
+        ['DNS WK — Serienentwicklung',data.qty.wkd],
+        ['Gesamttickets — 4 Saisons',data.totalTickets],
       ].map(([title,data],i)=><Card key={String(title)} title={String(title)}>
         <ChartCanvas height={175} config={{type:i===2?'line':'bar',data:{labels:[...SEASONS],datasets:[{data:[...(data as readonly number[])],backgroundColor:i===2?'rgba(13,77,94,.08)':[COLORS.year4,COLORS.year3,COLORS.year2,COLORS.year1],borderColor:COLORS.deep,fill:i===2,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
@@ -142,15 +148,15 @@ export function AnnualModule(){
     <SectionHeading de="Einnahmentrend · Zusammensetzung nach Jahr" it="Trend entrate · composizione per anno"/>
     <div className="analytics-grid-2">
       <Card title="Gesamteinnahmen — 4-Jahrestrend">
-        <ChartCanvas height={190} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...annual.totalRevenue],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1e6).toFixed(2)+'M'}}}}} as any}/>
+        <ChartCanvas height={190} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.totalRevenue],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1e6).toFixed(2)+'M'}}}}} as any}/>
       </Card>
       <Card title="Einnahmen-Zusammensetzung pro Jahr">
         <ChartCanvas height={190} config={{type:'bar',data:{labels:[...SEASONS],datasets:[
-          {label:'DAY',data:[...annual.revenueByType.day],backgroundColor:COLORS.day},
-          {label:'WK Area',data:[...annual.revenueByType.wka],backgroundColor:COLORS.wkArea},
-          {label:'WK DNS',data:[...annual.revenueByType.wkd],backgroundColor:COLORS.wkDns},
-          {label:'SK Area',data:[...annual.revenueByType.ska],backgroundColor:COLORS.skArea},
-          {label:'SK DNS',data:[...annual.revenueByType.skd],backgroundColor:COLORS.skDns},
+          {label:'DAY',data:[...data.revenueByType.day],backgroundColor:COLORS.day},
+          {label:'WK Area',data:[...data.revenueByType.wka],backgroundColor:COLORS.wkArea},
+          {label:'WK DNS',data:[...data.revenueByType.wkd],backgroundColor:COLORS.wkDns},
+          {label:'SK Area',data:[...data.revenueByType.ska],backgroundColor:COLORS.skArea},
+          {label:'SK DNS',data:[...data.revenueByType.skd],backgroundColor:COLORS.skDns},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true}}}} as any}/>
       </Card>
     </div>
@@ -160,14 +166,14 @@ export function AnnualModule(){
       <Card title="Δ Menge & Einnahmen">
         <table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Δ Menge</th><th>Δ Einnahmen</th></tr></thead><tbody>
           {TICKET_TYPES.map((t,i)=>{
-            const q=[annual.qty.day,annual.qty.wka,annual.qty.wkd,annual.qty.ska,annual.qty.skd][i];
-            const r=[annual.revenueByType.day,annual.revenueByType.wka,annual.revenueByType.wkd,annual.revenueByType.ska,annual.revenueByType.skd][i];
+            const q=[data.qty.day,data.qty.wka,data.qty.wkd,data.qty.ska,data.qty.skd][i];
+            const r=[data.revenueByType.day,data.revenueByType.wka,data.revenueByType.wkd,data.revenueByType.ska,data.revenueByType.skd][i];
             return <tr key={t}><td>{t}</td><td>{integer(q[3]-q[0])}</td><td>{euro(r[3]-r[0])}</td></tr>;
           })}
         </tbody></table>
       </Card>
       <Card title="Ø Ticketpreis WS 2025-26">
-        <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...annual.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
+        <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
       </Card>
     </div>
   </Module>;
