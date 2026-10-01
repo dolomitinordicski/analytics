@@ -1,0 +1,1 @@
+export const ANALYTICS_CATALOG_VERSION = 'a2.3';
