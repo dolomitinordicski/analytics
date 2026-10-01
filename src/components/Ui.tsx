@@ -48,7 +48,7 @@ export function EditorialSummary({de,it}:{de:string;it:string}) {
 }
 
 export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
-  key:string;labelDe:string;labelIt:string;value:string;classification:string;source:string;noteDe:string;noteIt:string;
+  key:string;labelDe:string;labelIt:string;value:string;classification:string;source:string;sourceYear?:string;sourceUrl?:string;noteDe:string;noteIt:string;
 }>}) {
   return <article className="analytics-methodology" data-dns-reveal>
     <header>
@@ -65,7 +65,10 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
         <div className="analytics-methodology-value">{item.value}</div>
         <p className="analytics-lang-de">{item.noteDe}</p>
         <p className="analytics-lang-it">{item.noteIt}</p>
-        <div className="analytics-methodology-source">Quelle · Fonte: {item.source}</div>
+        <div className="analytics-methodology-source">
+          Quelle · Fonte: {item.source}{item.sourceYear ? ` · ${item.sourceYear}` : ''}
+          {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer">Link</a></>}
+        </div>
       </div>)}
     </div>
   </article>;
