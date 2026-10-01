@@ -4,6 +4,7 @@ import { Card, Insight, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
+import { selectRegionalDataset } from '../services/regionalSelector';
 import {
   COLORS,
   REGIONS,
@@ -175,16 +176,22 @@ export function AnnualModule(){
 }
 
 export function RegionalModule(){
-  const qty=[regional.dayQ,regional.wkaQ,regional.wkdQ,regional.skaQ,regional.skdQ] as unknown as number[][];
-  const rev=[regional.dayR,regional.wkaR,regional.wkdR,regional.skaR,regional.skdR] as unknown as number[][];
+  const {snapshot,regionalLiveReady}=useAnalyticsLive();
+  const data=useMemo(()=>selectRegionalDataset(snapshot,regionalLiveReady),[snapshot,regionalLiveReady]);
+  const qty=data.qty;
+  const rev=data.revenue;
   const pctQ=stackedPercent(qty);
   const pctR=stackedPercent(rev);
   const datasetsFrom=(p:number[][])=>TICKET_TYPES.map((label,j)=>({label,data:p.map(x=>x[j]),backgroundColor:palette[j],borderWidth:0}));
   return <Module>
+    <div className={`analytics-source-badge is-${data.source}`}>
+      {data.source==='live' ? 'DNS_Core LIVE · regional parity verified' : 'Compatibility dataset · A.2.1'}
+    </div>
+
     <div className="analytics-metrics">
       <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value="Ahrntal+Sand" note="92,1% delle vendite in DAY" top/>
-      <Metric label="SK Area Schwerpunkt" sublabel="Focus SK Area" value="Osttirol" note="1.474 SK Area"/>
-      <Metric label="DNS WK Kerngebiet" sublabel="Area chiave DNS WK" value="3 Zinnen" note="2.162 DNS WK"/>
+      <Metric label="SK Area Schwerpunkt" sublabel="Focus SK Area" value="Osttirol" note={`${integer(qty[3][3])} SK Area`}/>
+      <Metric label="DNS WK Kerngebiet" sublabel="Area chiave DNS WK" value="3 Zinnen" note={`${integer(qty[2][2])} DNS WK`}/>
       <Metric label="Ausgewogenes Profil" sublabel="Profilo equilibrato" value="Gsiesertal" note="Mix prodotti DNS/Area"/>
     </div>
 
@@ -204,21 +211,21 @@ export function RegionalModule(){
         <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...qty[i]],backgroundColor:qty[i].map(v=>v===Math.max(...qty[i])?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
       <Card title="Gesamteinnahmen nach Region" subtitle="Entrate totali per regione">
-        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...regional.totalR],backgroundColor:regional.totalR.map(v=>v===Math.max(...regional.totalR)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
+        <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.totalRevenue],backgroundColor:data.totalRevenue.map(v=>v===Math.max(...data.totalRevenue)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Heatmap — Menge pro Region & Tickettyp" it="Heatmap — quantità per regione e tipo"/>
     <Card title="Regionale Verteilung" subtitle="Distribuzione regionale">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Region</th>{TICKET_TYPES.map(t=><th key={t}>{t}</th>)}<th>Entrate</th></tr></thead><tbody>
-        {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(regional.totalR[i])}</td></tr>)}
+        {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(data.totalRevenue[i])}</td></tr>)}
       </tbody></table></div>
     </Card>
 
     <SectionHeading de="Regionale Erkenntnisse" it="Insights regionali"/>
     <div className="analytics-insights">
-      <Insight n="I" de="Seiser Alm/Val Gardena — starkes WK Area Profil" it="Seiser Alm/Val Gardena — forte profilo WK Area" bodyDe="Mit 1.309 WK Area-Tickets weist das Gebiet den höchsten Wert im Network auf." bodyIt="Con 1.309 WK Area è il territorio con il valore più alto del network." tag="↗ DNS-Potenzial · Potenziale DNS"/>
-      <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe="28.023 Tickets und € 702.623 Umsatz machen die Region zum stärksten Einzelgebiet." bodyIt="28.023 ticket e € 702.623 di entrate: è l'area singola più forte." tag="Top contribution"/>
+      <Insight n="I" de="Seiser Alm/Val Gardena — starkes WK Area Profil" it="Seiser Alm/Val Gardena — forte profilo WK Area" bodyDe={`Mit ${integer(qty[1][5])} WK Area-Tickets weist das Gebiet den höchsten Wert im Network auf.`} bodyIt={`Con ${integer(qty[1][5])} WK Area è il territorio con il valore più alto del network.`} tag="↗ DNS-Potenzial · Potenziale DNS"/>
+      <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} Tickets und ${euro(data.totalRevenue[2])} Umsatz machen die Region zum stärksten Einzelgebiet.`} bodyIt={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} ticket e ${euro(data.totalRevenue[2])} di entrate: è l'area singola più forte.`} tag="Top contribution"/>
       <Insight n="III" de="Gsiesertal — ausgewogenes DNS-Profil" it="Gsiesertal — profilo DNS equilibrato" bodyDe="Der ausgewogenste Produktmix im Network." bodyIt="Il mix prodotti più equilibrato del network." tag="Pilotgebiet · Territorio pilota"/>
     </div>
   </Module>;
