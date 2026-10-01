@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:parity": "node scripts/check-a2-2-parity.mjs",
+    "validate": "npm run check:parity && npm run build"
   },
   "dependencies": {
     "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#ca176d844dafcf85ced1eba700abeefa82fbf0a7",
