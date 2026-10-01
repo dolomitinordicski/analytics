@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, kpRegions, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -156,6 +156,54 @@ export function kpParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=kpRegions.length*KP_MILESTONE_DATES_2025_26.length*3;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+export function compareKpPartnersToCompatibility(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const rows=snapshot?.kp?.rows ?? [];
+  const checks:ParityCheck[]=[];
+
+  kpPartners.forEach((legacy,index)=>{
+    const row=rows.find(item=>item.label===legacy.p);
+    const milestones=[...(row?.milestones ?? [])];
+    const m1=milestones.find(value=>{
+      const def=snapshot?.kp?.milestones.find(m=>m.id===value.milestoneId);
+      return def?.date==='2025-12-23';
+    });
+    const m2=milestones.find(value=>{
+      const def=snapshot?.kp?.milestones.find(m=>m.id===value.milestoneId);
+      return def?.date==='2026-01-06';
+    });
+    const m3=milestones.find(value=>{
+      const def=snapshot?.kp?.milestones.find(m=>m.id===value.milestoneId);
+      return def?.date==='2026-01-20';
+    });
+
+    checks.push(
+      check(`kp-partner-pot-${index}`,`${legacy.p} potential km`,legacy.pot,row?.referenceKm.potentialOperationalKm ?? null,0.05),
+      check(`kp-partner-ks1-${index}`,`${legacy.p} KS 23.12`,legacy.ks1,m1?.artificialSnowKm ?? null,0.05),
+      check(`kp-partner-ks2-${index}`,`${legacy.p} KS 06.01`,legacy.ks2,m2?.artificialSnowKm ?? null,0.05),
+      check(`kp-partner-ks3-${index}`,`${legacy.p} KS 20.01`,legacy.ks3,m3?.artificialSnowKm ?? null,0.05),
+      check(`kp-partner-open3-${index}`,`${legacy.p} opened 20.01`,legacy.tot3,m3?.openedKm ?? null,0.05),
+    );
+  });
+
+  return checks;
+}
+
+export function kpPartnerParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=kpPartners.length*5;
   return {
     available:available.length,
     expected,
