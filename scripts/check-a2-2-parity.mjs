@@ -23,6 +23,7 @@ const parity = read('src/services/parity.ts');
 const livePanel = read('src/components/LiveSourcePanel.tsx');
 const liveContext = read('src/components/AnalyticsLiveContext.tsx');
 const overviewSelector = read('src/services/overviewSelector.ts');
+const regionalSelector = read('src/services/regionalSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -142,6 +143,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.2 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.2 guarded Overview live switch is present');
+
+for (const [label, content, tokens] of [
+  ['regional matrix aggregate', liveAnalytics, ['byReportingAreaProduct']],
+  ['regional parity gate', parity, ['compareRegionalToCompatibility','regionalParitySummary','regional-qty-','regional-revenue-']],
+  ['Regional selector', regionalSelector, ['selectRegionalDataset','source:\'live\'','totalRevenue']],
+  ['Regional live switch', modules, ['regionalLiveReady','selectRegionalDataset','regional parity verified']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.3 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.3 guarded Regional live switch is present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
