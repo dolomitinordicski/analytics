@@ -221,7 +221,7 @@ for (const [label, content, tokens] of [
 if (!process.exitCode) ok('A.3.9 Langlauf intensity is sourced from DNS_Core sales plus FAIR PN');
 
 for (const [label, content, tokens] of [
-  ['Editorial protocol', editorial, ['classification:\'observed\'','classification:\'external-source\'','classification:\'assumption\'','classification:\'limitation\'','ASTAT','dwif/Manova','DNS FAIR Model']],
+  ['Editorial protocol', editorial, ['classification:\'observed\'','classification:\'external-source\'','classification:\'assumption\'','classification:\'limitation\'','ASTAT','Seilbahnen Österreich','DNS FAIR Model']],
   ['Editorial UI', ui, ['EditorialSummary','MethodologyPanel','Quelle · Fonte']],
   ['Editorial module integration', modules, ['editorialSummaries.overview','editorialSummaries.annual','editorialSummaries.regional','reliabilityMethodology','advancedMethodology','overnightMethodology','intensityMethodology']],
 ]) {
