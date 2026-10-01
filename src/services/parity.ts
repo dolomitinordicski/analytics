@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, advancedDefaults, annual, kpPartners, kpRegions, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, advancedDefaults, annual, kpPartners, kpRegions, overnightAreas, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -300,6 +300,66 @@ export function advancedObservedParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=3;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+function overnightLegacyAreaId(label:string):string|null {
+  if (label==='Gröden / Val Gardena' || label==='Seiser Alm / Alpe di Siusi') {
+    return 'seiser-alm-dolomites-val-gardena';
+  }
+  return resolveAnalyticsReportingAreaId(label);
+}
+
+function compatibilityOvernightCurrentByArea() {
+  const totals:Record<string,number>={};
+  for (const row of overnightAreas) {
+    const areaId=overnightLegacyAreaId(row.area);
+    if (!areaId) continue;
+    totals[areaId]=(totals[areaId] ?? 0)+Number(row.pn[1]);
+  }
+  return totals;
+}
+
+export function compareFairOvernightsToCompatibility(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const fair=snapshot?.fair;
+  const legacy=compatibilityOvernightCurrentByArea();
+  const checks:ParityCheck[]=[];
+  const seen=new Set<string>();
+
+  for (const region of fair?.regions ?? []) {
+    const areaId=resolveAnalyticsReportingAreaId(region.name);
+    if (!areaId) continue;
+    seen.add(areaId);
+    checks.push(check(
+      `overnight-pn-${areaId}`,
+      `${region.name} PN`,
+      legacy[areaId] ?? 0,
+      Number(region.PN),
+      0,
+    ));
+  }
+
+  for (const areaId of Object.keys(legacy)) {
+    if (!seen.has(areaId)) {
+      checks.push(check(`overnight-pn-${areaId}`,`${areaId} PN`,legacy[areaId],null,0));
+    }
+  }
+  return checks;
+}
+
+export function overnightParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=8;
   return {
     available:available.length,
     expected,
