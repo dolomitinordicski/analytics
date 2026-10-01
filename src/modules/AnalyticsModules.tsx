@@ -9,6 +9,7 @@ import { selectReliabilityDataset } from '../services/reliabilitySelector';
 import { selectKpPartnerDataset } from '../services/kpPartnerSelector';
 import { selectAnnualDataset } from '../services/annualSelector';
 import { selectAdvancedObservedInputs } from '../services/advancedSelector';
+import { selectOvernightDataset } from '../services/overnightSelector';
 import {
   COLORS,
   REGIONS,
@@ -383,42 +384,50 @@ export function AdvancedModule(){
 }
 
 export function OvernightModule(){
-  const sorted=[...overnightAreas].sort((a,b)=>b.pn[1]-a.pn[1]);
-  const total2526=overnightAreas.reduce((s,a)=>s+a.pn[1],0);
-  const total2425=overnightAreas.reduce((s,a)=>s+a.pn[0],0);
+  const {snapshot,overnightLiveReady}=useAnalyticsLive();
+  const data=useMemo(()=>selectOvernightDataset(snapshot,overnightLiveReady),[snapshot,overnightLiveReady]);
+  const sorted=[...data.rows].sort((a,b)=>b.pn2526-a.pn2526);
+  const total2526=data.rows.reduce((s,a)=>s+a.pn2526,0);
+  const total2425=data.rows.reduce((s,a)=>s+a.pn2425,0);
   const top=sorted[0];
-  const monthly=[0,1,2,3].map(i=>overnightAreas.reduce((s,a)=>s+a.m[i],0));
+  const monthly=data.monthly;
   return <Module>
+    <div className={`analytics-source-badge is-${data.source==='fair'?'live':'compatibility'}`}>
+      {data.source==='fair' ? 'DNS FAIR · PN parity verified · 8 reporting areas' : 'Compatibility dataset · PN A.2.1'}
+    </div>
+
     <div className="analytics-metrics">
       <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(total2526)} note={`${integer(total2526-total2425)} vs. 2024-25`}/>
-      <Metric label="Top-Gebiet" sublabel="Area principale" value="Val Gardena" note={integer(top.pn[1])} top/>
-      <Metric label="Gebiete" sublabel="Aree" value={overnightAreas.length}/>
-      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(total2526/overnightAreas.length)}/>
+      <Metric label="Top-Gebiet" sublabel="Area principale" value={top?.area ?? '—'} note={top?integer(top.pn2526):'—'} top/>
+      <Metric label="Gebiete" sublabel="Aree" value={data.rows.length}/>
+      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(total2526/data.rows.length)}/>
     </div>
 
     <SectionHeading de="Übernachtungen pro Gebiet — WS 2025-26" it="Pernottamenti per area — SI 2025-26"/>
     <div className="analytics-grid-2">
       <Card title="Übernachtungen pro Gebiet (sortiert)">
-        <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn[1]),backgroundColor:sorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn2526),backgroundColor:sorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
       </Card>
       <Card title="Anteil pro Gebiet">
-        <ChartCanvas config={{type:'doughnut',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn[1]),backgroundColor:['#0D4D5E','#1a5f70','#2a6f80','#417483','#5a8f9e','#7aa6b3','#8ab8c4','#AAD0D1','#D4CEC6'],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <ChartCanvas config={{type:'doughnut',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn2526),backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light,COLORS.day,COLORS.wkArea,COLORS.skArea,COLORS.wkDns,COLORS.skDns],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Datentabelle · Zeitreihe" it="Tabella dati · serie storica"/>
     <Card title="WS 2025-26 vs. WS 2024-25">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet</th><th>2025-26</th><th>Anteil</th><th>2024-25</th><th>Δ</th></tr></thead><tbody>
-        {sorted.map(a=><tr key={a.area}><td><RegionLabel name={a.area} compact/></td><td><strong>{integer(a.pn[1])}</strong></td><td>{pct(a.pn[1]/total2526*100)}</td><td>{integer(a.pn[0])}</td><td className={a.pn[1]-a.pn[0]>=0?'is-positive':'is-negative'}>{integer(a.pn[1]-a.pn[0])}</td></tr>)}
+        {sorted.map(a=><tr key={a.areaId}><td><RegionLabel name={a.area} compact/></td><td><strong>{integer(a.pn2526)}</strong></td><td>{pct(a.pn2526/total2526*100)}</td><td>{integer(a.pn2425)}</td><td className={a.pn2526-a.pn2425>=0?'is-positive':'is-negative'}>{integer(a.pn2526-a.pn2425)}</td></tr>)}
       </tbody></table></div>
     </Card>
 
     <SectionHeading de="Kontext Südtirol — Wintersaison 2025/26 (Provinzebene)" it="Contesto Alto Adige — stagione invernale 2025/26"/>
+    <div className="analytics-source-badge is-compatibility">Monthly context · compatibility source · not provided by FAIR</div>
     <div className="analytics-metrics">
       {['Dezember 2025','Januar 2026','Februar 2026','März 2026'].map((m,i)=><Metric key={m} label={m} value={integer(monthly[i])}/>)}
     </div>
   </Module>;
 }
+
 
 export function IntensityModule(){
   const areas=intensityAreas.map(a=>({

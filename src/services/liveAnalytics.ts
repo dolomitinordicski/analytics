@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from './dnsCore';
 import type { AnalyticsAccessContext } from './auth';
 
@@ -96,9 +96,25 @@ export type LiveAnnualSeries = {
   points:AnnualSeriesPoint[];
 };
 
+export type FairRegionInput = {
+  name:string;
+  PN:number;
+  SW:number;
+  KP:number;
+  SA:number;
+};
+
+export type LiveFairSnapshot = {
+  source:'fairModel/ws-2026-27';
+  modelSeasonId:'2026-27';
+  regions:FairRegionInput[];
+  clientUpdatedAt:number;
+};
+
 export type LiveAnalyticsSnapshot = {
   seasonId: string;
   loadedAt: string;
+  fair?:LiveFairSnapshot;
   annual?: LiveAnnualSeries;
   sales?: {
     source:'operational'|'historical-season-records';
@@ -406,6 +422,35 @@ async function loadHistoricalAnnualSeries(currentSales:LiveSalesAggregate):Promi
   return ordered.length===4 ? {source:'historical-season-records',points:ordered} : null;
 }
 
+async function readFairSnapshot():Promise<LiveFairSnapshot|null> {
+  try {
+    const snap=await getDoc(doc(db,'fairModel','ws-2026-27'));
+    if (!snap.exists()) return null;
+    const data=snap.data();
+    const regions=Array.isArray(data.regions) ? data.regions : [];
+    const valid=regions.length===8 && regions.every((region:unknown)=>{
+      if (!region || typeof region!=='object') return false;
+      const item=region as Record<string,unknown>;
+      return typeof item.name==='string' && ['PN','SW','KP','SA'].every(key=>Number.isFinite(Number(item[key])));
+    });
+    if (!valid) return null;
+    return {
+      source:'fairModel/ws-2026-27',
+      modelSeasonId:'2026-27',
+      regions:regions.map((region:Record<string,unknown>)=>({
+        name:String(region.name),
+        PN:Number(region.PN),
+        SW:Number(region.SW),
+        KP:Number(region.KP),
+        SA:Number(region.SA),
+      })),
+      clientUpdatedAt:Number(data.clientUpdatedAt || 0),
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function readSeason<T>(collectionName:string, seasonId:string):Promise<T[]> {
   const snap=await getDocs(query(collection(db,collectionName),where('seasonId','==',seasonId)));
   return snap.docs.map(d=>({id:d.id,...d.data()} as T));
@@ -416,6 +461,7 @@ export async function loadLiveAnalyticsSnapshot(
   access:AnalyticsAccessContext,
 ):Promise<LiveAnalyticsSnapshot> {
   const snapshot:LiveAnalyticsSnapshot={seasonId,loadedAt:new Date().toISOString()};
+  snapshot.fair=(await readFairSnapshot()) ?? undefined;
 
   if (access.canReadTicketSales) {
     if (seasonId==='2025-26') {
