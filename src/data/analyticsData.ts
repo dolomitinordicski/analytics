@@ -1,0 +1,169 @@
+export const COLORS = {
+  deep: '#0D4D5E',
+  mid: '#417483',
+  light: '#AAD0D1',
+  background: '#F4F8F9',
+  day: '#D4CEC6',
+  wkArea: '#8B3A2F',
+  wkDns: '#417483',
+  skArea: '#7A7875',
+  skDns: '#AAD0D1',
+  positive: '#0F6E56',
+  negative: '#993C1D',
+  year1: '#0D4D5E',
+  year2: '#5a8f9e',
+  year3: '#8ab8c4',
+  year4: '#c8e8e9',
+} as const;
+
+export const REGIONS = [
+  'Antholzertal',
+  'Gsiesertal',
+  '3 Zinnen',
+  'Osttirol',
+  'Ahrntal+Sand',
+  'Seiser Alm/Val Gardena',
+  'Comelico',
+  'Cortina',
+] as const;
+
+export const SEASONS = ['2022-23','2023-24','2024-25','2025-26'] as const;
+export const TICKET_TYPES = ['DAY','WK Area','WK DNS','SK Area','SK DNS'] as const;
+
+export const seasonOverview = {
+  totalTickets: 77462,
+  totalRevenue: 1890388,
+  avgPrice: 24.40,
+  topRegion: '3 Zinnen',
+  topRegionRevenue: 702623,
+  topRegionTickets: 28023,
+  regionQty: [4538,12586,28023,8931,7904,13710,1085,685],
+  regionRevenue: [134868,302512,702623,352673,147409,206245,27780,15123],
+  ticketQty: [65017,4032,3458,2600,2355],
+  ticketRevenue: [842555,210672,214726,303415,319020],
+  channels: {
+    labels: ['Büro/Uffici','Online','Loipe/Pista'],
+    values: [56003,11201,5069],
+  },
+} as const;
+
+export const annual = {
+  qty: {
+    day:[66242,71264,74038,65017],
+    wka:[4371,4716,4448,4032],
+    ska:[2422,1974,3597,2600],
+    wkd:[1759,3693,4003,3458],
+    skd:[1801,2139,1927,2355],
+  },
+  totalTickets:[76595,83786,88013,77462],
+  totalRevenue:[1572292,1767774,2051327,1890388],
+  avgPrice:[20.53,21.10,23.31,24.40],
+  revenueByType:{
+    day:[773234,878993,951847,842555],
+    wka:[208408,229387,227820,210672],
+    wkd:[105670,229387,240660,214726],
+    ska:[269700,178046,377610,303415],
+    skd:[215280,251961,253390,319020],
+  },
+} as const;
+
+export const regional = {
+  dayQ:[3528,10888,23329,6205,7277,12279,921,590],
+  wkaQ:[186,504,1231,561,225,1309,15,1],
+  wkdQ:[360,624,2162,233,45,1,24,9],
+  skaQ:[96,248,477,1474,172,79,30,24],
+  skdQ:[362,320,809,458,185,34,84,51],
+  totalQ:[4538,12586,28023,8931,7904,13710,1085,685],
+  dayR:[42336,165356,334802,72995,87324,122790,11052,5900],
+  wkaR:[9672,26208,64122,30072,11700,68068,780,50],
+  wkdR:[22320,38688,134154,14666,2790,62,1488,558],
+  skaR:[11040,28700,55945,172360,20170,9875,3450,1875],
+  skdR:[49500,43560,113600,62580,25425,5450,6740,12165],
+  totalR:[134868,302512,702623,352673,147409,206245,27780,15123],
+} as const;
+
+export const kpRegions = [
+  {r:'Antholzertal',pot:45,tot1:23.2,ks1:23.2,tot2:24.3,ks2:24.3,tot3:35.9,ks3:33.5,note:'Biathlon escluso (Milano Cortina 2026)'},
+  {r:'Gsiesertal',pot:40,tot1:42.7,ks1:42.7,tot2:42.7,ks2:42.7,tot3:43.2,ks3:42.7,note:'Cappato 100%'},
+  {r:'3 Zinnen',pot:153,tot1:42.0,ks1:42.0,tot2:56.1,ks2:50.1,tot3:58.5,ks3:47.3,note:''},
+  {r:'Osttirol',pot:256,tot1:23.0,ks1:20.0,tot2:41.0,ks2:31.0,tot3:45.2,ks3:35.2,note:'⚠ Dato provvisorio'},
+  {r:'Ahrntal+Sand',pot:51,tot1:34.5,ks1:4.0,tot2:44.5,ks2:14.0,tot3:49.0,ks3:14.0,note:''},
+  {r:'Seiser Alm/Gard',pot:90,tot1:53.9,ks1:3.6,tot2:86.9,ks2:3.6,tot3:111.8,ks3:3.0,note:''},
+  {r:'Comelico',pot:61,tot1:1.5,ks1:1.5,tot2:2.5,ks2:2.5,tot3:42.0,ks3:12.0,note:''},
+  {r:'Cortina',pot:20,tot1:0,ks1:0,tot2:0,ks2:0,tot3:10.0,ks3:0,note:'20 km NS al 20.01'},
+].map(d=>({
+  ...d,
+  pct1:Math.min(100,d.tot1/d.pot*100),
+  pct2:Math.min(100,d.tot2/d.pot*100),
+  pct3:Math.min(100,d.tot3/d.pot*100),
+  kp:Math.min(100,d.ks3/d.pot*100),
+}));
+
+export const kpPartners = [
+  {p:'Antholzertal',pot:45,ks1:23.2,ks2:24.3,ks3:33.5,tot3:35.9},
+  {p:'Biathlon Antholz',pot:16,ks1:22.3,ks2:22.3,ks3:22.3,tot3:22.3,excluded:true},
+  {p:'Gsiesertal',pot:40,ks1:42.7,ks2:42.7,ks3:42.7,tot3:43.2},
+  {p:'3ZD - Toblach',pot:69.87,ks1:20.0,ks2:20.0,ks3:31.0,tot3:31.0},
+  {p:'3ZD - Sexten',pot:19.68,ks1:5.9,ks2:7.7,ks3:7.7,tot3:12.9},
+  {p:'3ZD - Innichen',pot:16.52,ks1:6.7,ks2:6.7,ks3:0.0,tot3:0.0},
+  {p:'3ZD - Niederdorf',pot:14.58,ks1:6.4,ks2:14.7,ks3:6.4,tot3:6.4},
+  {p:'3ZD - Braies',pot:25.08,ks1:3.0,ks2:1.0,ks3:1.0,tot3:7.0},
+  {p:'Osttirol',pot:202,ks1:15.0,ks2:19.0,ks3:23.2,tot3:30.2},
+  {p:'Osttirol-Obert.',pot:55,ks1:5.0,ks2:12.0,ks3:12.0,tot3:15.0},
+  {p:'Cortina',pot:20,ks1:0.0,ks2:0.0,ks3:0.0,tot3:10.0},
+  {p:'Comelico',pot:61,ks1:1.5,ks2:2.5,ks3:12.0,tot3:42.0},
+  {p:'Ahrntal',pot:22,ks1:0.0,ks2:10.0,ks3:10.0,tot3:20.0},
+  {p:'Sand in Taufers',pot:29,ks1:4.0,ks2:4.0,ks3:4.0,tot3:29.0},
+  {p:'Seiser Alm',pot:56,ks1:2.1,ks2:2.1,ks3:1.5,tot3:77.3},
+  {p:'Val Gardena',pot:34,ks1:1.5,ks2:1.5,ks3:1.5,tot3:34.5},
+] as const;
+
+export const advancedDefaults = {
+  weeklyTicketsNetwork: 7490,
+  weeklyTicketsSouthTyrol: 6647,
+  dayTickets: 65017,
+  nightsPerWeeklyGuest: 6,
+  overnightShare: 0.75,
+  spendPerNight: 117,
+  multiplier: 1.5,
+  dayOvernightShare: 45,
+  astat:[
+    {de:'Unterkunft',it:'Alloggio',q:0.40,c:'#0D4D5E'},
+    {de:'Interne Beförderung',it:'Trasporto interno',q:0.116,c:'#417483'},
+    {de:'Gastronomie',it:'Ristorazione',q:0.159,c:'#7A7875'},
+    {de:'Waren',it:'Beni/acquisti',q:0.16,c:'#AAD0D1'},
+    {de:'Extra',it:'Extra',q:0.165,c:'#D4CEC6'},
+  ],
+} as const;
+
+export const overnightAreas = [
+  {area:'Gröden / Val Gardena',pn:[1629071,1601487],m:[349702,470969,457451,323866]},
+  {area:'3 Zinnen Dolomites',pn:[964968,936617],m:[226555,289250,281874,140196]},
+  {area:'Osttirol',pn:[800690,835393],m:[158325,239192,294900,150576]},
+  {area:'Seiser Alm / Alpe di Siusi',pn:[796994,809237],m:[162259,238856,261761,146614]},
+  {area:'Ahrntal / Sand in Taufers',pn:[678847,692590],m:[133070,198701,214440,146379]},
+  {area:"Cortina d'Ampezzo",pn:[83320,77161],m:[19696,21403,19908,16174]},
+  {area:'Gsiesertal / Welsberg / Taisten',pn:[194461,193071],m:[46700,59498,57713,29141]},
+  {area:'Antholzertal',pn:[188788,182878],m:[46095,56438,55184,25959]},
+  {area:'Comelico',pn:[34514,7564],m:[2261,1934,2498,871]},
+] as const;
+
+export const intensityAreas = [
+  {area:'Gsiesertal / Welsberg / Taisten',wk:944,day:10888,pn:193071},
+  {area:'Antholzertal',wk:722,day:3528,pn:182878},
+  {area:'3 Zinnen Dolomites',wk:2971,day:23329,pn:936617},
+  {area:'Osttirol',wk:691,day:6205,pn:835393},
+  {area:'Ahrntal / Sand in Taufers',wk:230,day:7277,pn:692590},
+  {area:'Seiser Alm / Val Gardena',wk:35,day:12279,pn:2410724},
+  {area:'Comelico',wk:108,day:921,pn:7564},
+  {area:"Cortina d'Ampezzo",wk:60,day:590,pn:77161},
+] as const;
+
+export const overviewInsights = [
+  ['01','DNS SK — Rekord der Serie','DNS SK — record storico assoluto','2.355 Pässe · +31% vs. 2022-23 · +22% vs. 2024-25.','2.355 tessere · +31% vs. 2022-23. Il cliente più fidelizzato premia la rete.','↑ Strukturelles Wachstum · Crescita strutturale'],
+  ['02','DNS WK — KPI der Netzgesundheit','DNS WK — KPI della salute del network','Fast doppelt so viele wie 2022-23, aber volatil.','Quasi il doppio del 2022-23, ma volatile. Dipende dalla rete operativa.','Sensibel · Sensibile alle aperture'],
+  ['03','3 Zinnen — Lokomotive des Systems','3 Zinnen — locomotore del sistema','€ 702.623 · 28.023 Tickets — 37% des DNS-Umsatzes.','37% del fatturato DNS. Grande forza, ma dipendenza da una singola area.','⚠ Konzentration · Concentrazione'],
+  ['04','DAY 84% — strukturelle Abhängigkeit','DAY: 84% — dipendenza strutturale','Identische Quote wie 2022-23.','Quota identica al 2022-23. Il modello resta legato al giornaliero.','Risiko · Rischio stagionale'],
+  ['05','Umsatz hält besser als Volumen','Il fatturato regge meglio dei volumi','Tickets −12% · Umsatz −8%. Ø-Ticketwert wächst.','Ticket −12% · fatturato −8%. Il valore medio cresce.','↑ Qualität · Qualità vs quantità'],
+  ['06','2025-26 weniger negativ als es scheint','Il 2025-26 è meno negativo di quanto sembri','Vs. 2022-23: +867 Tickets, +€318.096.','Vs. 2022-23: +867 ticket, +€318.096.','Langfristig positiv · Trend positivo'],
+] as const;
