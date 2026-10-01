@@ -28,6 +28,7 @@ const reliabilitySelector = read('src/services/reliabilitySelector.ts');
 const kpPartnerSelector = read('src/services/kpPartnerSelector.ts');
 const annualSelector = read('src/services/annualSelector.ts');
 const advancedSelector = read('src/services/advancedSelector.ts');
+const overnightSelector = read('src/services/overnightSelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -196,6 +197,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.7 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.7 Advanced Analytics observed inputs are guarded and assumptions remain explicit');
+
+for (const [label, content, tokens] of [
+  ['FAIR snapshot loader', liveAnalytics, ['fairModel','ws-2026-27','readFairSnapshot','FairRegionInput']],
+  ['Overnight selector', overnightSelector, ['selectOvernightDataset','seiser-alm-dolomites-val-gardena','source:\'fair\'']],
+  ['Overnight parity', parity, ['compareFairOvernightsToCompatibility','overnightParitySummary','overnight-pn-']],
+  ['Overnight module switch', modules, ['overnightLiveReady','selectOvernightDataset','PN parity verified','not provided by FAIR']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.8 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.8 Overnight PN is sourced from FAIR with guarded parity');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
