@@ -13,6 +13,10 @@ const data = read('src/data/analyticsData.ts');
 const css = read('src/styles/index.css');
 const printSheet = read('src/components/AnalyticsPrintSheet.tsx');
 const pkg = JSON.parse(read('package.json'));
+const metrics = read('src/data/metrics.ts');
+const scopes = read('src/data/scopes.ts');
+const architecture = read('src/data/architecture.ts');
+const boundary = read('src/services/analyticsBoundary.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -103,6 +107,16 @@ if (!pkg.dependencies?.['@dolomitinordicski/dns-shared-data']) {
 } else {
   ok('shared DNS Foundation package is pinned');
 }
+
+for (const [label, content, tokens] of [
+  ['metric catalog', metrics, ['tickets.total.qty','trails.kp.ratio']],
+  ['scope catalog', scopes, ['dns-network','resolveReportingAreaId']],
+  ['layer architecture', architecture, ['analyticsAggregates','analyticsModels','analyticsAssumptions']],
+  ['DNS_Core boundary', boundary, ['dns-core-ready','compatibility-fallback']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.2.3 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.2.3 metric/scope/layer/boundary architecture is present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
