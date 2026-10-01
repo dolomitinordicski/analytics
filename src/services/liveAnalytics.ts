@@ -50,6 +50,7 @@ export type LiveSalesAggregate = {
   averageTicketPrice: number;
   byReportingArea: Record<string,{quantity:number;revenue:number}>;
   byProduct: Record<string,{quantity:number;revenue:number}>;
+  byReportingAreaProduct: Record<string,Record<string,{quantity:number;revenue:number}>>;
   byChannel: Record<string,{quantity:number;revenue:number}>;
   unmappedProducts: string[];
   channelsPresent: string[];
@@ -81,6 +82,7 @@ function effectiveAmount(row: TicketSalesLive) {
 function aggregateSales(rows: TicketSalesLive[]): LiveSalesAggregate {
   const byReportingArea: LiveSalesAggregate['byReportingArea'] = {};
   const byProduct: LiveSalesAggregate['byProduct'] = {};
+  const byReportingAreaProduct: LiveSalesAggregate['byReportingAreaProduct'] = {};
   const byChannel: LiveSalesAggregate['byChannel'] = {};
   let totalTickets=0, totalRevenue=0;
   const knownProducts = new Set(['day','wk-area','wk-dns','sk-area','sk-dns']);
@@ -97,6 +99,10 @@ function aggregateSales(rows: TicketSalesLive[]): LiveSalesAggregate {
     byProduct[row.productCode] ??= {quantity:0,revenue:0};
     byProduct[row.productCode].quantity += quantity;
     byProduct[row.productCode].revenue += revenue;
+    byReportingAreaProduct[row.reportingAreaId] ??= {};
+    byReportingAreaProduct[row.reportingAreaId][row.productCode] ??= {quantity:0,revenue:0};
+    byReportingAreaProduct[row.reportingAreaId][row.productCode].quantity += quantity;
+    byReportingAreaProduct[row.reportingAreaId][row.productCode].revenue += revenue;
     byChannel[row.salesChannel] ??= {quantity:0,revenue:0};
     byChannel[row.salesChannel].quantity += quantity;
     byChannel[row.salesChannel].revenue += revenue;
@@ -109,6 +115,7 @@ function aggregateSales(rows: TicketSalesLive[]): LiveSalesAggregate {
     averageTicketPrice: totalTickets ? totalRevenue/totalTickets : 0,
     byReportingArea,
     byProduct,
+    byReportingAreaProduct,
     byChannel,
     unmappedProducts:[...unmapped].sort(),
     channelsPresent:Object.keys(byChannel).sort(),
