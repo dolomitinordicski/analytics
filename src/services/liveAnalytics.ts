@@ -82,9 +82,24 @@ export type LiveKpAggregate = {
   areas: Record<string,LiveKpPoint>;
 };
 
+export type AnnualSeriesPoint = {
+  seasonId:string;
+  totalTickets:number;
+  totalRevenue:number;
+  avgPrice:number;
+  qty:{day:number;wka:number;wkd:number;ska:number;skd:number};
+  revenue:{day:number;wka:number;wkd:number;ska:number;skd:number};
+};
+
+export type LiveAnnualSeries = {
+  source:'historical-season-records';
+  points:AnnualSeriesPoint[];
+};
+
 export type LiveAnalyticsSnapshot = {
   seasonId: string;
   loadedAt: string;
+  annual?: LiveAnnualSeries;
   sales?: {
     source:'operational'|'historical-season-records';
     rows:TicketSalesLive[];
@@ -300,6 +315,97 @@ function historicalKpSnapshot(records:HistoricalSeasonRecord[],seasonId:string) 
   return {milestones,rows};
 }
 
+function annualCategoryCode(label:string):keyof AnnualSeriesPoint['qty']|null {
+  const normalized=label.trim().toLowerCase();
+  if (normalized==='day') return 'day';
+  if (normalized==='area wk') return 'wka';
+  if (normalized==='dns wk') return 'wkd';
+  if (normalized==='area sk') return 'ska';
+  if (normalized.startsWith('dns sk')) return 'skd';
+  return null;
+}
+
+function annualFrom2024Record(record:HistoricalSeasonRecord):Map<string,AnnualSeriesPoint> {
+  const totals=new Map<string,{quantity:number;amount:number}>();
+  const qty=new Map<string,AnnualSeriesPoint['qty']>();
+  const revenue=new Map<string,AnnualSeriesPoint['revenue']>();
+
+  for (const fact of record.facts ?? []) {
+    if (fact.kind==='annualTotal') {
+      totals.set(String(fact.seasonId),{
+        quantity:Number(fact.quantity ?? 0),
+        amount:Number(fact.amount ?? 0),
+      });
+      continue;
+    }
+    if (fact.kind!=='annualCategory') continue;
+    const code=annualCategoryCode(String(fact.sourceProductLabel ?? ''));
+    if (!code || !Array.isArray(fact.values)) continue;
+    for (const value of fact.values as Record<string,unknown>[]) {
+      const seasonId=String(value.seasonId ?? '');
+      const q=qty.get(seasonId) ?? {day:0,wka:0,wkd:0,ska:0,skd:0};
+      const r=revenue.get(seasonId) ?? {day:0,wka:0,wkd:0,ska:0,skd:0};
+      q[code]=Number(value.quantity ?? 0);
+      r[code]=Number(value.amount ?? 0);
+      qty.set(seasonId,q);
+      revenue.set(seasonId,r);
+    }
+  }
+
+  const result=new Map<string,AnnualSeriesPoint>();
+  for (const [seasonId,total] of totals) {
+    const q=qty.get(seasonId);
+    const r=revenue.get(seasonId);
+    if (!q || !r) continue;
+    result.set(seasonId,{
+      seasonId,
+      totalTickets:total.quantity,
+      totalRevenue:total.amount,
+      avgPrice:total.quantity ? total.amount/total.quantity : 0,
+      qty:q,
+      revenue:r,
+    });
+  }
+  return result;
+}
+
+function annual2025FromSales(aggregate:LiveSalesAggregate):AnnualSeriesPoint {
+  const group=(code:string,field:'quantity'|'revenue')=>Number(aggregate.byProduct[code]?.[field] ?? 0);
+  const skdQty=group('sk-dns','quantity')+group('sk-instructor','quantity');
+  const skdRevenue=group('sk-dns','revenue')+group('sk-instructor','revenue');
+  return {
+    seasonId:'2025-26',
+    totalTickets:aggregate.totalTickets,
+    totalRevenue:aggregate.totalRevenue,
+    avgPrice:aggregate.averageTicketPrice,
+    qty:{
+      day:group('day','quantity'),
+      wka:group('wk-area','quantity'),
+      wkd:group('wk-dns','quantity'),
+      ska:group('sk-area','quantity'),
+      skd:skdQty,
+    },
+    revenue:{
+      day:group('day','revenue'),
+      wka:group('wk-area','revenue'),
+      wkd:group('wk-dns','revenue'),
+      ska:group('sk-area','revenue'),
+      skd:skdRevenue,
+    },
+  };
+}
+
+async function loadHistoricalAnnualSeries(currentSales:LiveSalesAggregate):Promise<LiveAnnualSeries|null> {
+  const records=await readHistoricalRecords('2024-25','sales');
+  const annualRecord=records.find(record=>record.id==='2024-25__sales__network-annual-comparison');
+  if (!annualRecord) return null;
+  const points=annualFrom2024Record(annualRecord);
+  points.set('2025-26',annual2025FromSales(currentSales));
+  const order=['2022-23','2023-24','2024-25','2025-26'];
+  const ordered=order.map(id=>points.get(id)).filter((point):point is AnnualSeriesPoint=>Boolean(point));
+  return ordered.length===4 ? {source:'historical-season-records',points:ordered} : null;
+}
+
 async function readSeason<T>(collectionName:string, seasonId:string):Promise<T[]> {
   const snap=await getDocs(query(collection(db,collectionName),where('seasonId','==',seasonId)));
   return snap.docs.map(d=>({id:d.id,...d.data()} as T));
@@ -315,11 +421,13 @@ export async function loadLiveAnalyticsSnapshot(
     if (seasonId==='2025-26') {
       const records=await readHistoricalRecords(seasonId,'sales');
       const rows=historicalSalesRows(records);
+      const aggregate=aggregateSales(rows);
       snapshot.sales={
         source:'historical-season-records',
         rows,
-        aggregate:aggregateSales(rows),
+        aggregate,
       };
+      snapshot.annual=await loadHistoricalAnnualSeries(aggregate);
     } else {
       const rows=await readSeason<TicketSalesLive>('ticketSales',seasonId);
       snapshot.sales={source:'operational',rows,aggregate:aggregateSales(rows)};
