@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
@@ -33,18 +33,36 @@ const TABS = [
 type TabId = typeof TABS[number]['id'];
 type Language = 'de' | 'it';
 
+const LANGUAGE_KEY = 'dns-analytics-language';
+
+function detectLanguage(): Language {
+  const stored = window.localStorage.getItem(LANGUAGE_KEY);
+  if (stored === 'de' || stored === 'it') return stored;
+  return window.navigator.language.toLowerCase().startsWith('it') ? 'it' : 'de';
+}
+
 export default function App() {
   const [active,setActive] = useState<TabId>(() => {
     const hash = window.location.hash.replace(/^#/, '') as TabId;
     return TABS.some(tab => tab.id === hash) ? hash : 'overview';
   });
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [language,setLanguage] = useState<Language>('de');
+  const [language,setLanguage] = useState<Language>(detectLanguage);
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
   const [printActive,setPrintActive] = useState(false);
 
+  const refreshCore = useCallback(async () => {
+    setCore({state:'loading',text:'DNS_Core · connecting…'});
+    setCore(await loadDNSCoreMaster());
+  }, []);
+
   useEffect(() => applyDNSFoundation(),[]);
-  useEffect(() => { void loadDNSCoreMaster().then(setCore); },[]);
+  useEffect(() => { void refreshCore(); },[refreshCore]);
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dataset.analyticsLanguage = language;
+    window.localStorage.setItem(LANGUAGE_KEY, language);
+  },[language]);
   useEffect(() => {
     const onHashChange = () => {
       const hash = window.location.hash.replace(/^#/, '') as TabId;
@@ -78,10 +96,17 @@ export default function App() {
           </div>
         </div>
         <div className="analytics-header-actions">
-          <div className={`analytics-core-status is-${core.state}`}>{core.text}</div>
+          <div className={`analytics-core-status is-${core.state}`} aria-live="polite">{core.text}</div>
           <AccessibilityMount language={language}/>
-          <div className="analytics-lang">
-            {(['de','it'] as const).map(l=><button key={l} type="button" data-dns-press className={language===l?'is-active':''} onClick={()=>setLanguage(l)}>{l.toUpperCase()}</button>)}
+          <div className="analytics-lang" role="group" aria-label={language === 'de' ? 'Sprache' : 'Lingua'}>
+            {(['de','it'] as const).map(l=><button
+              key={l}
+              type="button"
+              data-dns-press
+              className={language===l?'is-active':''}
+              aria-pressed={language===l}
+              onClick={()=>setLanguage(l)}
+            >{l.toUpperCase()}</button>)}
           </div>
         </div>
       </div>
@@ -132,7 +157,7 @@ export default function App() {
             });
           }}
         >
-          Drucken · Stampa PDF
+          {language === 'de' ? 'Drucken · PDF' : 'Stampa · PDF'}
         </button>
       </div>
     </nav>
@@ -142,9 +167,26 @@ export default function App() {
       <div className="analytics-context">
         <div><strong>WS 2025-26</strong><span> · {tab.label}</span></div>
         <div className="analytics-context-meta">
-          Data source A.2.1: preserved local datasets · DNS_Core master data connected
+          {language === 'de'
+            ? 'Datenbasis A.2.1 · lokale Datensätze erhalten · DNS_Core Stammdaten verbunden'
+            : 'Base dati A.2.1 · dataset locali preservati · anagrafiche DNS_Core collegate'}
         </div>
       </div>
+
+      {core.state !== 'ready' && <div className={`analytics-runtime-state is-${core.state}`} role={core.state === 'error' ? 'alert' : 'status'} aria-live="polite">
+        <div>
+          <strong>{core.state === 'loading'
+            ? (language === 'de' ? 'DNS_Core wird geladen' : 'Caricamento DNS_Core')
+            : (language === 'de' ? 'DNS_Core derzeit nicht erreichbar' : 'DNS_Core al momento non raggiungibile')}</strong>
+          <span>{core.state === 'loading'
+            ? (language === 'de' ? ' Stammdaten werden synchronisiert.' : ' Sincronizzazione delle anagrafiche in corso.')
+            : (language === 'de' ? ' Analytics arbeitet mit den erhaltenen lokalen Datensätzen weiter.' : ' Analytics continua con i dataset locali preservati.')}</span>
+        </div>
+        {core.state === 'error' && <button type="button" onClick={()=>void refreshCore()}>
+          {language === 'de' ? 'Erneut verbinden' : 'Riprova connessione'}
+        </button>}
+      </div>}
+
       <section
         id="analytics-active-panel"
         role="tabpanel"
