@@ -83,6 +83,71 @@
     @apply font-alt text-[9px] uppercase tracking-[.04em] text-dns-muted;
   }
 
+  .analytics-live-panel {
+    @apply mb-4 flex flex-col gap-3 rounded-[10px] border border-dns-mid/20 bg-white px-4 py-3 text-[11px] text-dns-mid shadow-[0_1px_4px_rgba(13,77,94,.04)];
+  }
+
+  .analytics-live-panel.is-auth {
+    @apply border-dns-light/70 bg-dns-light/[.08];
+  }
+
+  .analytics-live-copy {
+    @apply min-w-0 leading-relaxed;
+  }
+
+  .analytics-live-copy strong {
+    @apply text-dns-deep;
+  }
+
+  .analytics-live-login {
+    @apply grid grid-cols-1 gap-2 sm:grid-cols-[minmax(160px,1fr)_minmax(140px,1fr)_auto];
+  }
+
+  .analytics-live-login input {
+    @apply min-h-9 w-full rounded-md border border-dns-mid/25 bg-white px-3 text-[11px] text-dns-deep outline-none focus:border-dns-mid;
+  }
+
+  .analytics-live-login button,
+  .analytics-live-meta button {
+    @apply inline-flex min-h-9 items-center justify-center rounded-md border border-dns-mid/30 bg-white px-3 text-[10px] font-semibold uppercase tracking-[.05em] text-dns-deep hover:bg-dns-bg disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .analytics-live-meta {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-2 font-alt text-[10px] text-dns-muted;
+  }
+
+  .analytics-live-meta .is-ready { @apply font-semibold text-[#0F6E56]; }
+  .analytics-live-meta .is-warning { @apply font-semibold text-[#993C1D]; }
+
+  .analytics-live-error {
+    @apply rounded-md border border-[#B86B52]/30 bg-[#B86B52]/[.06] px-3 py-2 font-alt text-[10px] text-[#8A432C];
+  }
+
+  .analytics-live-diagnostics {
+    @apply border-t border-dns-mid/10 pt-2;
+  }
+
+  .analytics-live-diagnostics summary {
+    @apply cursor-pointer text-[10px] font-semibold uppercase tracking-[.04em] text-dns-mid;
+  }
+
+  .analytics-live-diagnostic-grid {
+    @apply mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4;
+  }
+
+  .analytics-live-diagnostic-grid div {
+    @apply rounded-md bg-dns-bg p-2;
+  }
+
+  .analytics-live-diagnostic-grid span,
+  .analytics-live-diagnostic-grid small {
+    @apply block font-alt text-[9px] text-dns-muted;
+  }
+
+  .analytics-live-diagnostic-grid strong {
+    @apply block text-[12px] text-dns-deep;
+  }
+
   .analytics-runtime-state {
     @apply mb-5 flex flex-col items-start justify-between gap-3 rounded-[10px] border border-dns-mid/20 bg-white px-4 py-3 text-[11px] leading-relaxed text-dns-mid sm:flex-row sm:items-center;
   }
@@ -107,6 +172,18 @@
   }
 
   .analytics-module { @apply min-w-0; }
+
+  .analytics-source-badge {
+    @apply mb-3 inline-flex rounded-full border px-2.5 py-1 font-alt text-[9px] font-semibold uppercase tracking-[.05em];
+  }
+
+  .analytics-source-badge.is-live {
+    @apply border-[#0F6E56]/25 bg-[#0F6E56]/[.06] text-[#0F6E56];
+  }
+
+  .analytics-source-badge.is-compatibility {
+    @apply border-dns-mid/20 bg-white text-dns-muted;
+  }
 
   .analytics-metrics {
     @apply mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4;
@@ -306,4 +383,51 @@
   .analytics-metric-value { font-size: 19px; }
   .analytics-big-impact { font-size: 25px; }
   .analytics-big-impact.secondary { font-size: 20px; }
+}
+
+
+.analytics-assumption-note {
+  @apply mb-4 rounded-md border border-dns-mid/20 bg-white px-3 py-2 font-alt text-[10px] leading-5 text-dns-muted;
+}
+
+
+.analytics-editorial-summary {
+  @apply my-4 grid gap-3 rounded-lg bg-dns-deep px-5 py-4 md:grid-cols-2;
+}
+.analytics-editorial-summary p {
+  @apply m-0 text-sm italic leading-6 text-white;
+}
+.analytics-editorial-summary p:first-child {
+  @apply border-dns-light/30 text-dns-light md:border-r md:pr-4;
+}
+.analytics-methodology {
+  @apply my-4 rounded-lg border border-dns-mid/20 bg-dns-mid/[0.06] p-4;
+}
+.analytics-methodology > header {
+  @apply mb-3;
+}
+.analytics-methodology-grid {
+  @apply grid gap-3 md:grid-cols-2;
+}
+.analytics-methodology-item {
+  @apply rounded-md border border-dns-mid/15 bg-white p-3 text-[10px] leading-5 text-dns-muted;
+}
+.analytics-methodology-topline {
+  @apply flex items-start justify-between gap-3;
+}
+.analytics-methodology-topline strong {
+  @apply text-dns-deep;
+}
+.analytics-methodology-value {
+  @apply my-1 text-sm font-bold text-dns-deep;
+}
+.analytics-methodology-source {
+  @apply mt-2 border-t border-dns-mid/10 pt-2 text-[9px] italic text-dns-mid;
+}
+.analytics-methodology-kind {
+  @apply rounded-full bg-dns-light/30 px-2 py-0.5 text-[8px] uppercase tracking-wide text-dns-deep;
+}
+.analytics-methodology-kind.is-assumption,
+.analytics-methodology-kind.is-limitation {
+  background: rgba(212,206,198,.60);
 }
