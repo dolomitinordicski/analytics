@@ -5,6 +5,7 @@ import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
 import { selectRegionalDataset } from '../services/regionalSelector';
+import { selectReliabilityDataset } from '../services/reliabilitySelector';
 import {
   COLORS,
   REGIONS,
@@ -232,16 +233,26 @@ export function RegionalModule(){
 }
 
 export function ReliabilityModule(){
-  const sorted=[...kpRegions].sort((a,b)=>b.kp-a.kp);
-  const totalPot=kpRegions.reduce((s,d)=>s+d.pot,0);
-  const totalOpen=kpRegions.reduce((s,d)=>s+d.tot3,0);
-  const totalKs=kpRegions.reduce((s,d)=>s+d.ks3,0);
+  const {snapshot,reliabilityLiveReady}=useAnalyticsLive();
+  const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady),[snapshot,reliabilityLiveReady]);
+  const rows=data.rows;
+  const sorted=[...rows].sort((a,b)=>b.kp-a.kp);
+  const totalPot=rows.reduce((s,d)=>s+d.pot,0);
+  const totalOpen=rows.reduce((s,d)=>s+d.tot3,0);
+  const totalOpen1=rows.reduce((s,d)=>s+d.tot1,0);
+  const totalKs=rows.reduce((s,d)=>s+d.ks3,0);
+  const mostReliable=[...rows].sort((a,b)=>b.pct3-a.pct3)[0];
+
   return <Module>
+    <div className={`analytics-source-badge is-${data.source}`}>
+      {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : 'Compatibility dataset · A.2.1'}
+    </div>
+
     <div className="analytics-metrics">
       <Metric label="Netzöffnung am 20.01.2026" sublabel="Rete aperta" value={pct(totalOpen/totalPot*100)} note={`${totalOpen.toFixed(1)} / ${totalPot.toFixed(0)} km`}/>
-      <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalKs/totalOpen*100)} note={`${totalKs.toFixed(1)} km KS`}/>
-      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value="30,0%" note="Milestone 1"/>
-      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value="Gsiesertal" note="100% alle 3 milestone" top/>
+      <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalOpen ? totalKs/totalOpen*100 : 0)} note={`${totalKs.toFixed(1)} km KS`}/>
+      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} note="Milestone 1"/>
+      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} note={mostReliable ? `${pct(mostReliable.pct3,0)} am 20.01` : '—'} top/>
     </div>
 
     <SectionHeading de="KP — Kunstschnee-Index pro Region" it="KP per regione — indice neve artificiale"/>
@@ -250,10 +261,10 @@ export function ReliabilityModule(){
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(d=>d.r),datasets:[{data:sorted.map(d=>d.kp),backgroundColor:sorted.map(d=>d.kp>=70?COLORS.deep:d.kp>=30?COLORS.mid:COLORS.light),borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}},y:axis}}} as any}/>
       </Card>
       <Card title="KS · NS · nicht geöffnet — al 20.01.2026">
-        <ChartCanvas config={{type:'bar',data:{labels:kpRegions.map(d=>d.r),datasets:[
-          {label:'KS',data:kpRegions.map(d=>d.ks3),backgroundColor:COLORS.deep},
-          {label:'Aperti senza KS',data:kpRegions.map(d=>Math.max(0,d.tot3-d.ks3)),backgroundColor:COLORS.light},
-          {label:'Potenziale non aperto',data:kpRegions.map(d=>Math.max(0,d.pot-d.tot3)),backgroundColor:'rgba(65,116,131,.15)'},
+        <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
+          {label:'KS',data:rows.map(d=>d.ks3),backgroundColor:COLORS.deep},
+          {label:'Aperti senza KS',data:rows.map(d=>Math.max(0,d.tot3-d.ks3)),backgroundColor:COLORS.light},
+          {label:'Potenziale non aperto',data:rows.map(d=>Math.max(0,d.pot-d.tot3)),backgroundColor:'rgba(65,116,131,.15)'},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true}}}} as any}/>
       </Card>
     </div>
@@ -261,20 +272,21 @@ export function ReliabilityModule(){
     <SectionHeading de="% Pistenöffnung — 3 Meilensteine pro Region" it="% piste aperte per regione — nelle 3 milestone"/>
     <div className="analytics-grid-2">
       <Card title="% Pistenöffnung pro Region & Meilenstein">
-        <ChartCanvas config={{type:'bar',data:{labels:kpRegions.map(d=>d.r),datasets:[
-          {label:'23.12.2025',data:kpRegions.map(d=>d.pct1),backgroundColor:COLORS.year4},
-          {label:'06.01.2026',data:kpRegions.map(d=>d.pct2),backgroundColor:COLORS.wkDns},
-          {label:'20.01.2026',data:kpRegions.map(d=>d.pct3),backgroundColor:COLORS.deep},
+        <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
+          {label:'23.12.2025',data:rows.map(d=>d.pct1),backgroundColor:COLORS.year4},
+          {label:'06.01.2026',data:rows.map(d=>d.pct2),backgroundColor:COLORS.wkDns},
+          {label:'20.01.2026',data:rows.map(d=>d.pct3),backgroundColor:COLORS.deep},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
       <Card title="Tabelle — KP pro Region WS 2025-26">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Regione</th><th>Pot.</th><th>23.12</th><th>06.01</th><th>20.01</th><th>KP</th></tr></thead><tbody>
-          {kpRegions.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
+          {rows.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
     </div>
 
     <SectionHeading de="Detailansicht — 16 Partner einzeln" it="Dettaglio — 16 partner"/>
+    <div className="analytics-source-badge is-compatibility">Partner detail · Compatibility dataset · A.2.1</div>
     <Card title="KP pro Partner — km KS / km potenziali individuali">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th>Aperto</th><th>KP</th></tr></thead><tbody>
         {kpPartners.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
