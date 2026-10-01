@@ -162,6 +162,8 @@ export default function App() {
         <button
           type="button"
           className="analytics-print-button"
+          data-dns-press
+          data-dns-hover
           onClick={() => {
             setPrintActive(true);
             window.requestAnimationFrame(() => {
