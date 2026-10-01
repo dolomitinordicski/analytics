@@ -12,6 +12,8 @@ import {
   compareLiveToCompatibility,
   compareRegionalToCompatibility,
   compareKpToCompatibility,
+  compareKpPartnersToCompatibility,
+  kpPartnerParitySummary,
   kpParitySummary,
   paritySummary,
   regionalParitySummary,
@@ -72,6 +74,8 @@ export function LiveSourcePanel({
   const regionalSummary=useMemo(()=>regionalParitySummary(regionalChecks),[regionalChecks]);
   const kpChecks=useMemo(()=>compareKpToCompatibility(snapshot),[snapshot]);
   const kpSummary=useMemo(()=>kpParitySummary(kpChecks),[kpChecks]);
+  const kpPartnerChecks=useMemo(()=>compareKpPartnersToCompatibility(snapshot),[snapshot]);
+  const kpPartnerSummary=useMemo(()=>kpPartnerParitySummary(kpPartnerChecks),[kpPartnerChecks]);
 
   async function login(){
     setBusy(true);
@@ -109,8 +113,8 @@ export function LiveSourcePanel({
         ? (language==='de'?' Live-Daten werden geladen…':'Caricamento dati live…')
         : snapshot
           ? (language==='de'
-              ? ` Live geladen · Sales ${snapshot.sales?.rows.length ?? 0} · KP ${snapshot.kp?.rows.length ?? 0}`
-              : ` Live caricati · Sales ${snapshot.sales?.rows.length ?? 0} · KP ${snapshot.kp?.rows.length ?? 0}`)
+              ? ` Live geladen · Sales ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`
+              : ` Live caricati · Sales ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`)
           : (language==='de'?' Keine Live-Daten verfügbar.':'Nessun dato live disponibile.')}</span>
     </div>
 
@@ -121,17 +125,17 @@ export function LiveSourcePanel({
           : `Parità: ${summary.matches}/${summary.available} corrispondenti`}
       </span>
       <span>
-        Overview {summary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
+        Overview {summary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
       </span>
       <button type="button" onClick={()=>void signOutAnalytics()}>
         {language==='de'?'Abmelden':'Esci'}
       </button>
     </div>
 
-    {(summary.different>0 || regionalSummary.different>0 || kpSummary.different>0) && <details className="analytics-live-diagnostics">
+    {(summary.different>0 || regionalSummary.different>0 || kpSummary.different>0 || kpPartnerSummary.different>0) && <details className="analytics-live-diagnostics">
       <summary>{language==='de'?'Abweichungen anzeigen':'Mostra differenze'}</summary>
       <div className="analytics-live-diagnostic-grid">
-        {[...checks,...regionalChecks,...kpChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
+        {[...checks,...regionalChecks,...kpChecks,...kpPartnerChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
           <span>{c.label}</span>
           <strong>{c.live?.toLocaleString('de-DE')}</strong>
           <small>legacy {c.legacy.toLocaleString('de-DE')} · Δ {c.delta?.toLocaleString('de-DE')}</small>
