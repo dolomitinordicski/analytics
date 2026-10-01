@@ -3,6 +3,7 @@ import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordics
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
 import { NavigationRuntimeMount } from './components/NavigationRuntimeMount';
+import { LiveSourcePanel } from './components/LiveSourcePanel';
 import {
   AdvancedModule,
   AnnualModule,
@@ -174,6 +175,8 @@ export default function App() {
             : `A.2.3 · data layer: ${boundaryMode} · dati analitici locali preservati`}
         </div>
       </div>
+
+      <LiveSourcePanel language={language} seasonId="2025-26"/>
 
       {core.state !== 'ready' && <div className={`analytics-runtime-state is-${core.state}`} role={core.state === 'error' ? 'alert' : 'status'} aria-live="polite">
         <div>

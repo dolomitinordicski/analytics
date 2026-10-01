@@ -17,6 +17,10 @@ const metrics = read('src/data/metrics.ts');
 const scopes = read('src/data/scopes.ts');
 const architecture = read('src/data/architecture.ts');
 const boundary = read('src/services/analyticsBoundary.ts');
+const auth = read('src/services/auth.ts');
+const liveAnalytics = read('src/services/liveAnalytics.ts');
+const parity = read('src/services/parity.ts');
+const livePanel = read('src/components/LiveSourcePanel.tsx');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -117,6 +121,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.2.3 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.2.3 metric/scope/layer/boundary architecture is present');
+
+for (const [label, content, tokens] of [
+  ['auth layer', auth, ['signInWithEmailAndPassword','ticketSales.read','kp.read']],
+  ['live adapter', liveAnalytics, ['ticketSales','kpEntries','kpFairValidations','aggregateSales','aggregateKp']],
+  ['parity diagnostics', parity, ['compareLiveToCompatibility','tickets-total','revenue-total']],
+  ['live source UI', livePanel, ['LiveSourcePanel','Compatibility-Datensatz','paritySummary']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.1 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.1 authenticated operational layer and parity diagnostics are present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
