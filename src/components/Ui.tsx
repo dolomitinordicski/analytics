@@ -38,3 +38,35 @@ export function Insight({ n, de, it, bodyDe, bodyIt, tag }: { n: string; de: str
     </div>
   </article>;
 }
+
+
+export function EditorialSummary({de,it}:{de:string;it:string}) {
+  return <div className="analytics-editorial-summary" data-dns-reveal>
+    <p className="analytics-lang-de">{de}</p>
+    <p className="analytics-lang-it">{it}</p>
+  </div>;
+}
+
+export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
+  key:string;labelDe:string;labelIt:string;value:string;classification:string;source:string;noteDe:string;noteIt:string;
+}>}) {
+  return <article className="analytics-methodology" data-dns-reveal>
+    <header>
+      <div className="analytics-card-title analytics-lang-de">{titleDe}</div>
+      <div className="analytics-card-subtitle analytics-lang-it">{titleIt}</div>
+    </header>
+    <div className="analytics-methodology-grid">
+      {items.map(item=><div key={item.key} className="analytics-methodology-item">
+        <div className="analytics-methodology-topline">
+          <strong>{item.labelDe}</strong>
+          <span className={`analytics-methodology-kind is-${item.classification}`}>{item.classification}</span>
+        </div>
+        <div className="analytics-card-subtitle analytics-lang-it">{item.labelIt}</div>
+        <div className="analytics-methodology-value">{item.value}</div>
+        <p className="analytics-lang-de">{item.noteDe}</p>
+        <p className="analytics-lang-it">{item.noteIt}</p>
+        <div className="analytics-methodology-source">Quelle · Fonte: {item.source}</div>
+      </div>)}
+    </div>
+  </article>;
+}
