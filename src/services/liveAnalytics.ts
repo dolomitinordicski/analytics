@@ -15,6 +15,14 @@ export type TicketSalesLive = {
   amountOverride?: number | null;
 };
 
+export type KpMilestoneDefinitionLive = {
+  id: string;
+  seasonId: string;
+  date: string;
+  label?: string;
+  order: number;
+};
+
 export type KpMilestoneLive = {
   milestoneId: string;
   openedKm: number;
@@ -56,23 +64,33 @@ export type LiveSalesAggregate = {
   channelsPresent: string[];
 };
 
+export type LiveKpPoint = {
+  potentialOperationalKm:number;
+  openedKm:number;
+  artificialSnowKm:number;
+  naturalSnowKm:number;
+  source:'validation'|'entries';
+};
+
 export type LiveKpAggregate = {
   entries: number;
   includedEntries: number;
   validations: number;
-  areas: Record<string,{
-    potentialOperationalKm:number;
-    openedKm:number;
-    artificialSnowKm:number;
-    naturalSnowKm:number;
-  }>;
+  milestoneIds: string[];
+  byAreaMilestone: Record<string,Record<string,LiveKpPoint>>;
+  areas: Record<string,LiveKpPoint>;
 };
 
 export type LiveAnalyticsSnapshot = {
   seasonId: string;
   loadedAt: string;
   sales?: { rows:TicketSalesLive[]; aggregate:LiveSalesAggregate };
-  kp?: { rows:KpEntryLive[]; validations:KpValidationLive[]; aggregate:LiveKpAggregate };
+  kp?: {
+    milestones:KpMilestoneDefinitionLive[];
+    rows:KpEntryLive[];
+    validations:KpValidationLive[];
+    aggregate:LiveKpAggregate;
+  };
 };
 
 function effectiveAmount(row: TicketSalesLive) {
@@ -122,34 +140,76 @@ function aggregateSales(rows: TicketSalesLive[]): LiveSalesAggregate {
   };
 }
 
-function aggregateKp(rows:KpEntryLive[], validations:KpValidationLive[]):LiveKpAggregate {
-  const areas:LiveKpAggregate['areas'] = {};
-  const add=(area:string,potential:number,opened:number,artificial:number,natural:number)=>{
-    areas[area] ??= {potentialOperationalKm:0,openedKm:0,artificialSnowKm:0,naturalSnowKm:0};
-    areas[area].potentialOperationalKm += potential;
-    areas[area].openedKm += opened;
-    areas[area].artificialSnowKm += artificial;
-    areas[area].naturalSnowKm += natural;
+function aggregateKp(
+  rows:KpEntryLive[],
+  validations:KpValidationLive[],
+  milestones:KpMilestoneDefinitionLive[],
+):LiveKpAggregate {
+  const ordered=[...milestones].sort((a,b)=>a.order-b.order);
+  const milestoneIds=ordered.map(m=>m.id);
+  const byAreaMilestone:LiveKpAggregate['byAreaMilestone']={};
+
+  const areas=new Set<string>([
+    ...rows.filter(r=>r.includeInKp).map(r=>r.reportingAreaId),
+    ...validations.map(v=>v.reportingAreaId),
+  ]);
+
+  const sumEntries=(areaId:string,milestoneId:string):LiveKpPoint|null=>{
+    const candidates=rows.filter(r=>r.includeInKp && r.reportingAreaId===areaId);
+    let potential=0, opened=0, artificial=0, natural=0, found=false;
+    for (const row of candidates) {
+      const value=(row.milestones ?? []).find(m=>m.milestoneId===milestoneId);
+      if (!value) continue;
+      found=true;
+      potential+=Number(row.referenceKm?.potentialOperationalKm || 0);
+      opened+=Number(value.openedKm || 0);
+      artificial+=Number(value.artificialSnowKm || 0);
+      natural+=Number(value.naturalSnowKm || 0);
+    }
+    return found ? {
+      potentialOperationalKm:potential,
+      openedKm:opened,
+      artificialSnowKm:artificial,
+      naturalSnowKm:natural,
+      source:'entries',
+    } : null;
   };
 
-  if (validations.length) {
-    const latestMilestone = validations.reduce((max,v)=>v.milestoneId > max ? v.milestoneId : max,'');
-    validations.filter(v=>v.milestoneId===latestMilestone).forEach(v=>
-      add(v.reportingAreaId,v.potentialOperationalKm,v.openedKm,v.artificialSnowKm,v.naturalSnowKm)
-    );
-  } else {
-    rows.filter(r=>r.includeInKp).forEach(r=>{
-      const last=[...(r.milestones ?? [])].at(-1);
-      if (!last) return;
-      add(r.reportingAreaId,Number(r.referenceKm?.potentialOperationalKm || 0),last.openedKm,last.artificialSnowKm,last.naturalSnowKm);
-    });
+  for (const areaId of areas) {
+    byAreaMilestone[areaId]={};
+    for (const milestoneId of milestoneIds) {
+      const validation=validations.find(v=>v.reportingAreaId===areaId && v.milestoneId===milestoneId);
+      if (validation) {
+        byAreaMilestone[areaId][milestoneId]={
+          potentialOperationalKm:Number(validation.potentialOperationalKm || 0),
+          openedKm:Number(validation.openedKm || 0),
+          artificialSnowKm:Number(validation.artificialSnowKm || 0),
+          naturalSnowKm:Number(validation.naturalSnowKm || 0),
+          source:'validation',
+        };
+        continue;
+      }
+      const fallback=sumEntries(areaId,milestoneId);
+      if (fallback) byAreaMilestone[areaId][milestoneId]=fallback;
+    }
+  }
+
+  const latestMilestoneId=milestoneIds.at(-1);
+  const latest:LiveKpAggregate['areas']={};
+  if (latestMilestoneId) {
+    for (const areaId of Object.keys(byAreaMilestone)) {
+      const point=byAreaMilestone[areaId][latestMilestoneId];
+      if (point) latest[areaId]=point;
+    }
   }
 
   return {
     entries:rows.length,
     includedEntries:rows.filter(r=>r.includeInKp).length,
     validations:validations.length,
-    areas,
+    milestoneIds,
+    byAreaMilestone,
+    areas:latest,
   };
 }
 
@@ -170,11 +230,12 @@ export async function loadLiveAnalyticsSnapshot(
   }
 
   if (access.canReadKp) {
-    const [rows,validations]=await Promise.all([
+    const [milestones,rows,validations]=await Promise.all([
+      readSeason<KpMilestoneDefinitionLive>('kpMilestones',seasonId),
       readSeason<KpEntryLive>('kpEntries',seasonId),
       readSeason<KpValidationLive>('kpFairValidations',seasonId),
     ]);
-    snapshot.kp={rows,validations,aggregate:aggregateKp(rows,validations)};
+    snapshot.kp={milestones,rows,validations,aggregate:aggregateKp(rows,validations,milestones)};
   }
 
   return snapshot;

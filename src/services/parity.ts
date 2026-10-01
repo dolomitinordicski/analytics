@@ -1,4 +1,4 @@
-import { REGIONS, TICKET_TYPES, regional, seasonOverview } from '../data/analyticsData';
+import { REGIONS, TICKET_TYPES, kpRegions, regional, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
 
@@ -95,6 +95,67 @@ export function regionalParitySummary(checks:ParityCheck[]) {
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
   const expected=REGIONS.length*PRODUCT_CODES.length*2;
+  return {
+    available:available.length,
+    expected,
+    matches,
+    different,
+    complete:available.length===expected,
+    ready:available.length===expected && different===0,
+  };
+}
+
+
+const KP_MILESTONE_DATES_2025_26 = ['2025-12-23','2026-01-06','2026-01-20'] as const;
+
+export function compareKpToCompatibility(snapshot:LiveAnalyticsSnapshot|null):ParityCheck[] {
+  const kp=snapshot?.kp;
+  const checks:ParityCheck[]=[];
+
+  kpRegions.forEach((legacy,areaIndex)=>{
+    const areaId=resolveAnalyticsReportingAreaId(legacy.r);
+    KP_MILESTONE_DATES_2025_26.forEach((date,milestoneIndex)=>{
+      const milestone=kp?.milestones.find(m=>m.date===date);
+      const point=areaId && milestone
+        ? kp?.aggregate.byAreaMilestone[areaId]?.[milestone.id]
+        : undefined;
+      const legacyOpened=[legacy.tot1,legacy.tot2,legacy.tot3][milestoneIndex];
+      const legacyArtificial=[legacy.ks1,legacy.ks2,legacy.ks3][milestoneIndex];
+
+      checks.push(
+        check(
+          `kp-potential-${areaId ?? areaIndex}-${milestoneIndex+1}`,
+          `${legacy.r} · ${date} potential km`,
+          legacy.pot,
+          point?.potentialOperationalKm ?? null,
+          0.05,
+        ),
+        check(
+          `kp-opened-${areaId ?? areaIndex}-${milestoneIndex+1}`,
+          `${legacy.r} · ${date} opened km`,
+          legacyOpened,
+          point?.openedKm ?? null,
+          0.05,
+        ),
+        check(
+          `kp-artificial-${areaId ?? areaIndex}-${milestoneIndex+1}`,
+          `${legacy.r} · ${date} artificial km`,
+          legacyArtificial,
+          point?.artificialSnowKm ?? null,
+          0.05,
+        ),
+      );
+    });
+  });
+
+  return checks;
+}
+
+export function kpParitySummary(checks:ParityCheck[]) {
+  const available=checks.filter(c=>c.status!=='unavailable');
+  const matches=available.filter(c=>c.status==='match').length;
+  const different=available.filter(c=>c.status==='different').length;
+  const expected=kpRegions.length*KP_MILESTONE_DATES_2025_26.length*3;
   return {
     available:available.length,
     expected,

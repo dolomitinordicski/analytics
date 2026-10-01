@@ -24,6 +24,7 @@ const livePanel = read('src/components/LiveSourcePanel.tsx');
 const liveContext = read('src/components/AnalyticsLiveContext.tsx');
 const overviewSelector = read('src/services/overviewSelector.ts');
 const regionalSelector = read('src/services/regionalSelector.ts');
+const reliabilitySelector = read('src/services/reliabilitySelector.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -153,6 +154,16 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.3 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.3 guarded Regional live switch is present');
+
+for (const [label, content, tokens] of [
+  ['KP milestone aggregate', liveAnalytics, ['kpMilestones','byAreaMilestone','source:\'validation\'','source:\'entries\'']],
+  ['KP parity gate', parity, ['compareKpToCompatibility','kpParitySummary','kp-potential-','kp-opened-','kp-artificial-']],
+  ['Reliability selector', reliabilitySelector, ['selectReliabilityDataset','source:\'live\'','MILESTONE_DATES']],
+  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP parity verified','Partner detail · Compatibility dataset']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.4 ${label} missing: ${token}`);
+}
+if (!process.exitCode) ok('A.3.4 guarded Reliability/KP live switch is present');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');

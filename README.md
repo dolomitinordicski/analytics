@@ -67,3 +67,13 @@ A.2.3 introduces the canonical analytical boundary without changing the visible 
 - preserved A.2.1 values remain the source of truth for the live UI during A.2.3
 
 A.3 is explicitly outside this phase: no production analytical fact is switched to a new source in A.2.3.
+
+
+## A.3 live operational migration
+
+- A.3.1 introduces authenticated DNS_Core reads for ticket sales and KP.
+- A.3.2 migrates WS 2025-26 Overview only after full live-vs-compatibility parity.
+- A.3.3 migrates Regional Performance only after complete area × product parity.
+- A.3.4 migrates area-level Network Reliability / KP only after all 8 reporting areas × 3 milestones × 3 values (potential, opened, artificial-snow km) match the preserved compatibility dataset.
+- KP source priority is validation-first: `kpFairValidations` overrides reconstructed area values from included `kpEntries` for the same area/milestone.
+- Partner-level KP detail remains explicitly on the A.2.1 compatibility dataset until a separate organization-level parity gate is implemented.
