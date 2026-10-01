@@ -11,8 +11,8 @@ const firebaseConfig = {
   measurementId: 'G-2G56PRYNME',
 };
 
-const app = getApps()[0] ?? initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const app = getApps()[0] ?? initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 const MASTER_COLLECTIONS = ['reportingAreas','destinations','organizations','organizationRelationships','seasons'] as const;
 
 export type DNSCoreStatus =
