@@ -98,3 +98,12 @@ A.3 is explicitly outside this phase: no production analytical fact is switched 
 - Historical discrepancies remain visible and do not trigger automatic normalization.
 
 A.3 integration validation runs on pull requests targeting `a3-integration` before any reconciliation with `main`.
+
+
+### A.3.7 Advanced Analytics observed inputs
+
+- Advanced Analytics now separates observed ticket volumes from model assumptions.
+- Observed inputs are DNS weekly tickets, South Tyrol weekly tickets, and DAY tickets from the same verified historical sales source used by Overview/Regional.
+- The economic model assumptions remain explicit and user-adjustable: nights per weekly guest, overnight-share assumption, spend per night, multiplier, and DAY overnight-share assumption.
+- The module switches observed inputs only after all three source checks match the preserved A.2.1 values.
+- Overnight totals are not duplicated into Advanced Analytics. The next overnight/intensity migration will source PN from the FAIR model (fairModel/ws-2026-27 and canonical successors) without changing the FAIR calculation engine.
