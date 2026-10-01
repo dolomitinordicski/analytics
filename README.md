@@ -107,3 +107,13 @@ A.3 integration validation runs on pull requests targeting `a3-integration` befo
 - The economic model assumptions remain explicit and user-adjustable: nights per weekly guest, overnight-share assumption, spend per night, multiplier, and DAY overnight-share assumption.
 - The module switches observed inputs only after all three source checks match the preserved A.2.1 values.
 - Overnight totals are not duplicated into Advanced Analytics. The next overnight/intensity migration will source PN from the FAIR model (fairModel/ws-2026-27 and canonical successors) without changing the FAIR calculation engine.
+
+
+### A.3.8 Overnights from FAIR
+
+- Overnight PN values for WS 2025-26 are read from DNS FAIR document fairModel/ws-2026-27.
+- FAIR remains the canonical source for PN; Analytics reads it without modifying the FAIR calculation engine or persistence behavior.
+- The old 9-row destination presentation is normalized to 8 canonical DNS reporting areas. Seiser Alm and Val Gardena are combined because FAIR stores one reporting-area PN and their preserved A.2.1 values reconcile exactly to that area total.
+- The FAIR switch is guarded by 8 PN parity checks, one per reporting area.
+- The 2024-25 comparison remains the preserved Analytics historical baseline.
+- Monthly December–March context remains explicitly compatibility-sourced because FAIR does not provide monthly PN.
