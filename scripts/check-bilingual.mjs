@@ -9,8 +9,21 @@ const modules=read('src/modules/AnalyticsModules.tsx');
 const ui=read('src/components/Ui.tsx');
 const live=read('src/components/LiveSourcePanel.tsx');
 const print=read('src/components/AnalyticsPrintSheet.tsx');
+const foundation=read('src/services/foundation.ts');
+const main=read('src/main.tsx');
+const index=read('index.html');
 
-if (!app.includes("return 'de';")) fail('German must be the default language when no preference is stored');
+if (!index.includes('<html lang="de">')) fail('German must be the initial document language');
+for (const [label,content,token] of [
+  ['App',app,'getDNSAnalyticsLanguage'],
+  ['App',app,'setDNSAnalyticsLanguage'],
+  ['App',app,'subscribeDNSAnalyticsLanguage'],
+  ['Foundation',foundation,'initDNSFoundation'],
+  ['bootstrap',main,'initDNSAnalyticsFoundation'],
+]) {
+  if (!content.includes(token)) fail(`Foundation language contract missing: ${label} · ${token}`);
+}
+if (/dns-analytics-language|LANGUAGE_KEY/.test(app)) fail('legacy Analytics-local language storage remains');
 for (const token of ['labelDe:','labelIt:','language === \'de\' ? t.labelDe : t.labelIt']) {
   if (!app.includes(token)) fail('tab navigation is not fully language-aware: '+token);
 }
@@ -48,7 +61,7 @@ if (!print.includes("language:'de'|'it'")) fail('print sheet does not receive ac
 if (!print.includes("language==='de'?'WS 2025-26':'SI 2025-26'")) fail('print season label is not localized');
 
 if (!process.exitCode) {
-  ok('DE-first / IT-second bilingual contract is enforced');
+  ok('DE-first / IT-second bilingual contract is enforced through Foundation');
   ok('mixed static Card titles are eliminated');
   ok('source, methodology and print UI are language-aware');
 } else {
