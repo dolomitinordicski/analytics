@@ -258,3 +258,16 @@ export const crossCuttingReferenceLimits:ReferenceSourceItem[]=[
     noteIt:'Il settimanale è un indicatore di soggiorno, non una prova di pernottamento.',
   },
 ];
+
+
+export const overnightWorkingPn2526 = [
+  {area:'Gröden / Val Gardena',pn:1601988,delta:-1.7,reliability:'official' as const},
+  {area:'3 Zinnen Dolomites',pn:937875,delta:-2.8,reliability:'official' as const},
+  {area:'Osttirol',pn:842993,delta:5.3,reliability:'official' as const},
+  {area:'Seiser Alm / Alpe di Siusi',pn:809490,delta:1.6,reliability:'official' as const},
+  {area:'Ahrntal / Sand in Taufers',pn:692590,delta:2.0,reliability:'official' as const},
+  {area:"Cortina d'Ampezzo",pn:77181,delta:null,reliability:'provisional' as const},
+  {area:'Gsiesertal / Welsberg / Taisten',pn:193052,delta:-0.7,reliability:'official' as const},
+  {area:'Antholzertal',pn:183676,delta:-2.7,reliability:'official' as const},
+  {area:'Comelico',pn:7564,delta:null,reliability:'assumption' as const},
+] as const;
