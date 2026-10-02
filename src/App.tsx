@@ -193,7 +193,7 @@ export default function App() {
             ? (language === 'de' ? ' Stammdaten werden synchronisiert.' : ' Sincronizzazione delle anagrafiche in corso.')
             : (language === 'de' ? ' Analytics arbeitet mit den erhaltenen lokalen Datensätzen weiter.' : ' Analytics continua con i dataset locali preservati.')}</span>
         </div>
-        {core.state === 'error' && <button type="button" onClick={()=>void refreshCore()}>
+        {core.state === 'error' && <button className="dns-button" data-variant="secondary" type="button" onClick={()=>void refreshCore()}>
           {language === 'de' ? 'Erneut verbinden' : 'Riprova connessione'}
         </button>}
       </div>}
