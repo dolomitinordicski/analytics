@@ -58,6 +58,14 @@ export function Alert({title, children, variant = 'info'}:{title?:string;childre
   </aside>;
 }
 
+const methodologyLabels:Record<string,{de:string;it:string}>={
+  observed:{de:'Beobachtet',it:'Osservato'},
+  derived:{de:'Abgeleitet',it:'Derivato'},
+  'external-source':{de:'Externe Quelle',it:'Fonte esterna'},
+  assumption:{de:'Annahme',it:'Assunzione'},
+  limitation:{de:'Grenze',it:'Limite'},
+};
+
 export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
   key:string;labelDe:string;labelIt:string;value:string;classification:string;source:string;sourceYear?:string;sourceUrl?:string;noteDe:string;noteIt:string;
 }>}) {
@@ -70,7 +78,10 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
       {items.map(item=><div key={item.key} className="analytics-methodology-item">
         <div className="analytics-methodology-topline">
           <strong>{item.labelDe}</strong>
-          <span className={`analytics-methodology-kind is-${item.classification}`}>{item.classification}</span>
+          <span className={`analytics-methodology-kind is-${item.classification}`}>
+            <span className="analytics-lang-de">{methodologyLabels[item.classification]?.de ?? item.classification}</span>
+            <span className="analytics-lang-it">{methodologyLabels[item.classification]?.it ?? item.classification}</span>
+          </span>
         </div>
         <div className="analytics-card-subtitle analytics-lang-it">{item.labelIt}</div>
         <div className="analytics-methodology-value">{item.value}</div>
@@ -78,7 +89,7 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
         <p className="analytics-lang-it">{item.noteIt}</p>
         <div className="analytics-methodology-source">
           Quelle · Fonte: {item.source}{item.sourceYear ? ` · ${item.sourceYear}` : ''}
-          {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer">Link</a></>}
+          {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer"><span className="analytics-lang-de">Quelle öffnen</span><span className="analytics-lang-it">Apri fonte</span></a></>}
         </div>
       </div>)}
     </div>
