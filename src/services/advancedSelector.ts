@@ -1,5 +1,6 @@
-import { advancedDefaults } from '../data/analyticsData';
+import { advancedDefaults, seasonOverview } from '../data/analyticsData';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 const SOUTH_TYROL_AREAS = [
   'drei-zinnen',
@@ -10,7 +11,7 @@ const SOUTH_TYROL_AREAS = [
 ] as const;
 
 export type AdvancedObservedInputs = {
-  source:'live'|'compatibility';
+  source:'live'|'public'|'compatibility';
   weeklyTicketsNetwork:number;
   weeklyTicketsSouthTyrol:number;
   dayTickets:number;
@@ -22,17 +23,22 @@ export type AdvancedObservedInputs = {
 export function selectAdvancedObservedInputs(
   snapshot:LiveAnalyticsSnapshot|null,
   liveReady:boolean,
+  publicBaseline?:PublicBaselineData|null,
 ):AdvancedObservedInputs {
   const sales=snapshot?.sales?.aggregate;
   if (!liveReady || !sales) {
+    const defaults=publicBaseline?.advancedDefaults;
+    const revenue=publicBaseline?.seasonOverview.ticketRevenue ?? seasonOverview.ticketRevenue;
+    const weeklyRevenueArea=Number(revenue[1] ?? 0);
+    const weeklyRevenueDns=Number(revenue[2] ?? 0);
     return {
-      source:'compatibility',
-      weeklyTicketsNetwork:advancedDefaults.weeklyTicketsNetwork,
-      weeklyTicketsSouthTyrol:advancedDefaults.weeklyTicketsSouthTyrol,
-      dayTickets:advancedDefaults.dayTickets,
-      weeklyRevenueArea:210672,
-      weeklyRevenueDns:214726,
-      weeklyRevenueNetwork:425398,
+      source:publicBaseline?'public':'compatibility',
+      weeklyTicketsNetwork:Number(defaults?.weeklyTicketsNetwork ?? advancedDefaults.weeklyTicketsNetwork),
+      weeklyTicketsSouthTyrol:Number(defaults?.weeklyTicketsSouthTyrol ?? advancedDefaults.weeklyTicketsSouthTyrol),
+      dayTickets:Number(defaults?.dayTickets ?? advancedDefaults.dayTickets),
+      weeklyRevenueArea,
+      weeklyRevenueDns,
+      weeklyRevenueNetwork:weeklyRevenueArea+weeklyRevenueDns,
     };
   }
 
