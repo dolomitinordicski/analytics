@@ -1,0 +1,13 @@
+{
+  "source": "dns_dashboardf.html",
+  "sha256": "30b10ebd49f8bf32b5f2f0e02bc068efebaa940aa73428c910ff52e218dd3e88",
+  "bytes": 100199,
+  "visibleTextSha256": "e157904304b7756e379f4b438480891e1e87726a2d0897bf9c250c63eb739341",
+  "visibleTextChars": 20174,
+  "visibleTextLines": 649,
+  "pageCount": 6,
+  "sectionHeadingsDe": 24,
+  "sectionHeadingsIt": 24,
+  "insightCount": 15,
+  "rule": "This manifest is a zero-loss audit anchor. Runtime migration must not delete, rewrite or silently replace source content."
+}
