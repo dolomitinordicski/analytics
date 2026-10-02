@@ -431,3 +431,119 @@
 .analytics-methodology-kind.is-limitation {
   background: rgba(212,206,198,.60);
 }
+
+
+/* Legacy dashboard parity blocks: preserve the source HTML's editorial density
+   while using the current Analytics visual language. */
+.analytics-bilingual-note {
+  display: grid;
+  gap: .65rem;
+}
+.analytics-bilingual-note p {
+  margin: 0;
+}
+.analytics-legacy-inline {
+  margin-top: .55rem;
+  line-height: 1.45;
+}
+.analytics-kpi-stack {
+  display: grid;
+  gap: .55rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.analytics-kpi-stack > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: .2rem;
+  border: 1px solid rgba(65,116,131,.14);
+  border-radius: 8px;
+  background: rgba(244,248,249,.72);
+  padding: .7rem;
+}
+.analytics-kpi-stack span,
+.analytics-impact-flow span {
+  font-family: var(--font-alt);
+  font-size: 9px;
+  color: var(--color-dns-muted);
+}
+.analytics-kpi-stack strong,
+.analytics-impact-flow strong {
+  font-size: 16px;
+  color: var(--color-dns-deep);
+}
+.analytics-legacy-list {
+  display: grid;
+  gap: .65rem;
+  font-family: var(--font-alt);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--color-dns-deep);
+}
+.analytics-impact-flow {
+  display: grid;
+  gap: .8rem;
+  margin-top: .45rem;
+}
+.analytics-impact-flow > div:not(.analytics-impact-arrow) {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  border-bottom: 1px solid rgba(65,116,131,.12);
+  padding-bottom: .65rem;
+}
+.analytics-impact-flow > div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.analytics-impact-flow small {
+  font-family: var(--font-alt);
+  font-size: 9px;
+  color: var(--color-dns-muted);
+}
+.analytics-impact-arrow {
+  color: var(--color-dns-light);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.analytics-legacy-columns {
+  display: grid;
+  gap: 1rem;
+  color: var(--color-dns-deep);
+  font-size: 10px;
+  line-height: 1.55;
+}
+.analytics-legacy-columns strong {
+  display: block;
+  margin-bottom: .35rem;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.analytics-legacy-columns ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.analytics-legacy-columns li {
+  margin-bottom: .25rem;
+}
+.analytics-legacy-columns li span {
+  display: block;
+}
+.analytics-legacy-columns p {
+  margin: 0 0 .55rem;
+}
+
+@media (min-width: 768px) {
+  .analytics-bilingual-note,
+  .analytics-legacy-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .analytics-kpi-stack {
+    grid-template-columns: 1fr;
+  }
+}
