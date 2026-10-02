@@ -29,6 +29,15 @@ import {
   overnightMethodology,
   reliabilityMethodology,
 } from '../data/editorial';
+import {
+  legacyAdvancedCopy,
+  legacyAnnualDelta,
+  legacyAnnualPrices2025,
+  legacyOverviewNotes,
+  legacyOvernightCopy,
+  legacyRegionalInsights,
+  legacyReliabilityCopy,
+} from '../data/legacyDashboard';
 
 const euro = (v:number) => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
 const integer = (v:number) => new Intl.NumberFormat('de-DE').format(Math.round(v));
@@ -85,6 +94,7 @@ export function OverviewModule(){
       </Card>
       <Card title="Vertriebskanal" subtitle="Canale di vendita">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <div className="analytics-note-small analytics-legacy-inline">{legacyOverviewNotes.channelMix}</div>
       </Card>
     </div>
 
@@ -98,6 +108,7 @@ export function OverviewModule(){
           {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
           {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
         ]},options:{...baseOptions,cutout:'40%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
+        <div className="analytics-note-small analytics-legacy-inline">{legacyOverviewNotes.revenueVsQuantity}</div>
       </Card>
     </div>
 
@@ -172,21 +183,22 @@ export function AnnualModule(){
       </Card>
     </div>
 
-    <SectionHeading de="Delta 2022-23 → 2025-26 & Ø Preise" it="Delta 2022-23 → 2025-26 & prezzi medi"/>
+    <SectionHeading de="Delta 2022-23 → 2025-26 & Ø Preise" it="Variazione 2022-23 → 2025-26 & prezzi medi"/>
     <div className="analytics-grid-2">
-      <Card title="Δ Menge & Einnahmen">
-        <table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Δ Menge</th><th>Δ Einnahmen</th></tr></thead><tbody>
-          {TICKET_TYPES.map((t,i)=>{
-            const q=[data.qty.day,data.qty.wka,data.qty.wkd,data.qty.ska,data.qty.skd][i];
-            const r=[data.revenueByType.day,data.revenueByType.wka,data.revenueByType.wkd,data.revenueByType.ska,data.revenueByType.skd][i];
-            return <tr key={t}><td>{t}</td><td>{integer(q[3]-q[0])}</td><td>{euro(r[3]-r[0])}</td></tr>;
-          })}
-        </tbody></table>
+      <Card title="Δ Menge & Einnahmen" subtitle="Δ quantità & entrate">
+        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Δ Menge</th><th>Δ Einnahmen</th><th>% Menge</th><th>% Einnahmen</th></tr></thead><tbody>
+          {legacyAnnualDelta.map(row=><tr key={row.type}><td>{row.type}</td><td>{row.qty>0?'+':''}{integer(row.qty)}</td><td>{row.revenue>0?'+':''}{euro(row.revenue)}</td><td>{row.qtyPct>0?'+':''}{pct(row.qtyPct,Math.abs(row.qtyPct)<10?2:1)}</td><td>{row.revenuePct>0?'+':''}{pct(row.revenuePct,Math.abs(row.revenuePct)<10?2:1)}</td></tr>)}
+        </tbody></table></div>
       </Card>
-      <Card title="Ø Ticketpreis WS 2025-26">
-        <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
+      <Card title="Ø Ticketpreis WS 2025-26" subtitle="Prezzo medio per tipo">
+        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Ø Preis</th></tr></thead><tbody>
+          {legacyAnnualPrices2025.map(row=><tr key={row.type}><td>{row.type}</td><td><strong>€ {row.value.toFixed(2).replace('.',',')}</strong></td></tr>)}
+        </tbody></table></div>
       </Card>
     </div>
+    <Card title="Ø Preis-Trend" subtitle="Trend prezzo medio">
+      <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
+    </Card>
     <EditorialSummary {...editorialSummaries.annual}/>
   </Module>;
 }
@@ -206,9 +218,9 @@ export function RegionalModule(){
 
     <div className="analytics-metrics">
       <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value="Ahrntal+Sand" note="92,1% delle vendite in DAY" top/>
-      <Metric label="SK Area Schwerpunkt" sublabel="Focus SK Area" value="Osttirol" note={`${integer(qty[3][3])} SK Area`}/>
-      <Metric label="DNS WK Kerngebiet" sublabel="Area chiave DNS WK" value="3 Zinnen" note={`${integer(qty[2][2])} DNS WK`}/>
-      <Metric label="Ausgewogenes Profil" sublabel="Profilo equilibrato" value="Gsiesertal" note="Mix prodotti DNS/Area"/>
+      <Metric label="SK Area Schwerpunkt" sublabel="SK Area più radicata" value="Osttirol" note="1.474 pz · 56,7% del totale DNS"/>
+      <Metric label="DNS WK Kerngebiet" sublabel="Cuore del DNS WK" value="3 Zinnen" note="2.162 pz · 62,5% del totale WK DNS"/>
+      <Metric label="Ausgewogenes Profil" sublabel="Profilo più diversificato" value="Gsiesertal" note="Mix equilibrato di tutti i tipi"/>
     </div>
 
     <SectionHeading de="Ticketmix pro Region — 100%" it="Composizione biglietti per regione — 100%"/>
@@ -240,9 +252,7 @@ export function RegionalModule(){
 
     <SectionHeading de="Regionale Erkenntnisse" it="Insights regionali"/>
     <div className="analytics-insights">
-      <Insight n="I" de="Seiser Alm/Val Gardena — starkes WK Area Profil" it="Seiser Alm/Val Gardena — forte profilo WK Area" bodyDe={`Mit ${integer(qty[1][5])} WK Area-Tickets weist das Gebiet den höchsten Wert im Network auf.`} bodyIt={`Con ${integer(qty[1][5])} WK Area è il territorio con il valore più alto del network.`} tag="↗ DNS-Potenzial · Potenziale DNS"/>
-      <Insight n="II" de="3 Zinnen — Umsatz- und Volumenmotor" it="3 Zinnen — motore di fatturato e volumi" bodyDe={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} Tickets und ${euro(data.totalRevenue[2])} Umsatz machen die Region zum stärksten Einzelgebiet.`} bodyIt={`${integer(qty.reduce((sum,a)=>sum+a[2],0))} ticket e ${euro(data.totalRevenue[2])} di entrate: è l'area singola più forte.`} tag="Top contribution"/>
-      <Insight n="III" de="Gsiesertal — ausgewogenes DNS-Profil" it="Gsiesertal — profilo DNS equilibrato" bodyDe="Der ausgewogenste Produktmix im Network." bodyIt="Il mix prodotti più equilibrato del network." tag="Pilotgebiet · Territorio pilota"/>
+      {legacyRegionalInsights.map(item=><Insight key={item.n} {...item}/>)}
     </div>
     <EditorialSummary {...editorialSummaries.regional}/>
   </Module>;
@@ -264,12 +274,13 @@ export function ReliabilityModule(){
     <div className={`analytics-source-badge is-${data.source}`}>
       {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : 'Compatibility dataset · A.2.1'}
     </div>
+    <BilingualNote de={legacyReliabilityCopy.legendDe} it={legacyReliabilityCopy.legendIt}/>
 
     <div className="analytics-metrics">
       <Metric label="Netzöffnung am 20.01.2026" sublabel="Rete aperta" value={pct(totalOpen/totalPot*100)} note={`${totalOpen.toFixed(1)} / ${totalPot.toFixed(0)} km`}/>
       <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalOpen ? totalKs/totalOpen*100 : 0)} note={`${totalKs.toFixed(1)} km KS`}/>
       <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} note="Milestone 1"/>
-      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} note={mostReliable ? `${pct(mostReliable.pct3,0)} am 20.01` : '—'} top/>
+      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} note={mostReliable ? `${pct(mostReliable.pct3,0)} alle 3 milestone` : '—'} top/>
     </div>
 
     <SectionHeading de="KP — Kunstschnee-Index pro Region" it="KP per regione — indice neve artificiale"/>
@@ -301,6 +312,23 @@ export function ReliabilityModule(){
         </tbody></table></div>
       </Card>
     </div>
+
+    <SectionHeading de="DNS Gesamtbild · Klassifikation nach KP-Index" it="Quadro complessivo DNS · Classificazione per indice KP"/>
+    <div className="analytics-grid-2">
+      <Card title="DNS — KS · offen ohne KS · nicht geöffnet (20.01)" subtitle="DNS — KS · aperte senza KS · non aperte (20.01)">
+        <div className="analytics-kpi-stack">
+          <div><span>KS</span><strong>{totalKs.toFixed(1)} km</strong></div>
+          <div><span>Aperte senza KS</span><strong>{Math.max(0,totalOpen-totalKs).toFixed(1)} km</strong></div>
+          <div><span>Non aperte</span><strong>{Math.max(0,totalPot-totalOpen).toFixed(1)} km</strong></div>
+        </div>
+      </Card>
+      <Card title="Klassifikation nach KP-Index" subtitle="Classificazione per indice KP">
+        <div className="analytics-legacy-list">
+          {legacyReliabilityCopy.classification.map(item=><div key={item}>{item}</div>)}
+        </div>
+      </Card>
+    </div>
+    <BilingualNote de={legacyReliabilityCopy.biathlonDe+' '+legacyReliabilityCopy.osttirolDe} it={legacyReliabilityCopy.biathlonIt+' '+legacyReliabilityCopy.osttirolIt}/>
 
     <SectionHeading de="Detailansicht — 16 Partner einzeln" it="Dettaglio — 16 partner"/>
     <div className={`analytics-source-badge is-${partnerData.source}`}>
@@ -339,6 +367,7 @@ export function AdvancedModule(){
     <div className={`analytics-source-badge is-${observed.source}`}>
       {observed.source==='live' ? 'DNS_Core historical · observed inputs verified' : 'Compatibility dataset · observed inputs A.2.1'}
     </div>
+    <BilingualNote de={legacyAdvancedCopy.introDe} it={legacyAdvancedCopy.introIt}/>
     <div className="analytics-assumption-note">
       Observed: ticket volumes · Assumptions: nights/guest, overnight share, spend/night, multiplier, DAY overnight share.
     </div>
@@ -363,16 +392,19 @@ export function AdvancedModule(){
     <SectionHeading de="Südtirol vs. Gesamtnetzwerk" it="Alto Adige vs. intero network"/>
     <div className="analytics-grid-2">
       <Card title="Wertschöpfung — Vergleich">
+        <BilingualNote de={legacyAdvancedCopy.southTyrolScopeDe} it={legacyAdvancedCopy.southTyrolScopeIt}/>
         <ChartCanvas config={{type:'bar',data:{labels:['Südtirol · Alto Adige','Network · intero'],datasets:[
           {label:'Direkt',data:[derived.directAA,derived.directNet],backgroundColor:COLORS.deep},
           {label:'Multiplikator',data:[derived.directAA*(mult-1),derived.directNet*(mult-1)],backgroundColor:COLORS.light},
         ]},options:{...baseOptions,indexAxis:'y',plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true}}}} as any}/>
       </Card>
-      <Card title="Ticketeinnahmen → Territorialer Impact">
-        <div className="analytics-big-impact">€ {(derived.totalNet/1e6).toFixed(2)} Mio</div>
-        <div className="analytics-note-small">Network impact · multiplier {mult.toFixed(2)}</div>
-        <div className="analytics-big-impact secondary">€ {(derived.grand/1e6).toFixed(2)} Mio</div>
-        <div className="analytics-note-small">WK + DAY scenario</div>
+      <Card title="Ticketeinnahmen → Territorialer Impact" subtitle="Incasso biglietti → impatto territoriale">
+        <div className="analytics-impact-flow">
+          <div><span>Einnahmen Wochenkarten · Incasso settimanali</span><strong>{euro(legacyAdvancedCopy.weeklyRevenue)}</strong><small>{legacyAdvancedCopy.weeklyRevenueBreakdown}</small></div>
+          <div className="analytics-impact-arrow">↓</div>
+          <div><span>Territorialer Impact · Impatto territoriale</span><strong>€ {(derived.totalNet/1e6).toFixed(2)} Mio</strong><small>× Multiplikator {mult.toFixed(2)}</small></div>
+          <div><span>Verhältnis · rapporto</span><strong>1 : {Math.round(derived.totalNet/legacyAdvancedCopy.weeklyRevenue)}</strong></div>
+        </div>
       </Card>
     </div>
 
@@ -387,13 +419,32 @@ export function AdvancedModule(){
     </div>
 
     <SectionHeading de="Szenario Tageskarten (explorativ)" it="Scenario giornalieri (esplorativo)"/>
+    <BilingualNote de={legacyAdvancedCopy.dayWarningDe} it={legacyAdvancedCopy.dayWarningIt}/>
     <div className="analytics-metrics">
       <Metric label="Tageskarten gesamt" sublabel="Giornalieri totali" value={integer(observed.dayTickets)}/>
       <Metric label="Davon Übernachtungsgäste" sublabel="Quota ospiti" value={integer(derived.dayNights)} note={`${dayShare}%`}/>
       <Metric label="Zusätzl. Wertschöpfung" sublabel="Valore aggiuntivo" value={`€ ${(derived.dayDirect/1e6).toFixed(2)} Mio`}/>
       <Metric label="Total WK + Tageskarten · Szenario" sublabel="Totale scenario" value={`€ ${(derived.grand/1e6).toFixed(2)} Mio`} top/>
     </div>
-    <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen" titleIt="Note metodologiche & fonti" items={advancedMethodology}/>
+    <SectionHeading de="Strategische Erkenntnisse" it="Insights strategici"/>
+    <div className="analytics-insights">
+      {legacyAdvancedCopy.insights.map(item=><Insight key={item.n} {...item}/>)}
+    </div>
+    <Card title="Ausgangs-HTML — Annahmen, Grenzen & Quellen" subtitle="HTML originale — assunzioni, limiti & fonti">
+      <div className="analytics-legacy-columns">
+        <div>
+          <strong className="analytics-lang-de">Annahmen</strong>
+          <strong className="analytics-lang-it">Assunzioni</strong>
+          <ul>{legacyAdvancedCopy.assumptionsDe.map((item,i)=><li key={item}><span className="analytics-lang-de">{item}</span><span className="analytics-lang-it">{legacyAdvancedCopy.assumptionsIt[i]}</span></li>)}</ul>
+        </div>
+        <div>
+          <p className="analytics-lang-de">{legacyAdvancedCopy.limitsDe}</p>
+          <p className="analytics-lang-it">{legacyAdvancedCopy.limitsIt}</p>
+          <div className="analytics-note-small">{legacyAdvancedCopy.sources}</div>
+        </div>
+      </div>
+    </Card>
+    <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen — verifiziertes Protokoll" titleIt="Note metodologiche & fonti — protocollo verificato" items={advancedMethodology}/>
   </Module>;
 }
 
@@ -417,6 +468,27 @@ export function OvernightModule(){
       <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(total2526/data.rows.length)}/>
     </div>
 
+    <SectionHeading de="Historische Basis aus Ausgangs-HTML — WS 2024-25" it="Base storica dal file HTML originale — SI 2024-25"/>
+    <BilingualNote de={legacyOvernightCopy.basisDe} it={legacyOvernightCopy.basisIt}/>
+    <div className="analytics-metrics">
+      <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(legacyOvernightCopy.total2425)} note="WS 2024-25 · 9 Gebiete · 9 aree"/>
+      <Metric label="Top-Gebiet" sublabel="Area top" value={legacyOvernightCopy.topArea2425} note={`${integer(legacyOvernightCopy.topArea2425Value)} · ${pct(legacyOvernightCopy.topArea2425Share)}`} top/>
+      <Metric label="Gebiete" sublabel="Aree" value={legacyOvernightCopy.areas2425} note="DNS Netzwerk · network"/>
+      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(legacyOvernightCopy.average2425)} note="Durchschnitt · media"/>
+    </div>
+    <div className="analytics-grid-2">
+      <Card title="Übernachtungen pro Gebiet — WS 2024-25" subtitle="Pernottamenti per area — SI 2024-25">
+        <ChartCanvas config={{type:'bar',data:{labels:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map(a=>a.area),datasets:[{data:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map(a=>a.pn[0]),backgroundColor:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
+      </Card>
+      <Card title="Datentabelle · Zeitreihe (Basis)" subtitle="Tabella dati · serie storica (base)">
+        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet · Area</th><th>PN 2024-25</th><th>Anteil · Quota</th><th>PN 2025-26</th></tr></thead><tbody>
+          {overnightAreas.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(a.pn[0]/legacyOvernightCopy.total2425*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
+        </tbody></table></div>
+        <div className="analytics-note-small analytics-legacy-inline">{legacyOvernightCopy.sourceNote}</div>
+      </Card>
+    </div>
+    <EditorialSummary de={legacyOvernightCopy.summaryDe} it={legacyOvernightCopy.summaryIt}/>
+
     <SectionHeading de="Übernachtungen pro Gebiet — WS 2025-26" it="Pernottamenti per area — SI 2025-26"/>
     <div className="analytics-grid-2">
       <Card title="Übernachtungen pro Gebiet (sortiert)">
@@ -434,11 +506,19 @@ export function OvernightModule(){
       </tbody></table></div>
     </Card>
 
-    <SectionHeading de="Kontext Südtirol — Wintersaison 2025/26 (Provinzebene)" it="Contesto Alto Adige — stagione invernale 2025/26"/>
+    <SectionHeading de="Kontext Südtirol — Wintersaison 2025/26 (Provinzebene)" it="Contesto Alto Adige — stagione invernale 2025/26 (livello provinciale)"/>
     <div className="analytics-source-badge is-compatibility">Monthly context · compatibility source · not provided by FAIR</div>
+    <BilingualNote de={legacyOvernightCopy.provinceContextDe} it={legacyOvernightCopy.provinceContextIt}/>
     <div className="analytics-metrics">
-      {['Dezember 2025','Januar 2026','Februar 2026','März 2026'].map((m,i)=><Metric key={m} label={m} value={integer(monthly[i])}/>)}
+      {legacyOvernightCopy.months.map((m,i)=><Metric key={m.de} label={m.de} sublabel={m.it} value={integer(monthly[i] ?? m.nights)} note={`Übernachtungen · presenze (${m.nightsDelta>0?'+':''}${m.nightsDelta.toFixed(1).replace('.',',')}%) · ${integer(m.arrivals)} Ankünfte/arrivi (${m.arrivalsDelta>0?'+':''}${m.arrivalsDelta.toFixed(1).replace('.',',')}%)`}/>)}
     </div>
+    <div className="analytics-metrics">
+      <Metric label="Summe Dez–März 2025/26" sublabel="Totale dic–mar 2025/26" value={integer(legacyOvernightCopy.winterWindowNights)} note="Übernachtungen · presenze — FAIR-Zeitfenster / finestra FAIR"/>
+      <Metric label="Ankünfte Dez–März" sublabel="Arrivi dic–mar" value={integer(legacyOvernightCopy.winterWindowArrivals)} note="01.12.2025–31.03.2026"/>
+      <Metric label="Saison gesamt 2025/26" sublabel="Stagione totale 2025/26" value="14,8 Mio" note={`${integer(legacyOvernightCopy.seasonTotalArrivals)} Ankünfte/arrivi`}/>
+      <Metric label="Top-Gemeinde März" sublabel="Comune top marzo" value={legacyOvernightCopy.topMunicipalityMarch} note={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} presenze`} top/>
+    </div>
+    <div className="analytics-note-small analytics-legacy-inline">{legacyOvernightCopy.provinceSource}</div>
   </Module>;
 }
 
@@ -504,6 +584,13 @@ export function IntensityModule(){
     </div>
     <MethodologyPanel titleDe="KPI-Protokoll & Quellen" titleIt="Protocollo KPI & fonti" items={intensityMethodology}/>
   </Module>;
+}
+
+function BilingualNote({de,it}:{de:string;it:string}){
+  return <div className="analytics-assumption-note analytics-bilingual-note" data-dns-reveal>
+    <p className="analytics-lang-de">{de}</p>
+    <p className="analytics-lang-it">{it}</p>
+  </div>;
 }
 
 function Slider({label,value,min,max,step,onChange,prefix='',suffix=''}:{label:string;value:number;min:number;max:number;step:number;onChange:(v:number)=>void;prefix?:string;suffix?:string}){
