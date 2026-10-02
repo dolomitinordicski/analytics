@@ -140,13 +140,13 @@ export function LiveSourcePanel({
       <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
         {publicBaseline?.state==='ready'
           ? (publicBaseline.matches
-              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblico: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblica: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
               : (language==='de' ? `Öffentliche Baseline: ${publicBaseline.mismatchCount} Abweichungen` : `Baseline pubblica: ${publicBaseline.mismatchCount} differenze`))
           : publicBaseline?.state==='missing'
             ? (language==='de' ? 'Öffentliche Baseline: noch nicht veröffentlicht' : 'Baseline pubblica: non ancora pubblicata')
             : publicBaseline?.state==='error'
               ? (language==='de' ? 'Öffentliche Baseline: Fehler' : 'Baseline pubblica: errore')
-              : (language==='de' ? 'Public Baseline wird geprüft…' : 'Verifica baseline pubblica…')}
+              : (language==='de' ? 'Öffentliche Baseline wird geprüft…' : 'Verifica baseline pubblica…')}
       </span>
       <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
         {audit?.state==='ready'
@@ -171,7 +171,7 @@ export function LiveSourcePanel({
       </div>
     </details>}
     {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
-      <summary>{language==='de'?'Public-Baseline Abweichungen anzeigen':'Mostra differenze baseline pubblico'}</summary>
+      <summary>{language==='de'?'Abweichungen der öffentlichen Baseline anzeigen':'Mostra differenze baseline pubblica'}</summary>
       <div className="analytics-live-diagnostic-grid">
         {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
           <span>{item.path}</span>
@@ -190,8 +190,8 @@ export function LiveSourcePanel({
         ? (language==='de'?' Live-Daten werden geladen…':'Caricamento dati live…')
         : snapshot
           ? (language==='de'
-              ? ` Live geladen · Sales ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`
-              : ` Live caricati · Sales ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`)
+              ? ` Live geladen · Verkäufe ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`
+              : ` Live caricati · Vendite ${snapshot.sales?.rows.length ?? 0} (${snapshot.sales?.source ?? '—'}) · KP ${snapshot.kp?.rows.length ?? 0} (${snapshot.kp?.source ?? '—'})`)
           : (language==='de'?' Keine Live-Daten verfügbar.':'Nessun dato live disponibile.')}</span>
     </div>
 
@@ -232,7 +232,7 @@ export function LiveSourcePanel({
       <div className="analytics-live-diagnostic-grid">
         {[...checks,...annualChecks,...regionalChecks,...advancedChecks,...overnightChecks,...intensityChecks,...kpChecks,...kpPartnerChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
           <span>{c.label}</span>
-          <strong>{c.live?.toLocaleString('de-DE')}</strong>
+          <strong>{c.live?.toLocaleString(language==='de'?'de-DE':'it-IT')}</strong>
           <small>{language==='de'?'Legacy':'Legacy'} {c.legacy.toLocaleString(language==='de'?'de-DE':'it-IT')} · Δ {c.delta?.toLocaleString(language==='de'?'de-DE':'it-IT')}</small>
         </div>)}
       </div>
