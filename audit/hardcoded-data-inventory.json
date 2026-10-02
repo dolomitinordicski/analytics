@@ -1,0 +1,98 @@
+{
+  "version": "A3.11A-1",
+  "source": {
+    "file": "dns_dashboardf.html",
+    "sha256": "30b10ebd49f8bf32b5f2f0e02bc068efebaa940aa73428c910ff52e218dd3e88"
+  },
+  "rule": "copy-verify-switch-delete-last",
+  "datasets": [
+    {
+      "id": "overview-2025-26",
+      "source": "src/data/analyticsData.ts#seasonOverview",
+      "classification": "operational-historical",
+      "runtimeUse": "compatibility fallback + live parity",
+      "target": "DNS_Core.analyticsAuditSnapshots/legacy-dashboard-v1",
+      "status": "inventory"
+    },
+    {
+      "id": "annual-2022-23_2025-26",
+      "source": "src/data/analyticsData.ts#annual",
+      "classification": "operational-historical",
+      "runtimeUse": "compatibility fallback + live parity",
+      "target": "DNS_Core.historicalSeasonRecords + audit snapshot",
+      "status": "inventory"
+    },
+    {
+      "id": "regional-2025-26",
+      "source": "src/data/analyticsData.ts#regional",
+      "classification": "operational-historical",
+      "runtimeUse": "compatibility fallback + live parity",
+      "target": "DNS_Core.historicalSeasonRecords + audit snapshot",
+      "status": "inventory"
+    },
+    {
+      "id": "kp-regions-2025-26",
+      "source": "src/data/analyticsData.ts#kpRegions",
+      "classification": "operational-historical",
+      "runtimeUse": "compatibility fallback + per-field live fallback",
+      "target": "DNS_Core.historicalSeasonRecords + audit snapshot",
+      "status": "inventory"
+    },
+    {
+      "id": "kp-partners-2025-26",
+      "source": "src/data/analyticsData.ts#kpPartners",
+      "classification": "operational-historical",
+      "runtimeUse": "compatibility fallback + per-field live fallback",
+      "target": "DNS_Core.historicalSeasonRecords + audit snapshot",
+      "status": "inventory"
+    },
+    {
+      "id": "overnights-2024-25_2025-26",
+      "source": "src/data/analyticsData.ts#overnightAreas",
+      "classification": "historical-context",
+      "runtimeUse": "2024-25 baseline + monthly compatibility context",
+      "target": "DNS_Core.analyticsReferenceSeries + audit snapshot",
+      "status": "inventory"
+    },
+    {
+      "id": "intensity-inputs-2025-26",
+      "source": "src/data/analyticsData.ts#intensityAreas",
+      "classification": "derived-compatibility",
+      "runtimeUse": "compatibility fallback",
+      "target": "derive from canonical sales + FAIR; audit snapshot only",
+      "status": "inventory"
+    },
+    {
+      "id": "advanced-observed-inputs",
+      "source": "src/data/analyticsData.ts#advancedDefaults[weeklyTicketsNetwork,weeklyTicketsSouthTyrol,dayTickets]",
+      "classification": "derived-compatibility",
+      "runtimeUse": "compatibility fallback",
+      "target": "derive from canonical sales; audit snapshot only",
+      "status": "inventory"
+    },
+    {
+      "id": "advanced-model-parameters",
+      "source": "src/data/analyticsData.ts#advancedDefaults",
+      "classification": "model-parameters",
+      "runtimeUse": "scenario inputs",
+      "target": "versioned analytics assumptions/config",
+      "status": "retain-as-config"
+    },
+    {
+      "id": "legacy-editorial-numerics",
+      "source": "src/data/legacyDashboard.ts",
+      "classification": "editorial-context",
+      "runtimeUse": "protected legacy content",
+      "target": "retain protected content; derive duplicated operational numerics where possible only after parity",
+      "status": "protected"
+    }
+  ],
+  "acceptance": {
+    "integer": "exact",
+    "currency": "exact cents",
+    "decimal": "source precision",
+    "arrays": "same length/order/labels/values",
+    "text": "byte-equivalent unless separately documented source annotation",
+    "mismatchesAllowed": 0
+  }
+}
