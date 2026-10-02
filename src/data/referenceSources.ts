@@ -257,6 +257,15 @@ export const crossCuttingReferenceLimits:ReferenceSourceItem[]=[
     noteDe:'Ein Wochenkartenticket ist ein Indikator für Aufenthalt, kein Beweis für eine Übernachtung.',
     noteIt:'Il settimanale è un indicatore di soggiorno, non una prova di pernottamento.',
   },
+  {
+    key:'formal-citations',
+    labelDe:'Formale Zitation',
+    labelIt:'Citazione formale',
+    source:'DNS Quelldossier — Arbeitshinweis',
+    reliability:'assumption',
+    noteDe:'Tiefe Links zu einzelnen ASTAT-, Land-Tirol- oder weiteren Publikationen vor formaler externer Zitation erneut prüfen.',
+    noteIt:'Verificare nuovamente i link profondi alle singole pubblicazioni ASTAT, Land Tirol o altre fonti prima di una citazione formale esterna.',
+  },
 ];
 
 
