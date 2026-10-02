@@ -67,7 +67,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
       <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note={`${kpis.ticketsDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.ticketsDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
       <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value={`€ ${(data.totalRevenue/1e6).toFixed(2).replace('.',',')} Mio`} note={`${kpis.revenueDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.revenueDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
       <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value={`€ ${data.avgPrice.toFixed(2).replace('.',',')}`} note={`${kpis.avgPriceDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.avgPriceDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
-      <Metric label="Top Leistung" sublabel="Top performance" value={data.topRegion} note={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} Tkts`} top/>
+      <Metric label="Top Leistung" sublabel="Miglior risultato" value={data.topRegion} noteDe={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} Tickets`} noteIt={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} ticket`} top/>
     </div>
 
     <SectionHeading de="Verkäufe nach Region" it="Vendite per regione"/>
@@ -143,7 +143,7 @@ export function AnnualModule({language}:AnalyticsModuleProps){
       const revenue=revenueSeries[last]-revenueSeries[first];
       return {type,qty,revenue,qtyPct:qtySeries[first]?qty/qtySeries[first]*100:0,revenuePct:revenueSeries[first]?revenue/revenueSeries[first]*100:0};
     });
-    rows.push({type:'GESAMT / TOT',qty:data.totalTickets[last]-data.totalTickets[first],revenue:data.totalRevenue[last]-data.totalRevenue[first],qtyPct:data.totalTickets[first]?(data.totalTickets[last]-data.totalTickets[first])/data.totalTickets[first]*100:0,revenuePct:data.totalRevenue[first]?(data.totalRevenue[last]-data.totalRevenue[first])/data.totalRevenue[first]*100:0});
+    rows.push({type:language==='de'?'GESAMT':'TOTALE',qty:data.totalTickets[last]-data.totalTickets[first],revenue:data.totalRevenue[last]-data.totalRevenue[first],qtyPct:data.totalTickets[first]?(data.totalTickets[last]-data.totalTickets[first])/data.totalTickets[first]*100:0,revenuePct:data.totalRevenue[first]?(data.totalRevenue[last]-data.totalRevenue[first])/data.totalRevenue[first]*100:0});
     return rows;
   },[data]);
   const lastIndex=data.totalTickets.length-1;
@@ -163,7 +163,7 @@ export function AnnualModule({language}:AnalyticsModuleProps){
       <Metric label={kpis.dnsSkIsRecord?'DNS SK — Rekord':'DNS SK — aktueller Wert'} sublabel={kpis.dnsSkIsRecord?'DNS SK — record':'DNS SK — valore attuale'} value={integer(kpis.dnsSk)} note={`${kpis.dnsSkGrowthPct>=0?'↑ +':'↓ '}${Math.abs(kpis.dnsSkGrowthPct).toFixed(0)}% vs. 2022-23`} top/>
       <Metric label="DNS WK Wachstum" sublabel="DNS WK crescita" value={`${kpis.dnsWkGrowthPct>=0?'+':''}${kpis.dnsWkGrowthPct.toFixed(0)}%`} note={`vs. 2022-23 (${integer(data.qty.wkd[0])}→${integer(data.qty.wkd[data.qty.wkd.length-1])})`}/>
       <Metric label="Umsatz 4 Jahre" sublabel="Entrate 4 anni" value={`${kpis.totalRevenueGrowthPct>=0?'+':''}${kpis.totalRevenueGrowthPct.toFixed(1).replace('.',',')}%`} note="2022-23 → 2025-26"/>
-      <Metric label="Rekord-Saison" sublabel="Stagione record" value={kpis.recordSeason} note={`${euro(kpis.recordRevenue)} · ${integer(kpis.recordTickets)} Tkts`}/>
+      <Metric label="Rekord-Saison" sublabel="Stagione record" value={kpis.recordSeason} noteDe={`${euro(kpis.recordRevenue)} · ${integer(kpis.recordTickets)} Tickets`} noteIt={`${euro(kpis.recordRevenue)} · ${integer(kpis.recordTickets)} ticket`}/>
     </div>
 
     <SectionHeading de="Trendentwicklung — Index 100 · DNS vs. Area" it="Sviluppo trend — Indice 100 · DNS vs. Area"/>
@@ -306,13 +306,13 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       de={data.source==='live' ? 'DNS_Core LIVE · KP-Parität geprüft' : data.source==='public' ? 'DNS_Core öffentliche Baseline · Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · A.2.1'}
       it={data.source==='live' ? 'DNS_Core LIVE · parità KP verificata' : data.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss verificato' : 'Dataset di compatibilità · A.2.1'}
     />
-    <BilingualNote de={legacyReliabilityCopy.legendDe} it={legacyReliabilityCopy.legendIt}/>
+    <BilingualNote de="KS = Kunstschnee · NS = Naturschnee · nicht geöffnet · KP = KS-km am 20.01 / potenzielle Gesamt-km (max. 100%)" it={legacyReliabilityCopy.legendIt}/>
 
     <div className="analytics-metrics">
       <Metric label="Netzöffnung am 20.01.2026" sublabel="Rete aperta" value={pct(totalOpen/totalPot*100)} note={`${totalOpen.toFixed(1)} / ${totalPot.toFixed(0)} km`}/>
       <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalOpen ? totalKs/totalOpen*100 : 0)} note={`${totalKs.toFixed(1)} km KS`}/>
-      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} note="Milestone 1"/>
-      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} noteDe={mostReliable ? `${pct(mostReliable.pct3,0)} an allen 3 Meilensteinen` : '—'} noteIt={mostReliable ? `${pct(mostReliable.pct3,0)} alle 3 milestone` : '—'} top/>
+      <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} noteDe="Meilenstein 1" noteIt="Milestone 1"/>
+      <Metric label="Höchste Zuverlässigkeit" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} noteDe={mostReliable ? `${pct(mostReliable.pct3,0)} an allen 3 Meilensteinen` : '—'} noteIt={mostReliable ? `${pct(mostReliable.pct3,0)} alle 3 milestone` : '—'} top/>
     </div>
 
     <SectionHeading de="KP — Kunstschnee-Index pro Region" it="KP per regione — indice neve artificiale"/>
@@ -463,7 +463,7 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
       <Metric label="Tageskarten gesamt" sublabel="Giornalieri totali" value={integer(observed.dayTickets)}/>
       <Metric label="Davon Übernachtungsgäste" sublabel="Quota ospiti" value={integer(derived.dayNights)} note={`${dayShare}%`}/>
       <Metric label="Zusätzl. Wertschöpfung" sublabel="Valore aggiuntivo" value={`€ ${(derived.dayDirect/1e6).toFixed(2)} Mio`}/>
-      <Metric label="Total WK + Tageskarten · Szenario" sublabel="Totale scenario" value={`€ ${(derived.grand/1e6).toFixed(2)} Mio`} top/>
+      <Metric label="Gesamt WK + Tageskarten · Szenario" sublabel="Totale scenario" value={`€ ${(derived.grand/1e6).toFixed(2)} Mio`} top/>
     </div>
     <SectionHeading de="Strategische Erkenntnisse" it="Insights strategici"/>
     <div className="analytics-insights">
@@ -492,7 +492,7 @@ export function OvernightModule({language}:AnalyticsModuleProps){
   const monthly=data.monthly;
   return <Module>
     <SourceBadge state={data.source}
-      de={data.source==='fair' ? 'DNS FAIR · PN-Parität geprüft · 8 Reporting Areas' : data.source==='public' ? 'DNS_Core öffentliche Baseline · PN Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · PN A.2.1'}
+      de={data.source==='fair' ? 'DNS FAIR · PN-Parität geprüft · 8 Berichtsgebiete' : data.source==='public' ? 'DNS_Core öffentliche Baseline · PN Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · PN A.2.1'}
       it={data.source==='fair' ? 'DNS FAIR · parità PN verificata · 8 reporting area' : data.source==='public' ? 'Baseline pubblica DNS_Core · PN zero-loss verificato' : 'Dataset di compatibilità · PN A.2.1'}
     />
 
@@ -625,7 +625,7 @@ export function IntensityModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Strategische Erkenntnisse" it="Insights strategici"/>
     <div className="analytics-insights">
-      <Insight n="I" de={`${sorted[0].area.split('/')[0].trim()} — höchste Intensität im Network`} it={`${sorted[0].area.split('/')[0].trim()} — massima intensità nel network`} bodyDe={`${pct(sorted[0].intWK,2)} der Übernachtungen sind geschätzte Langlauf-Gäste.`} bodyIt={`${pct(sorted[0].intWK,2)} dei pernottamenti stimati sono fondisti.`} tag="Strukturelle Verankerung · Radicamento strutturale"/>
+      <Insight n="I" de={`${sorted[0].area.split('/')[0].trim()} — höchste Intensität im Netzwerk`} it={`${sorted[0].area.split('/')[0].trim()} — massima intensità nel network`} bodyDe={`${pct(sorted[0].intWK,2)} der Übernachtungen sind geschätzte Langlauf-Gäste.`} bodyIt={`${pct(sorted[0].intWK,2)} dei pernottamenti stimati sono fondisti.`} tag="Strukturelle Verankerung · Radicamento strutturale"/>
       <Insight n="II" de="Comelico — überraschend hohe Intensität" it="Comelico — intensità sorprendentemente alta" bodyDe="Kleines Gebiet, aber der Langlauf ist relativ dominant." bodyIt="Area piccola, ma il fondo vi è relativamente dominante." tagDe="↑ Strukturelle Relevanz" tagIt="↑ Rilevanza strutturale" tag="↑ Strukturelle Relevanz · ↑ Rilevanza strutturale"/>
       <Insight n="III" de="Niedrige % ≠ wirtschaftlich irrelevant" it="% bassa ≠ irrilevante economicamente" bodyDe="Auch kleine Prozentwerte können hunderte direkt zurechenbare Übernachtungen bedeuten." bodyIt="Anche percentuali ridotte possono corrispondere a centinaia di pernottamenti attribuibili." tagDe="Kontext" tagIt="Contesto" tag="Kontext · Contesto"/>
     </div>
