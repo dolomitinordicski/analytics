@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
-import { Alert, BilingualText, Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading, SourceBadge } from '../components/Ui';
+import { Alert, BilingualText, Card, EditorialSummary, Insight, MethodologyPanel, Metric, ReferencePanel, SectionHeading, SourceBadge } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
@@ -28,6 +28,14 @@ import {
   overnightMethodology,
   reliabilityMethodology,
 } from '../data/editorial';
+import {
+  advancedReferenceSources,
+  crossCuttingReferenceLimits,
+  overnightReferenceSources,
+  overnightWorkingPn2526,
+  reliabilityReferenceSources,
+  salesReferenceSources,
+} from '../data/referenceSources';
 import {
   legacyAdvancedCopy,
   legacyOverviewNotes,
@@ -118,6 +126,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
       {overviewInsights.map(x=><Insight key={x[0]} n={x[0]} de={x[1]} it={x[2]} bodyDe={x[3]} bodyIt={x[4]} tag={x[5]}/>)}
     </div>
     <EditorialSummary {...editorialSummaries.overview}/>
+    <ReferencePanel titleDe="Datenquellen & Qualität" titleIt="Fonti dati & qualità" items={salesReferenceSources}/>
   </Module>;
 }
 
@@ -377,6 +386,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       </tbody></table></div>
     </Card>
     <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen" titleIt="Note metodologiche & fonti" items={reliabilityMethodology}/>
+    <ReferencePanel titleDe="KP-Datenquellen & Zuverlässigkeit" titleIt="Fonti KP & affidabilità" items={reliabilityReferenceSources}/>
     <EditorialSummary {...editorialSummaries.reliability}/>
   </Module>;
 }
@@ -474,6 +484,8 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
       <span className="analytics-lang-it">Le assunzioni e le fonti dell’HTML originale restano archiviate nel dataset di preservazione. Per calcolo e interpretazione fa fede esclusivamente il protocollo verificato seguente.</span>
     </Alert>
     <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen — verifiziertes Protokoll" titleIt="Note metodologiche & fonti — protocollo verificato" items={advancedMethodology}/>
+    <ReferencePanel titleDe="Referenzwerte & Quellenqualität" titleIt="Valori di riferimento & qualità fonti" items={advancedReferenceSources}/>
+    <ReferencePanel titleDe="Übergreifende Grenzen" titleIt="Limiti trasversali" items={crossCuttingReferenceLimits}/>
   </Module>;
 }
 
@@ -548,6 +560,33 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       </tbody></table></div>
     </Card>
 
+    <SectionHeading de="Arbeitsdossier 2025-26 — nicht operative Referenz" it="Dossier di lavoro 2025-26 — riferimento non operativo"/>
+    <Alert variant="warning">
+      <span className="analytics-lang-de">Diese Werte stammen aus dem ergänzenden Quelldossier (Tourismusverbände / bereitgestellte Daten). Sie dienen ausschließlich der Dokumentation und ersetzen die kanonischen FAIR-Werte nicht. Abweichungen werden vor externer Nutzung separat validiert.</span>
+      <span className="analytics-lang-it">Questi valori provengono dal dossier fonti aggiuntivo (associazioni turistiche / dati forniti). Servono solo come documentazione e non sostituiscono i valori FAIR canonici. Le differenze vanno validate separatamente prima dell’uso esterno.</span>
+    </Alert>
+    <Card titleDe="PN nach Gebiet — Arbeitsdossier" titleIt="PN per area — dossier di lavoro">
+      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr>
+        <th><BilingualText de="Gebiet" it="Area"/></th>
+        <th>PN 2025-26</th>
+        <th>Δ</th>
+        <th><BilingualText de="Status" it="Stato"/></th>
+      </tr></thead><tbody>
+        {overnightWorkingPn2526.map(row=><tr key={row.area}>
+          <td>{row.area}</td>
+          <td>{integer(row.pn)}</td>
+          <td>{row.delta==null?'—':`${row.delta>0?'+':''}${row.delta.toFixed(1).replace('.',',')}%`}</td>
+          <td><span className="dns-status" data-status={row.reliability==='official'?'ready':row.reliability==='provisional'?'error':'warning'}>
+            {row.reliability==='official'
+              ? <BilingualText de="Quelle bestätigt" it="Fonte confermata"/>
+              : row.reliability==='provisional'
+                ? <BilingualText de="Zu prüfen" it="Da verificare"/>
+                : <BilingualText de="Zu kontextualisieren" it="Da contestualizzare"/>}
+          </span></td>
+        </tr>)}
+      </tbody></table></div>
+    </Card>
+
     <SectionHeading de="Kontext Südtirol — Wintersaison 2025/26 (Provinzebene)" it="Contesto Alto Adige — stagione invernale 2025/26 (livello provinciale)"/>
     <SourceBadge state="historical" de="Monatskontext · historische Quelle · nicht von FAIR bereitgestellt" it="Contesto mensile · fonte storica · non fornito da FAIR"/>
     <BilingualNote de={legacyOvernightCopy.provinceContextDe} it={legacyOvernightCopy.provinceContextIt}/>
@@ -564,6 +603,8 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       <span className="analytics-lang-de">Quelle: ASTAT — Landesinstitut für Statistik, monatliche Tourismusentwicklung (Dez. 2025–März 2026). Provinzkontext, nicht DNS-spezifisch. Die Summe Dez–März umfasst ganz Südtirol.</span>
       <span className="analytics-lang-it">{legacyOvernightCopy.provinceSource.replace('Quelle · Fonte: ','Fonte: ')}</span>
     </div>
+    <ReferencePanel titleDe="Touristische Referenzquellen & Vergleichbarkeit" titleIt="Fonti turistiche & comparabilità" items={overnightReferenceSources}/>
+    <ReferencePanel titleDe="Statistische Grenzen" titleIt="Limiti statistici" items={crossCuttingReferenceLimits}/>
   </Module>;
 }
 
