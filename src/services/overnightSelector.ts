@@ -1,6 +1,7 @@
 import { overnightAreas } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 export type OvernightAreaRow = {
   areaId:string;
@@ -10,7 +11,7 @@ export type OvernightAreaRow = {
 };
 
 export type OvernightDataset = {
-  source:'fair'|'compatibility';
+  source:'fair'|'public'|'compatibility';
   rows:OvernightAreaRow[];
   monthly:number[];
 };
@@ -33,9 +34,9 @@ function legacyAreaId(label:string):string|null {
   return resolveAnalyticsReportingAreaId(label);
 }
 
-function compatibilityRows():OvernightAreaRow[] {
+function rowsFrom(sourceRows:ReadonlyArray<{area:string;pn:ReadonlyArray<number>;m:ReadonlyArray<number>}>):OvernightAreaRow[] {
   const grouped=new Map<string,OvernightAreaRow>();
-  for (const row of overnightAreas) {
+  for (const row of sourceRows) {
     const areaId=legacyAreaId(row.area);
     if (!areaId) continue;
     const current=grouped.get(areaId) ?? {
@@ -54,11 +55,13 @@ function compatibilityRows():OvernightAreaRow[] {
 export function selectOvernightDataset(
   snapshot:LiveAnalyticsSnapshot|null,
   fairReady:boolean,
+  publicBaseline?:PublicBaselineData|null,
 ):OvernightDataset {
-  const fallback=compatibilityRows();
-  const monthly=[0,1,2,3].map(i=>overnightAreas.reduce((sum,row)=>sum+Number(row.m[i]),0));
+  const sourceRows=publicBaseline?.overnightAreas ?? overnightAreas;
+  const fallback=rowsFrom(sourceRows);
+  const monthly=[0,1,2,3].map(i=>sourceRows.reduce((sum,row)=>sum+Number(row.m[i]),0));
   if (!fairReady || !snapshot?.fair) {
-    return {source:'compatibility',rows:fallback,monthly};
+    return {source:publicBaseline?'public':'compatibility',rows:fallback,monthly};
   }
 
   const byArea=new Map(fallback.map(row=>[row.areaId,row]));
