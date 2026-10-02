@@ -26,6 +26,7 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run check:parity
+      - run: npm run check:zero-loss
       - run: npm run build
       - if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
