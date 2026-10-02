@@ -287,11 +287,15 @@ export function compareAdvancedObservedInputs(snapshot:LiveAnalyticsSnapshot|nul
       },0)
     : null;
   const day=sales ? Number(sales.byProduct.day?.quantity ?? 0) : null;
+  const wkAreaRevenue=sales ? Number(sales.byProduct['wk-area']?.revenue ?? 0) : null;
+  const wkDnsRevenue=sales ? Number(sales.byProduct['wk-dns']?.revenue ?? 0) : null;
 
   return [
     check('advanced-weekly-network','Advanced weekly tickets network',advancedDefaults.weeklyTicketsNetwork,weeklyNetwork,0),
     check('advanced-weekly-south-tyrol','Advanced weekly tickets South Tyrol',advancedDefaults.weeklyTicketsSouthTyrol,weeklySouthTyrol,0),
     check('advanced-day','Advanced DAY tickets',advancedDefaults.dayTickets,day,0),
+    check('advanced-wk-area-revenue','Advanced WK Area revenue',210672,wkAreaRevenue,0.02),
+    check('advanced-wk-dns-revenue','Advanced WK DNS revenue',214726,wkDnsRevenue,0.02),
   ];
 }
 
@@ -299,7 +303,7 @@ export function advancedObservedParitySummary(checks:ParityCheck[]) {
   const available=checks.filter(c=>c.status!=='unavailable');
   const matches=available.filter(c=>c.status==='match').length;
   const different=available.filter(c=>c.status==='different').length;
-  const expected=3;
+  const expected=5;
   return {
     available:available.length,
     expected,

@@ -14,6 +14,9 @@ export type AdvancedObservedInputs = {
   weeklyTicketsNetwork:number;
   weeklyTicketsSouthTyrol:number;
   dayTickets:number;
+  weeklyRevenueNetwork:number;
+  weeklyRevenueArea:number;
+  weeklyRevenueDns:number;
 };
 
 export function selectAdvancedObservedInputs(
@@ -27,6 +30,9 @@ export function selectAdvancedObservedInputs(
       weeklyTicketsNetwork:advancedDefaults.weeklyTicketsNetwork,
       weeklyTicketsSouthTyrol:advancedDefaults.weeklyTicketsSouthTyrol,
       dayTickets:advancedDefaults.dayTickets,
+      weeklyRevenueArea:210672,
+      weeklyRevenueDns:214726,
+      weeklyRevenueNetwork:425398,
     };
   }
 
@@ -41,10 +47,16 @@ export function selectAdvancedObservedInputs(
       Number(area['wk-dns']?.quantity ?? 0);
   },0);
 
+  const weeklyRevenueArea=Number(sales.byProduct['wk-area']?.revenue ?? 0);
+  const weeklyRevenueDns=Number(sales.byProduct['wk-dns']?.revenue ?? 0);
+
   return {
     source:'live',
     weeklyTicketsNetwork,
     weeklyTicketsSouthTyrol,
     dayTickets:Number(sales.byProduct.day?.quantity ?? 0),
+    weeklyRevenueArea,
+    weeklyRevenueDns,
+    weeklyRevenueNetwork:weeklyRevenueArea+weeklyRevenueDns,
   };
 }

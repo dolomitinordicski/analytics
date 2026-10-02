@@ -33,6 +33,7 @@ const intensitySelector = read('src/services/intensitySelector.ts');
 const editorial = read('src/data/editorial.ts');
 const ui = read('src/components/Ui.tsx');
 const legacy = read('src/data/legacyDashboard.ts');
+const derivedKpis = read('src/services/derivedKpis.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -229,6 +230,19 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.10 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.10 editorial analyses and methodology/source protocol are integrated');
+
+for (const [label, content, tokens] of [
+  ['derived KPI service', derivedKpis, ['deriveOverviewKpis','deriveAnnualKpis','deriveRegionalKpis','nonDayEntropy']],
+  ['derived KPI rendering', modules, ['deriveOverviewKpis','deriveAnnualKpis','deriveRegionalKpis','observed.weeklyRevenueNetwork','observed.weeklyRevenueArea','observed.weeklyRevenueDns']],
+  ['Advanced revenue selector', advancedSelector, ['weeklyRevenueNetwork','weeklyRevenueArea','weeklyRevenueDns']],
+  ['Advanced revenue parity', parity, ['advanced-wk-area-revenue','advanced-wk-dns-revenue','const expected=5']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.11B ${label} missing: ${token}`);
+}
+for (const forbidden of ['value="2.355"','value="+97%"','value="+20,2%"','value="Ahrntal+Sand"','legacyAdvancedCopy.weeklyRevenue)}</strong>']) {
+  if (modules.includes(forbidden)) fail(`A.3.11B hardcoded visible KPI remains: ${forbidden}`);
+}
+if (!process.exitCode) ok('A.3.11B visible KPIs are derived from the active datasets');
 
 
 const legacySourceTokens = [
