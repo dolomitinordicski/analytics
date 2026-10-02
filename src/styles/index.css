@@ -190,7 +190,8 @@
   }
 
   .analytics-source-badge.is-historical {
-    @apply border-dns-mid/20 bg-dns-day/35 text-dns-muted;
+    @apply border-dns-mid/20 text-dns-muted;
+    background: rgba(212,206,198,.35);
   }
 
   .analytics-source-badge.is-compatibility {
