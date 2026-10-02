@@ -8,6 +8,7 @@ import {
   type AnalyticsAccessContext,
 } from '../services/auth';
 import { loadLiveAnalyticsSnapshot, type LiveAnalyticsSnapshot } from '../services/liveAnalytics';
+import { loadAuditSnapshotParity, type AuditParity } from '../services/auditSnapshot';
 import {
   compareLiveToCompatibility,
   compareRegionalToCompatibility,
@@ -41,8 +42,15 @@ export function LiveSourcePanel({
   const [password,setPassword]=useState('');
   const [busy,setBusy]=useState(true);
   const [error,setError]=useState('');
+  const [audit,setAudit]=useState<AuditParity|null>(null);
 
   useEffect(()=>subscribeAnalyticsAuth(next=>setUser(next)),[]);
+
+  useEffect(()=>{
+    let active=true;
+    void loadAuditSnapshotParity().then(result=>{ if(active) setAudit(result); });
+    return()=>{active=false};
+  },[]);
 
   useEffect(()=>{
     let live=true;
@@ -119,6 +127,29 @@ export function LiveSourcePanel({
         {busy ? '…' : (language==='de'?'Anmelden':'Accedi')}
       </button>
     </div>
+    <div className="analytics-live-meta">
+      <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
+        {audit?.state==='ready'
+          ? (audit.matches
+              ? (language==='de' ? 'Zero-Loss Audit: 100% · 0 Abweichungen' : 'Audit zero-loss: 100% · 0 differenze')
+              : (language==='de' ? `Zero-Loss Audit: ${audit.mismatchCount} Abweichungen` : `Audit zero-loss: ${audit.mismatchCount} differenze`))
+          : audit?.state==='missing'
+            ? (language==='de' ? 'Zero-Loss Audit: DNS_Core Snapshot fehlt' : 'Audit zero-loss: snapshot DNS_Core assente')
+            : audit?.state==='error'
+              ? (language==='de' ? 'Zero-Loss Audit: Fehler' : 'Audit zero-loss: errore')
+              : (language==='de' ? 'Zero-Loss Audit wird geprüft…' : 'Verifica audit zero-loss…')}
+      </span>
+    </div>
+    {audit?.state==='ready' && audit.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Zero-Loss Abweichungen anzeigen':'Mostra differenze zero-loss'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>local {String(item.local)}</small>
+        </div>)}
+      </div>
+    </details>}
     {error && <div className="analytics-live-error" role="alert">{error}</div>}
   </section>;
 
@@ -140,6 +171,13 @@ export function LiveSourcePanel({
           ? `Parity: ${summary.matches}/${summary.available} match`
           : `Parità: ${summary.matches}/${summary.available} corrispondenti`}
       </span>
+      <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
+        {audit?.state==='ready'
+          ? (audit.matches ? 'Zero-Loss 100% · 0 Δ' : `Zero-Loss ${audit.mismatchCount} Δ`)
+          : audit?.state==='missing' ? 'Zero-Loss snapshot —'
+          : audit?.state==='error' ? 'Zero-Loss error'
+          : 'Zero-Loss …'}
+      </span>
       <span>
         Overview {summary.ready?'✓':'—'} · Annual {annualSummary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Advanced {advancedSummary.ready?'✓':'—'} · Overnight {overnightSummary.ready?'✓':'—'} · Intensity {intensitySummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
       </span>
@@ -155,6 +193,16 @@ export function LiveSourcePanel({
           <span>{c.label}</span>
           <strong>{c.live?.toLocaleString('de-DE')}</strong>
           <small>legacy {c.legacy.toLocaleString('de-DE')} · Δ {c.delta?.toLocaleString('de-DE')}</small>
+        </div>)}
+      </div>
+    </details>}
+    {audit?.state==='ready' && audit.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Zero-Loss Audit-Abweichungen':'Differenze audit zero-loss'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>local {String(item.local)}</small>
         </div>)}
       </div>
     </details>}
