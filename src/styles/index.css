@@ -181,6 +181,18 @@
     @apply border-[#0F6E56]/25 bg-[#0F6E56]/[.06] text-[#0F6E56];
   }
 
+  .analytics-source-badge.is-public {
+    @apply border-dns-deep/20 bg-dns-light/20 text-dns-deep;
+  }
+
+  .analytics-source-badge.is-fair {
+    @apply border-dns-mid/25 bg-dns-mid/[.06] text-dns-deep;
+  }
+
+  .analytics-source-badge.is-historical {
+    @apply border-dns-mid/20 bg-dns-day/35 text-dns-muted;
+  }
+
   .analytics-source-badge.is-compatibility {
     @apply border-dns-mid/20 bg-white text-dns-muted;
   }
