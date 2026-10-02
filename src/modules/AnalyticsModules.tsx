@@ -32,6 +32,7 @@ import {
   advancedReferenceSources,
   crossCuttingReferenceLimits,
   overnightReferenceSources,
+  overnightWorkingPn2526,
   reliabilityReferenceSources,
   salesReferenceSources,
 } from '../data/referenceSources';
@@ -556,6 +557,33 @@ export function OvernightModule({language}:AnalyticsModuleProps){
     <Card titleDe="WS 2025-26 vs. WS 2024-25" titleIt="SI 2025-26 vs. SI 2024-25">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>2025-26</th><th><BilingualText de="Anteil" it="Quota"/></th><th>2024-25</th><th>Δ</th></tr></thead><tbody>
         {sorted.map(a=><tr key={a.areaId}><td><RegionLabel name={a.area} compact/></td><td><strong>{integer(a.pn2526)}</strong></td><td>{pct(a.pn2526/total2526*100)}</td><td>{integer(a.pn2425)}</td><td className={a.pn2526-a.pn2425>=0?'is-positive':'is-negative'}>{integer(a.pn2526-a.pn2425)}</td></tr>)}
+      </tbody></table></div>
+    </Card>
+
+    <SectionHeading de="Arbeitsdossier 2025-26 — nicht operative Referenz" it="Dossier di lavoro 2025-26 — riferimento non operativo"/>
+    <Alert variant="warning">
+      <span className="analytics-lang-de">Diese Werte stammen aus dem ergänzenden Quelldossier (Tourismusverbände / bereitgestellte Daten). Sie dienen ausschließlich der Dokumentation und ersetzen die kanonischen FAIR-Werte nicht. Abweichungen werden vor externer Nutzung separat validiert.</span>
+      <span className="analytics-lang-it">Questi valori provengono dal dossier fonti aggiuntivo (associazioni turistiche / dati forniti). Servono solo come documentazione e non sostituiscono i valori FAIR canonici. Le differenze vanno validate separatamente prima dell’uso esterno.</span>
+    </Alert>
+    <Card titleDe="PN nach Gebiet — Arbeitsdossier" titleIt="PN per area — dossier di lavoro">
+      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr>
+        <th><BilingualText de="Gebiet" it="Area"/></th>
+        <th>PN 2025-26</th>
+        <th>Δ</th>
+        <th><BilingualText de="Status" it="Stato"/></th>
+      </tr></thead><tbody>
+        {overnightWorkingPn2526.map(row=><tr key={row.area}>
+          <td>{row.area}</td>
+          <td>{integer(row.pn)}</td>
+          <td>{row.delta==null?'—':`${row.delta>0?'+':''}${row.delta.toFixed(1).replace('.',',')}%`}</td>
+          <td><span className="dns-status" data-status={row.reliability==='official'?'ready':row.reliability==='provisional'?'error':'warning'}>
+            {row.reliability==='official'
+              ? <BilingualText de="Quelle bestätigt" it="Fonte confermata"/>
+              : row.reliability==='provisional'
+                ? <BilingualText de="Zu prüfen" it="Da verificare"/>
+                : <BilingualText de="Zu kontextualisieren" it="Da contestualizzare"/>}
+          </span></td>
+        </tr>)}
       </tbody></table></div>
     </Card>
 
