@@ -10,15 +10,26 @@ The application is migrated to:
 - React
 - TypeScript
 - Tailwind CSS v4 / Vite
-- DNS Foundation / Design System v1.13.x
-- shared navigation runtime
-- Accessibility v1
-- shared print runtime
-- shared DNS brand assets and regional logo manifest
+- immutable DNS Foundation `foundation-v1.2.0`
+- canonical Foundation shell/navigation/interaction/motion runtime
+- Foundation Accessibility runtime
+- Foundation print capability/runtime
+- immutable DNS brand assets and canonical regional-logo helpers
 - shared Data Contract metadata
 - Firebase DNS_Core master-data connection
 
 The A.2.1 migration preserves the existing analytical values, graph colors and analytical meaning before changing data sources.
+
+### Final Foundation boundary
+
+Foundation owns shared design variables, operational chrome, DE-first language
+persistence, Accessibility, interaction/motion, print mechanics, footer,
+generic controls/tables/content semantics and shared brand assets.
+
+Analytics owns the analytical engines and presentation semantics: A.2/A.3
+selectors, parity and zero-loss gates, compatibility baselines, editorial
+content, Chart.js configurations, dedicated chart palettes and analytical
+assumptions. Foundation cleanup must not rewrite those values or colors.
 
 ### Preserved modules
 
