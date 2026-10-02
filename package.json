@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check:parity": "node scripts/check-a2-2-parity.mjs",
-    "validate": "npm run check:parity && npm run build"
+    "validate": "npm run check:parity && npm run check:zero-loss && npm run build",
+    "check:zero-loss": "node scripts/check-zero-loss-golden.mjs"
   },
   "dependencies": {
     "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#63a132b071fd2a4999b34580be0d4ab1aee36c91",
