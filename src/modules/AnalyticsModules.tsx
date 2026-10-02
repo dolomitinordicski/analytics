@@ -58,9 +58,10 @@ export function OverviewModule({language}:AnalyticsModuleProps){
   const kpis=useMemo(()=>deriveOverviewKpis(data,annualData),[data,annualData]);
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
-    <SourceBadge state={data.source}>
-      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={data.source}
+      de={data.source==='live' ? 'DNS_Core LIVE · Parität geprüft' : data.source==='public' ? 'DNS_Core öffentliche Baseline · Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · A.2.1'}
+      it={data.source==='live' ? 'DNS_Core LIVE · parità verificata' : data.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss verificato' : 'Dataset di compatibilità · A.2.1'}
+    />
 
     <div className="analytics-metrics">
       <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note={`${kpis.ticketsDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.ticketsDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
@@ -154,9 +155,10 @@ export function AnnualModule({language}:AnalyticsModuleProps){
     {type:'DNS SK',value:data.qty.skd[lastIndex]?data.revenueByType.skd[lastIndex]/data.qty.skd[lastIndex]:0},
   ];
   return <Module>
-    <SourceBadge state={data.source==='live'?'historical':data.source}>
-      {data.source==='live' ? 'DNS_Core historical · annual parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={data.source==='live'?'historical':data.source}
+      de={data.source==='live' ? 'DNS_Core historisch · Jahresparität geprüft' : data.source==='public' ? 'DNS_Core öffentliche Baseline · Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · A.2.1'}
+      it={data.source==='live' ? 'DNS_Core storico · parità annuale verificata' : data.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss verificato' : 'Dataset di compatibilità · A.2.1'}
+    />
     <div className="analytics-metrics">
       <Metric label={kpis.dnsSkIsRecord?'DNS SK — Rekord':'DNS SK — aktueller Wert'} sublabel={kpis.dnsSkIsRecord?'DNS SK — record':'DNS SK — valore attuale'} value={integer(kpis.dnsSk)} note={`${kpis.dnsSkGrowthPct>=0?'↑ +':'↓ '}${Math.abs(kpis.dnsSkGrowthPct).toFixed(0)}% vs. 2022-23`} top/>
       <Metric label="DNS WK Wachstum" sublabel="DNS WK crescita" value={`${kpis.dnsWkGrowthPct>=0?'+':''}${kpis.dnsWkGrowthPct.toFixed(0)}%`} note={`vs. 2022-23 (${integer(data.qty.wkd[0])}→${integer(data.qty.wkd[data.qty.wkd.length-1])})`}/>
@@ -240,9 +242,10 @@ export function RegionalModule({language}:AnalyticsModuleProps){
   const kpis=useMemo(()=>deriveRegionalKpis(data),[data]);
   const datasetsFrom=(p:number[][])=>TICKET_TYPES.map((label,j)=>({label,data:p.map(x=>x[j]),backgroundColor:palette[j],borderWidth:0}));
   return <Module>
-    <SourceBadge state={data.source}>
-      {data.source==='live' ? 'DNS_Core LIVE · regional parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={data.source}
+      de={data.source==='live' ? 'DNS_Core LIVE · regionale Parität geprüft' : data.source==='public' ? 'DNS_Core öffentliche Baseline · Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · A.2.1'}
+      it={data.source==='live' ? 'DNS_Core LIVE · parità regionale verificata' : data.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss verificato' : 'Dataset di compatibilità · A.2.1'}
+    />
 
     <div className="analytics-metrics">
       <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value={kpis.dayRegion} note={`${pct(kpis.daySharePct)} DAY-Anteil · quota DAY`} top/>
@@ -299,9 +302,10 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
   const mostReliable=[...rows].sort((a,b)=>b.pct3-a.pct3)[0];
 
   return <Module>
-    <SourceBadge state={data.source}>
-      {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={data.source}
+      de={data.source==='live' ? 'DNS_Core LIVE · KP-Parität geprüft' : data.source==='public' ? 'DNS_Core öffentliche Baseline · Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · A.2.1'}
+      it={data.source==='live' ? 'DNS_Core LIVE · parità KP verificata' : data.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss verificato' : 'Dataset di compatibilità · A.2.1'}
+    />
     <BilingualNote de={legacyReliabilityCopy.legendDe} it={legacyReliabilityCopy.legendIt}/>
 
     <div className="analytics-metrics">
@@ -359,9 +363,10 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
     <BilingualNote de={legacyReliabilityCopy.biathlonDe+' '+legacyReliabilityCopy.osttirolDe} it={legacyReliabilityCopy.biathlonIt+' '+legacyReliabilityCopy.osttirolIt}/>
 
     <SectionHeading de="Detailansicht — 16 Partner einzeln" it="Dettaglio — 16 partner"/>
-    <SourceBadge state={partnerData.source==='live'?'historical':partnerData.source}>
-      {partnerData.source==='live' ? 'DNS_Core historical · partner parity verified' : partnerData.source==='public' ? 'DNS_Core public baseline · partner zero-loss verified' : 'Partner detail · Compatibility dataset · A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={partnerData.source==='live'?'historical':partnerData.source}
+      de={partnerData.source==='live' ? 'DNS_Core historisch · Partnerparität geprüft' : partnerData.source==='public' ? 'DNS_Core öffentliche Baseline · Partner Zero-Loss geprüft' : 'Partnerdetail · Kompatibilitätsdatensatz · A.2.1'}
+      it={partnerData.source==='live' ? 'DNS_Core storico · parità partner verificata' : partnerData.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss partner verificato' : 'Dettaglio partner · dataset di compatibilità · A.2.1'}
+    />
     <Card title="KP pro Partner — km KS / km potenziali individuali">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th>Aperto</th><th>KP</th></tr></thead><tbody>
         {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
@@ -392,12 +397,14 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
     return {nightsNet,nightsAA,directNet,directAA,totalNet,dayNights,dayDirect,grand:directNet+dayDirect};
   },[nights,share,spend,mult,dayShare]);
   return <Module>
-    <SourceBadge state={observed.source==='live'?'historical':observed.source}>
-      {observed.source==='live' ? 'DNS_Core historical · observed inputs verified' : observed.source==='public' ? 'DNS_Core public baseline · observed inputs zero-loss verified' : 'Compatibility dataset · observed inputs A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={observed.source==='live'?'historical':observed.source}
+      de={observed.source==='live' ? 'DNS_Core historisch · beobachtete Inputs geprüft' : observed.source==='public' ? 'DNS_Core öffentliche Baseline · beobachtete Inputs Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · beobachtete Inputs A.2.1'}
+      it={observed.source==='live' ? 'DNS_Core storico · input osservati verificati' : observed.source==='public' ? 'Baseline pubblica DNS_Core · input osservati zero-loss verificati' : 'Dataset di compatibilità · input osservati A.2.1'}
+    />
     <BilingualNote de={legacyAdvancedCopy.introDe} it={legacyAdvancedCopy.introIt}/>
     <div className="analytics-assumption-note">
-      Observed: ticket volumes · Assumptions: nights/guest, overnight share, spend/night, multiplier, DAY overnight share.
+      <span className="analytics-lang-de">Beobachtet: Ticketmengen · Annahmen: Nächte/Gast, Übernachtungsanteil, Ausgaben/Nacht, Multiplikator, DAY-Übernachtungsanteil.</span>
+      <span className="analytics-lang-it">Osservato: volumi ticket · Assunzioni: notti/ospite, quota pernottanti, spesa/notte, moltiplicatore, quota pernottanti DAY.</span>
     </div>
     <div className="analytics-metrics">
       <Metric label="Wochenkarten gesamt" sublabel="Settimanali totali" value={integer(observed.weeklyTicketsNetwork)} note="Network"/>
@@ -480,9 +487,10 @@ export function OvernightModule({language}:AnalyticsModuleProps){
   const top=sorted[0];
   const monthly=data.monthly;
   return <Module>
-    <div className={`analytics-source-badge is-${data.source==='fair'?'live':data.source}`}>
-      {data.source==='fair' ? 'DNS FAIR · PN parity verified · 8 reporting areas' : data.source==='public' ? 'DNS_Core public baseline · PN zero-loss verified' : 'Compatibility dataset · PN A.2.1'}
-    </div>
+    <SourceBadge state={data.source}
+      de={data.source==='fair' ? 'DNS FAIR · PN-Parität geprüft · 8 Reporting Areas' : data.source==='public' ? 'DNS_Core öffentliche Baseline · PN Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · PN A.2.1'}
+      it={data.source==='fair' ? 'DNS FAIR · parità PN verificata · 8 reporting area' : data.source==='public' ? 'Baseline pubblica DNS_Core · PN zero-loss verificato' : 'Dataset di compatibilità · PN A.2.1'}
+    />
 
     <div className="analytics-metrics">
       <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(total2526)} note={`${integer(total2526-total2425)} vs. 2024-25`}/>
@@ -534,7 +542,7 @@ export function OvernightModule({language}:AnalyticsModuleProps){
     </Card>
 
     <SectionHeading de="Kontext Südtirol — Wintersaison 2025/26 (Provinzebene)" it="Contesto Alto Adige — stagione invernale 2025/26 (livello provinciale)"/>
-    <SourceBadge state="historical">Monthly context · historical source · not provided by FAIR</SourceBadge>
+    <SourceBadge state="historical" de="Monatskontext · historische Quelle · nicht von FAIR bereitgestellt" it="Contesto mensile · fonte storica · non fornito da FAIR"/>
     <BilingualNote de={legacyOvernightCopy.provinceContextDe} it={legacyOvernightCopy.provinceContextIt}/>
     <div className="analytics-metrics">
       {legacyOvernightCopy.months.map((m,i)=><Metric key={m.de} label={m.de} sublabel={m.it} value={integer(monthly[i] ?? m.nights)} note={`Übernachtungen · presenze (${m.nightsDelta>0?'+':''}${m.nightsDelta.toFixed(1).replace('.',',')}%) · ${integer(m.arrivals)} Ankünfte/arrivi (${m.arrivalsDelta>0?'+':''}${m.arrivalsDelta.toFixed(1).replace('.',',')}%)`}/>)}
@@ -565,11 +573,13 @@ export function IntensityModule({language}:AnalyticsModuleProps){
   const totalPn=areas.reduce((s,a)=>s+a.pn,0);
   const netInt=totalFondo/totalPn*100;
   return <Module>
-    <SourceBadge state={dataset.source}>
-      {dataset.source==='live' ? 'DNS_Core Sales + DNS FAIR PN · parity verified' : dataset.source==='public' ? 'DNS_Core public baseline · intensity inputs zero-loss verified' : 'Compatibility dataset · intensity inputs A.2.1'}
-    </SourceBadge>
+    <SourceBadge state={dataset.source}
+      de={dataset.source==='live' ? 'DNS_Core Verkäufe + DNS FAIR PN · Parität geprüft' : dataset.source==='public' ? 'DNS_Core öffentliche Baseline · Intensitätsinputs Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · Intensitätsinputs A.2.1'}
+      it={dataset.source==='live' ? 'Vendite DNS_Core + PN DNS FAIR · parità verificata' : dataset.source==='public' ? 'Baseline pubblica DNS_Core · input intensità zero-loss verificati' : 'Dataset di compatibilità · input intensità A.2.1'}
+    />
     <div className="analytics-assumption-note">
-      Model assumptions preserved: 75% overnight share × 6 nights for weekly tickets; 45% overnight share for DAY scenario.
+      <span className="analytics-lang-de">Modellannahmen: 75% Übernachtungsanteil × 6 Nächte für Wochenkarten; 45% Übernachtungsanteil im DAY-Szenario.</span>
+      <span className="analytics-lang-it">Assunzioni del modello: 75% pernottanti × 6 notti per i settimanali; 45% pernottanti nello scenario DAY.</span>
     </div>
     <div className="analytics-metrics">
       <Metric label="Intensivste Region (WK)" sublabel="Regione più intensa" value={sorted[0].area.split('/')[0].trim()} note={pct(sorted[0].intWK,2)} top/>
