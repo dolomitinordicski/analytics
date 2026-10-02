@@ -305,7 +305,7 @@ for (const [label, content, tokens] of [
   ['Advanced public fallback', advancedSelector, ['PublicBaselineData','weeklyRevenueArea','publicBaseline?.seasonOverview.ticketRevenue']],
   ['Overnight public fallback', overnightSelector, ['PublicBaselineData','publicBaseline?.overnightAreas','source:publicBaseline?\'public\':\'compatibility\'']],
   ['Intensity public fallback', intensitySelector, ['PublicBaselineData','publicBaseline?.intensityAreas','source:publicBaseline?\'public\':\'compatibility\'']],
-  ['H2 module routing', modules, ['publicBaseline','DNS_Core public baseline · KP','DNS_Core public baseline · observed inputs','DNS_Core public baseline · PN','DNS_Core public baseline · intensity']],
+  ['H2 module routing', modules, ['publicBaseline','DNS_Core public baseline · zero-loss verified','DNS_Core public baseline · observed inputs','DNS_Core public baseline · PN','DNS_Core public baseline · intensity']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.11H2 ${label} missing: ${token}`);
 }
