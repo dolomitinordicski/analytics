@@ -34,6 +34,8 @@ const editorial = read('src/data/editorial.ts');
 const ui = read('src/components/Ui.tsx');
 const legacy = read('src/data/legacyDashboard.ts');
 const derivedKpis = read('src/services/derivedKpis.ts');
+const foundation = read('src/services/foundation.ts');
+const main = read('src/main.tsx');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -48,10 +50,18 @@ for (const token of ['role="tablist"','role="tab"','aria-selected','role="tabpan
 }
 if (!process.exitCode) ok('tab navigation supports semantics, keyboard control and deep links');
 
-for (const token of ['dns-analytics-language','localStorage','dataset.analyticsLanguage','aria-pressed','refreshCore','analytics-runtime-state']) {
-  if (!app.includes(token)) fail(`language/runtime state contract missing: ${token}`);
+for (const [label, content, tokens] of [
+  ['Foundation language bridge', app, ['getDNSAnalyticsLanguage','setDNSAnalyticsLanguage','subscribeDNSAnalyticsLanguage','dataset.analyticsLanguage','aria-pressed']],
+  ['Foundation bootstrap', main, ['initDNSAnalyticsFoundation','dataset.analyticsLanguage']],
+  ['Foundation runtime', foundation, ['initDNSFoundation','getLanguage','setLanguage','subscribeLanguage']],
+  ['DNS_Core runtime states', app, ['refreshCore','analytics-runtime-state']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`language/runtime state contract missing: ${label} · ${token}`);
 }
-if (!process.exitCode) ok('language persistence and DNS_Core loading/error behavior are wired');
+if (/dns-analytics-language|LANGUAGE_KEY|localStorage\.setItem\([^)]*language/i.test(app)) {
+  fail('legacy Analytics-local language persistence is still present');
+}
+if (!process.exitCode) ok('Foundation language persistence and DNS_Core loading/error behavior are wired');
 
 const requiredExports = [
   'OverviewModule','AnnualModule','RegionalModule','ReliabilityModule',
