@@ -95,7 +95,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
       </Card>
       <Card titleDe="Vertriebskanal" titleIt="Canale di vendita">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
-        <div className="analytics-note-small analytics-legacy-inline">{legacyOverviewNotes.channelMix}</div>
+        <div className="analytics-note-small analytics-legacy-inline"><BilingualText de={legacyOverviewNotes.channelMix} it="Ufficio 77% · Online 15% · Pista 7%"/></div>
       </Card>
     </div>
 
@@ -109,7 +109,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
           {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
           {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
         ]},options:{...baseOptions,cutout:'40%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
-        <div className="analytics-note-small analytics-legacy-inline">{legacyOverviewNotes.revenueVsQuantity}</div>
+        <div className="analytics-note-small analytics-legacy-inline"><BilingualText de="Außen: Einnahmen · Innen: Menge" it={legacyOverviewNotes.revenueVsQuantity}/></div>
       </Card>
     </div>
 
@@ -188,11 +188,11 @@ export function AnnualModule({language}:AnalyticsModuleProps){
     <SectionHeading de="DNS-Produkte im Fokus · Gesamttickets" it="Focus prodotti DNS · Totale biglietti"/>
     <div className="analytics-grid-3">
       {[
-        ['DNS SK — Serienentwicklung',data.qty.skd],
-        ['DNS WK — Serienentwicklung',data.qty.wkd],
-        ['Gesamttickets — 4 Saisons',data.totalTickets],
-      ].map(([title,data],i)=><Card key={String(title)} title={String(title)}>
-        <ChartCanvas height={175} config={{type:i===2?'line':'bar',data:{labels:[...SEASONS],datasets:[{data:[...(data as readonly number[])],backgroundColor:i===2?'rgba(13,77,94,.08)':[COLORS.year4,COLORS.year3,COLORS.year2,COLORS.year1],borderColor:COLORS.deep,fill:i===2,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
+        {de:'DNS SK — Serienentwicklung',it:'DNS SK — evoluzione storica',data:data.qty.skd},
+        {de:'DNS WK — Serienentwicklung',it:'DNS WK — evoluzione storica',data:data.qty.wkd},
+        {de:'Gesamttickets — 4 Saisons',it:'Totale biglietti — 4 stagioni',data:data.totalTickets},
+      ].map((item,i)=><Card key={item.de} titleDe={item.de} titleIt={item.it}>
+        <ChartCanvas height={175} config={{type:i===2?'line':'bar',data:{labels:[...SEASONS],datasets:[{data:[...item.data],backgroundColor:i===2?'rgba(13,77,94,.08)':[COLORS.year4,COLORS.year3,COLORS.year2,COLORS.year1],borderColor:COLORS.deep,fill:i===2,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
     </div>
 
@@ -350,13 +350,17 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       <Card titleDe="DNS — KS · offen ohne KS · nicht geöffnet (20.01)" titleIt="DNS — KS · aperte senza KS · non aperte (20.01)">
         <div className="analytics-kpi-stack">
           <div><span>KS</span><strong>{totalKs.toFixed(1)} km</strong></div>
-          <div><span>Aperte senza KS</span><strong>{Math.max(0,totalOpen-totalKs).toFixed(1)} km</strong></div>
-          <div><span>Non aperte</span><strong>{Math.max(0,totalPot-totalOpen).toFixed(1)} km</strong></div>
+          <div><span><BilingualText de="Offen ohne KS" it="Aperte senza KS"/></span><strong>{Math.max(0,totalOpen-totalKs).toFixed(1)} km</strong></div>
+          <div><span><BilingualText de="Nicht geöffnet" it="Non aperte"/></span><strong>{Math.max(0,totalPot-totalOpen).toFixed(1)} km</strong></div>
         </div>
       </Card>
       <Card titleDe="Klassifikation nach KP-Index" titleIt="Classificazione per indice KP">
         <div className="analytics-legacy-list">
-          {legacyReliabilityCopy.classification.map(item=><div key={item}>{item}</div>)}
+          {[
+            {de:'KP ≥ 70% — Hohe KS-Abhängigkeit',it:'KP ≥ 70% — Alta dipendenza KS'},
+            {de:'KP 30–70% — Mix KS / NS',it:'KP 30–70% — Mix KS / NS'},
+            {de:'KP < 30% — Naturschnee',it:'KP < 30% — Neve naturale'},
+          ].map(item=><div key={item.de}><BilingualText de={item.de} it={item.it}/></div>)}
         </div>
       </Card>
     </div>
@@ -435,10 +439,10 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
       </Card>
       <Card titleDe="Ticketeinnahmen → territorialer Impact" titleIt="Incasso biglietti → impatto territoriale">
         <div className="analytics-impact-flow">
-          <div><span>Einnahmen Wochenkarten · Incasso settimanali</span><strong>{euro(observed.weeklyRevenueNetwork)}</strong><small>{`WK DNS ${euro(observed.weeklyRevenueDns)} + WK Area ${euro(observed.weeklyRevenueArea)}`}</small></div>
+          <div><span><BilingualText de="Einnahmen Wochenkarten" it="Incasso settimanali"/></span><strong>{euro(observed.weeklyRevenueNetwork)}</strong><small>{`WK DNS ${euro(observed.weeklyRevenueDns)} + WK Area ${euro(observed.weeklyRevenueArea)}`}</small></div>
           <div className="analytics-impact-arrow">↓</div>
-          <div><span>Territorialer Impact · Impatto territoriale</span><strong>€ {(derived.totalNet/1e6).toFixed(2)} Mio</strong><small>× Multiplikator {mult.toFixed(2)}</small></div>
-          <div><span>Verhältnis · rapporto</span><strong>1 : {observed.weeklyRevenueNetwork ? Math.round(derived.totalNet/observed.weeklyRevenueNetwork) : '—'}</strong></div>
+          <div><span><BilingualText de="Territorialer Impact" it="Impatto territoriale"/></span><strong>€ {(derived.totalNet/1e6).toFixed(2)} Mio</strong><small><BilingualText de={`× Multiplikator ${mult.toFixed(2)}`} it={`× moltiplicatore ${mult.toFixed(2)}`}/></small></div>
+          <div><span><BilingualText de="Verhältnis" it="Rapporto"/></span><strong>1 : {observed.weeklyRevenueNetwork ? Math.round(derived.totalNet/observed.weeklyRevenueNetwork) : '—'}</strong></div>
         </div>
       </Card>
     </div>
@@ -519,7 +523,10 @@ export function OvernightModule({language}:AnalyticsModuleProps){
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>PN 2024-25</th><th><BilingualText de="Anteil" it="Quota"/></th><th>PN 2025-26</th></tr></thead><tbody>
           {historicalRows.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(Number(a.pn[0])/historicalTotal*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
         </tbody></table></div>
-        <div className="analytics-note-small analytics-legacy-inline"><strong>Legacy archive · </strong>{legacyOvernightCopy.sourceNote}</div>
+        <div className="analytics-note-small analytics-legacy-inline">
+          <span className="analytics-lang-de"><strong>Legacy-Archiv · </strong>Quelle: DNS FAIR Model (PN WS 2024-25) · Disaggregation Seiser Alm/Gröden und Ahrntal/Sand in Taufers aus regionalen Tourismusdaten · vorläufig.</span>
+          <span className="analytics-lang-it"><strong>Archivio legacy · </strong>Fonte: DNS FAIR Model (PN SI 2024-25) · disaggregazione Alpe di Siusi/Val Gardena e Ahrntal/Sand in Taufers da dati turistici regionali · provvisorio.</span>
+        </div>
       </Card>
     </div>
     <EditorialSummary de={legacyOvernightCopy.summaryDe} it={legacyOvernightCopy.summaryIt}/>
@@ -553,7 +560,10 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       <Metric label="Saison gesamt 2025/26" sublabel="Stagione totale 2025/26" value="14,8 Mio" noteDe={`${integer(legacyOvernightCopy.seasonTotalArrivals)} Ankünfte`} noteIt={`${integer(legacyOvernightCopy.seasonTotalArrivals)} arrivi`}/>
       <Metric label="Top-Gemeinde März" sublabel="Comune top marzo" value={legacyOvernightCopy.topMunicipalityMarch} noteDe={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} Übernachtungen`} noteIt={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} presenze`} top/>
     </div>
-    <div className="analytics-note-small analytics-legacy-inline">{legacyOvernightCopy.provinceSource}</div>
+    <div className="analytics-note-small analytics-legacy-inline">
+      <span className="analytics-lang-de">Quelle: ASTAT — Landesinstitut für Statistik, monatliche Tourismusentwicklung (Dez. 2025–März 2026). Provinzkontext, nicht DNS-spezifisch. Die Summe Dez–März umfasst ganz Südtirol.</span>
+      <span className="analytics-lang-it">{legacyOvernightCopy.provinceSource.replace('Quelle · Fonte: ','Fonte: ')}</span>
+    </div>
   </Module>;
 }
 
@@ -616,8 +626,8 @@ export function IntensityModule({language}:AnalyticsModuleProps){
     <SectionHeading de="Strategische Erkenntnisse" it="Insights strategici"/>
     <div className="analytics-insights">
       <Insight n="I" de={`${sorted[0].area.split('/')[0].trim()} — höchste Intensität im Network`} it={`${sorted[0].area.split('/')[0].trim()} — massima intensità nel network`} bodyDe={`${pct(sorted[0].intWK,2)} der Übernachtungen sind geschätzte Langlauf-Gäste.`} bodyIt={`${pct(sorted[0].intWK,2)} dei pernottamenti stimati sono fondisti.`} tag="Strukturelle Verankerung · Radicamento strutturale"/>
-      <Insight n="II" de="Comelico — überraschend hohe Intensität" it="Comelico — intensità sorprendentemente alta" bodyDe="Kleines Gebiet, aber der Langlauf ist relativ dominant." bodyIt="Area piccola, ma il fondo vi è relativamente dominante." tag="↑ Strukturelle Relevanz"/>
-      <Insight n="III" de="Niedrige % ≠ wirtschaftlich irrelevant" it="% bassa ≠ irrilevante economicamente" bodyDe="Auch kleine Prozentwerte können hunderte direkt zurechenbare Übernachtungen bedeuten." bodyIt="Anche percentuali ridotte possono corrispondere a centinaia di pernottamenti attribuibili." tag="Kontext · Contesto"/>
+      <Insight n="II" de="Comelico — überraschend hohe Intensität" it="Comelico — intensità sorprendentemente alta" bodyDe="Kleines Gebiet, aber der Langlauf ist relativ dominant." bodyIt="Area piccola, ma il fondo vi è relativamente dominante." tagDe="↑ Strukturelle Relevanz" tagIt="↑ Rilevanza strutturale" tag="↑ Strukturelle Relevanz · ↑ Rilevanza strutturale"/>
+      <Insight n="III" de="Niedrige % ≠ wirtschaftlich irrelevant" it="% bassa ≠ irrilevante economicamente" bodyDe="Auch kleine Prozentwerte können hunderte direkt zurechenbare Übernachtungen bedeuten." bodyIt="Anche percentuali ridotte possono corrispondere a centinaia di pernottamenti attribuibili." tagDe="Kontext" tagIt="Contesto" tag="Kontext · Contesto"/>
     </div>
     <MethodologyPanel titleDe="KPI-Protokoll & Quellen" titleIt="Protocollo KPI & fonti" items={intensityMethodology}/>
   </Module>;
