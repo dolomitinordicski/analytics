@@ -36,7 +36,10 @@ export function Card({ title, subtitle, titleDe, titleIt, subtitleDe, subtitleIt
   </article>;
 }
 
-export function Insight({ n, de, it, bodyDe, bodyIt, tag }: { n: string; de: string; it: string; bodyDe: string; bodyIt: string; tag: string }) {
+export function Insight({ n, de, it, bodyDe, bodyIt, tag, tagDe, tagIt }: { n: string; de: string; it: string; bodyDe: string; bodyIt: string; tag: string; tagDe?: string; tagIt?: string }) {
+  const parts = tag.split(' · ');
+  const fallbackDe = parts[0] ?? tag;
+  const fallbackIt = parts.length > 1 ? parts.slice(1).join(' · ') : tag;
   return <article className="analytics-insight" data-dns-reveal>
     <div className="analytics-insight-n">{n}</div>
     <div>
@@ -44,7 +47,7 @@ export function Insight({ n, de, it, bodyDe, bodyIt, tag }: { n: string; de: str
       <div className="analytics-card-subtitle analytics-lang-it">{it}</div>
       <p className="analytics-insight-body analytics-lang-de">{bodyDe}</p>
       <p className="analytics-insight-body is-it analytics-lang-it">{bodyIt}</p>
-      <span className="analytics-tag">{tag}</span>
+      <span className="analytics-tag"><BilingualText de={tagDe ?? fallbackDe} it={tagIt ?? fallbackIt}/></span>
     </div>
   </article>;
 }
