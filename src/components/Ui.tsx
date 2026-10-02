@@ -1,11 +1,15 @@
 import type { ReactNode } from 'react';
 
-export function Metric({ label, sublabel, value, note, top = false }: { label: string; sublabel?: string; value: ReactNode; note?: string; top?: boolean }) {
+export function Metric({ label, sublabel, value, note, noteDe, noteIt, top = false }: { label: string; sublabel?: string; value: ReactNode; note?: string; noteDe?: ReactNode; noteIt?: ReactNode; top?: boolean }) {
   return <div className={`analytics-metric ${top ? 'is-top' : ''}`}>
     <div className="analytics-label analytics-lang-de">{label}</div>
     {sublabel && <div className="analytics-sublabel analytics-lang-it">{sublabel}</div>}
     <div className="analytics-metric-value">{value}</div>
     {note && <div className="analytics-note-small">{note}</div>}
+    {(noteDe || noteIt) && <div className="analytics-note-small">
+      {noteDe && <span className="analytics-lang-de">{noteDe}</span>}
+      {noteIt && <span className="analytics-lang-it">{noteIt}</span>}
+    </div>}
   </div>;
 }
 
@@ -16,11 +20,17 @@ export function SectionHeading({ de, it }: { de: string; it: string }) {
   </div>;
 }
 
-export function Card({ title, subtitle, children, accent = false }: { title: string; subtitle?: string; children: ReactNode; accent?: boolean }) {
+export function Card({ title, subtitle, titleDe, titleIt, subtitleDe, subtitleIt, children, accent = false }: { title?: string; subtitle?: string; titleDe?: string; titleIt?: string; subtitleDe?: string; subtitleIt?: string; children: ReactNode; accent?: boolean }) {
   return <article className={`analytics-card ${accent ? 'is-accent' : ''}`} data-dns-reveal>
     <header className="analytics-card-header">
-      <div className="analytics-card-title">{title}</div>
-      {subtitle && <div className="analytics-card-subtitle">{subtitle}</div>}
+      {(titleDe || titleIt) ? <>
+        {titleDe && <div className="analytics-card-title analytics-lang-de">{titleDe}</div>}
+        {titleIt && <div className="analytics-card-title analytics-lang-it">{titleIt}</div>}
+      </> : title ? <div className="analytics-card-title">{title}</div> : null}
+      {(subtitleDe || subtitleIt) ? <>
+        {subtitleDe && <div className="analytics-card-subtitle analytics-lang-de">{subtitleDe}</div>}
+        {subtitleIt && <div className="analytics-card-subtitle analytics-lang-it">{subtitleIt}</div>}
+      </> : subtitle ? <div className="analytics-card-subtitle">{subtitle}</div> : null}
     </header>
     {children}
   </article>;
@@ -99,6 +109,16 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
 
 export type AnalyticsSourceState = 'live'|'public'|'compatibility'|'historical'|'fair';
 
-export function SourceBadge({state,children}:{state:AnalyticsSourceState;children:ReactNode}) {
-  return <div className={`analytics-source-badge is-${state}`} data-analytics-source={state}>{children}</div>;
+export function SourceBadge({state,de,it,children}:{state:AnalyticsSourceState;de?:ReactNode;it?:ReactNode;children?:ReactNode}) {
+  return <div className={`analytics-source-badge is-${state}`} data-analytics-source={state}>
+    {(de || it) ? <BilingualText de={de ?? ''} it={it ?? ''}/> : children}
+  </div>;
+}
+
+
+export function BilingualText({de,it,className=''}:{de:ReactNode;it:ReactNode;className?:string}) {
+  return <>
+    <span className={`analytics-lang-de ${className}`.trim()}>{de}</span>
+    <span className={`analytics-lang-it ${className}`.trim()}>{it}</span>
+  </>;
 }
