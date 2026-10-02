@@ -58,7 +58,7 @@ export function OverviewModule(){
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
+      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : data.source==='public' ? 'DNS_Core public baseline · KP zero-loss verified' : 'Compatibility dataset · A.2.1'}
     </div>
 
     <div className="analytics-metrics">
