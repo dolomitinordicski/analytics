@@ -11,6 +11,7 @@ import { selectAnnualDataset } from '../services/annualSelector';
 import { selectAdvancedObservedInputs } from '../services/advancedSelector';
 import { selectOvernightDataset } from '../services/overnightSelector';
 import { selectIntensityDataset } from '../services/intensitySelector';
+import { deriveAnnualKpis, deriveOverviewKpis, deriveRegionalKpis } from '../services/derivedKpis';
 import {
   COLORS,
   REGIONS,
@@ -54,8 +55,10 @@ function stackedPercent(values:number[][]){
 }
 
 export function OverviewModule(){
-  const {snapshot,overviewLiveReady}=useAnalyticsLive();
+  const {snapshot,overviewLiveReady,annualLiveReady}=useAnalyticsLive();
   const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady),[snapshot,overviewLiveReady]);
+  const annualData=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady),[snapshot,annualLiveReady]);
+  const kpis=useMemo(()=>deriveOverviewKpis(data,annualData),[data,annualData]);
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
@@ -63,9 +66,9 @@ export function OverviewModule(){
     </div>
 
     <div className="analytics-metrics">
-      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note="↓ 10,9% vs. WS 2024-25"/>
-      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value={`€ ${(data.totalRevenue/1e6).toFixed(2).replace('.',',')} Mio`} note="↓ 7,8% vs. WS 2024-25"/>
-      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value={`€ ${data.avgPrice.toFixed(2).replace('.',',')}`} note="↑ +2,8% vs. WS 2024-25"/>
+      <Metric label="Gesamttickets" sublabel="Biglietti totali" value={integer(data.totalTickets)} note={`${kpis.ticketsDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.ticketsDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
+      <Metric label="Gesamteinnahmen" sublabel="Entrate totali" value={`€ ${(data.totalRevenue/1e6).toFixed(2).replace('.',',')} Mio`} note={`${kpis.revenueDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.revenueDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
+      <Metric label="Ø Ticketpreis" sublabel="Prezzo medio" value={`€ ${data.avgPrice.toFixed(2).replace('.',',')}`} note={`${kpis.avgPriceDeltaPct>=0?'↑ +':'↓ '}${Math.abs(kpis.avgPriceDeltaPct).toFixed(1).replace('.',',')}% vs. WS 2024-25`}/>
       <Metric label="Top Leistung" sublabel="Top performance" value={data.topRegion} note={`${euro(data.topRegionRevenue)} · ${integer(data.topRegionTickets)} Tkts`} top/>
     </div>
 
@@ -126,15 +129,16 @@ export function AnnualModule(){
   const idx=(arr:readonly number[])=>arr.map(v=>v/arr[0]*100);
   const dnsTotal=data.qty.wkd.map((v,i)=>v+data.qty.skd[i]);
   const areaTotal=data.qty.wka.map((v,i)=>v+data.qty.ska[i]);
+  const kpis=useMemo(()=>deriveAnnualKpis(data),[data]);
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
       {data.source==='live' ? 'DNS_Core historical · annual parity verified' : 'Compatibility dataset · A.2.1'}
     </div>
     <div className="analytics-metrics">
-      <Metric label="DNS SK — Rekord" sublabel="DNS SK — record" value="2.355" note="↑ +31% vs. 2022-23" top/>
-      <Metric label="DNS WK Wachstum" sublabel="DNS WK crescita" value="+97%" note="vs. 2022-23 (1.759→3.458)"/>
-      <Metric label="Umsatz 4 Jahre" sublabel="Entrate 4 anni" value="+20,2%" note="2022-23 → 2025-26"/>
-      <Metric label="Rekord-Saison" sublabel="Stagione record" value="2024-25" note="€ 2,05 Mio · 88.013 Tkts"/>
+      <Metric label={kpis.dnsSkIsRecord?'DNS SK — Rekord':'DNS SK — aktueller Wert'} sublabel={kpis.dnsSkIsRecord?'DNS SK — record':'DNS SK — valore attuale'} value={integer(kpis.dnsSk)} note={`${kpis.dnsSkGrowthPct>=0?'↑ +':'↓ '}${Math.abs(kpis.dnsSkGrowthPct).toFixed(0)}% vs. 2022-23`} top/>
+      <Metric label="DNS WK Wachstum" sublabel="DNS WK crescita" value={`${kpis.dnsWkGrowthPct>=0?'+':''}${kpis.dnsWkGrowthPct.toFixed(0)}%`} note={`vs. 2022-23 (${integer(data.qty.wkd[0])}→${integer(data.qty.wkd[data.qty.wkd.length-1])})`}/>
+      <Metric label="Umsatz 4 Jahre" sublabel="Entrate 4 anni" value={`${kpis.totalRevenueGrowthPct>=0?'+':''}${kpis.totalRevenueGrowthPct.toFixed(1).replace('.',',')}%`} note="2022-23 → 2025-26"/>
+      <Metric label="Rekord-Saison" sublabel="Stagione record" value={kpis.recordSeason} note={`${euro(kpis.recordRevenue)} · ${integer(kpis.recordTickets)} Tkts`}/>
     </div>
 
     <SectionHeading de="Trendentwicklung — Index 100 · DNS vs. Area" it="Sviluppo trend — Indice 100 · DNS vs. Area"/>
@@ -210,6 +214,7 @@ export function RegionalModule(){
   const rev=data.revenue;
   const pctQ=stackedPercent(qty);
   const pctR=stackedPercent(rev);
+  const kpis=useMemo(()=>deriveRegionalKpis(data),[data]);
   const datasetsFrom=(p:number[][])=>TICKET_TYPES.map((label,j)=>({label,data:p.map(x=>x[j]),backgroundColor:palette[j],borderWidth:0}));
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
@@ -217,10 +222,10 @@ export function RegionalModule(){
     </div>
 
     <div className="analytics-metrics">
-      <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value="Ahrntal+Sand" note="92,1% delle vendite in DAY" top/>
-      <Metric label="SK Area Schwerpunkt" sublabel="SK Area più radicata" value="Osttirol" note="1.474 pz · 56,7% del totale DNS"/>
-      <Metric label="DNS WK Kerngebiet" sublabel="Cuore del DNS WK" value="3 Zinnen" note="2.162 pz · 62,5% del totale WK DNS"/>
-      <Metric label="Ausgewogenes Profil" sublabel="Profilo più diversificato" value="Gsiesertal" note="Mix equilibrato di tutti i tipi"/>
+      <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value={kpis.dayRegion} note={`${pct(kpis.daySharePct)} DAY-Anteil · quota DAY`} top/>
+      <Metric label="SK Area Schwerpunkt" sublabel="SK Area più radicata" value={kpis.skAreaRegion} note={`${integer(kpis.skAreaQty)} pz · ${pct(kpis.skAreaNetworkSharePct)} del totale SK Area`}/>
+      <Metric label="DNS WK Kerngebiet" sublabel="Cuore del DNS WK" value={kpis.dnsWkRegion} note={`${integer(kpis.dnsWkQty)} pz · ${pct(kpis.dnsWkNetworkSharePct)} del totale WK DNS`}/>
+      <Metric label="Ausgewogenes Profil" sublabel="Profilo più diversificato" value={kpis.diversifiedRegion} note="Mix der Nicht-DAY-Produkte · mix prodotti non-DAY"/>
     </div>
 
     <SectionHeading de="Ticketmix pro Region — 100%" it="Composizione biglietti per regione — 100%"/>
@@ -400,10 +405,10 @@ export function AdvancedModule(){
       </Card>
       <Card title="Ticketeinnahmen → Territorialer Impact" subtitle="Incasso biglietti → impatto territoriale">
         <div className="analytics-impact-flow">
-          <div><span>Einnahmen Wochenkarten · Incasso settimanali</span><strong>{euro(legacyAdvancedCopy.weeklyRevenue)}</strong><small>{legacyAdvancedCopy.weeklyRevenueBreakdown}</small></div>
+          <div><span>Einnahmen Wochenkarten · Incasso settimanali</span><strong>{euro(observed.weeklyRevenueNetwork)}</strong><small>{`WK DNS ${euro(observed.weeklyRevenueDns)} + WK Area ${euro(observed.weeklyRevenueArea)}`}</small></div>
           <div className="analytics-impact-arrow">↓</div>
           <div><span>Territorialer Impact · Impatto territoriale</span><strong>€ {(derived.totalNet/1e6).toFixed(2)} Mio</strong><small>× Multiplikator {mult.toFixed(2)}</small></div>
-          <div><span>Verhältnis · rapporto</span><strong>1 : {Math.round(derived.totalNet/legacyAdvancedCopy.weeklyRevenue)}</strong></div>
+          <div><span>Verhältnis · rapporto</span><strong>1 : {observed.weeklyRevenueNetwork ? Math.round(derived.totalNet/observed.weeklyRevenueNetwork) : '—'}</strong></div>
         </div>
       </Card>
     </div>
