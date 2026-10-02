@@ -43,7 +43,7 @@ const LANGUAGE_KEY = 'dns-analytics-language';
 function detectLanguage(): Language {
   const stored = window.localStorage.getItem(LANGUAGE_KEY);
   if (stored === 'de' || stored === 'it') return stored;
-  return window.navigator.language.toLowerCase().startsWith('it') ? 'it' : 'de';
+  return 'de';
 }
 
 export default function App() {
@@ -224,6 +224,6 @@ export default function App() {
       <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
     </footer>
 
-    <AnalyticsPrintSheet active={printActive} title={tabLabel}><ActiveComponent language={language}/></AnalyticsPrintSheet>
+    <AnalyticsPrintSheet active={printActive} title={tabLabel} language={language}><ActiveComponent language={language}/></AnalyticsPrintSheet>
   </div></AnalyticsLiveProvider>;
 }
