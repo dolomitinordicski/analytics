@@ -9,6 +9,7 @@ import {
 } from '../services/auth';
 import { loadLiveAnalyticsSnapshot, type LiveAnalyticsSnapshot } from '../services/liveAnalytics';
 import { loadAuditSnapshotParity, type AuditParity } from '../services/auditSnapshot';
+import { loadPublicBaselineParity, type PublicBaselineParity } from '../services/publicBaseline';
 import {
   compareLiveToCompatibility,
   compareRegionalToCompatibility,
@@ -43,12 +44,20 @@ export function LiveSourcePanel({
   const [busy,setBusy]=useState(true);
   const [error,setError]=useState('');
   const [audit,setAudit]=useState<AuditParity|null>(null);
+  const [publicBaseline,setPublicBaseline]=useState<PublicBaselineParity|null>(null);
 
   useEffect(()=>subscribeAnalyticsAuth(next=>setUser(next)),[]);
 
   useEffect(()=>{
     let active=true;
-    void loadAuditSnapshotParity().then(result=>{ if(active) setAudit(result); });
+    void Promise.all([
+      loadAuditSnapshotParity(),
+      loadPublicBaselineParity(),
+    ]).then(([auditResult,publicResult])=>{
+      if (!active) return;
+      setAudit(auditResult);
+      setPublicBaseline(publicResult);
+    });
     return()=>{active=false};
   },[]);
 
@@ -128,6 +137,17 @@ export function LiveSourcePanel({
       </button>
     </div>
     <div className="analytics-live-meta">
+      <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
+        {publicBaseline?.state==='ready'
+          ? (publicBaseline.matches
+              ? (language==='de' ? `Public Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblico: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              : (language==='de' ? `Public Baseline: ${publicBaseline.mismatchCount} Abweichungen` : `Baseline pubblico: ${publicBaseline.mismatchCount} differenze`))
+          : publicBaseline?.state==='missing'
+            ? (language==='de' ? 'Public Baseline: noch nicht veröffentlicht' : 'Baseline pubblico: non ancora pubblicato')
+            : publicBaseline?.state==='error'
+              ? (language==='de' ? 'Public Baseline: Fehler' : 'Baseline pubblico: errore')
+              : (language==='de' ? 'Public Baseline wird geprüft…' : 'Verifica baseline pubblico…')}
+      </span>
       <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
         {audit?.state==='ready'
           ? (audit.matches
@@ -144,6 +164,26 @@ export function LiveSourcePanel({
       <summary>{language==='de'?'Zero-Loss Abweichungen anzeigen':'Mostra differenze zero-loss'}</summary>
       <div className="analytics-live-diagnostic-grid">
         {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>local {String(item.local)}</small>
+        </div>)}
+      </div>
+    </details>}
+    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Public-Baseline Abweichungen anzeigen':'Mostra differenze baseline pubblico'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>local {String(item.local)}</small>
+        </div>)}
+      </div>
+    </details>}
+    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Public-Baseline Abweichungen anzeigen':'Mostra differenze baseline pubblico'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
           <span>{item.path}</span>
           <strong>{String(item.remote)}</strong>
           <small>local {String(item.local)}</small>
@@ -170,6 +210,13 @@ export function LiveSourcePanel({
         {language==='de'
           ? `Parity: ${summary.matches}/${summary.available} match`
           : `Parità: ${summary.matches}/${summary.available} corrispondenti`}
+      </span>
+      <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
+        {publicBaseline?.state==='ready'
+          ? (publicBaseline.matches ? `Public 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Public ${publicBaseline.mismatchCount} Δ`)
+          : publicBaseline?.state==='missing' ? 'Public snapshot —'
+          : publicBaseline?.state==='error' ? 'Public error'
+          : 'Public …'}
       </span>
       <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
         {audit?.state==='ready'
