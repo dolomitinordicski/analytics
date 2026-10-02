@@ -26,13 +26,13 @@ import { loadDNSCoreMaster, type DNSCoreStatus } from './services/dnsCore';
 import { getAnalyticsBoundaryMode } from './services/analyticsBoundary';
 
 const TABS = [
-  { id:'overview', label:'WS 2025-26', component:OverviewModule },
-  { id:'annual', label:'Jahresvergleich · Confronto annuale', component:AnnualModule },
-  { id:'regions', label:'Performance Regionen · Regioni', component:RegionalModule },
-  { id:'reliability', label:'Network Reliability', component:ReliabilityModule },
-  { id:'advanced', label:'Advanced Analytics', component:AdvancedModule },
-  { id:'overnights', label:'Übernachtungen · Pernottamenti', component:OvernightModule },
-  { id:'intensity', label:'Langlauf-Intensität · Peso del fondo', component:IntensityModule },
+  { id:'overview', labelDe:'WS 2025-26', labelIt:'SI 2025-26', component:OverviewModule },
+  { id:'annual', labelDe:'Jahresvergleich', labelIt:'Confronto annuale', component:AnnualModule },
+  { id:'regions', labelDe:'Performance Regionen', labelIt:'Regioni', component:RegionalModule },
+  { id:'reliability', labelDe:'Netzzuverlässigkeit', labelIt:'Affidabilità rete', component:ReliabilityModule },
+  { id:'advanced', labelDe:'Erweiterte Analysen', labelIt:'Analisi avanzate', component:AdvancedModule },
+  { id:'overnights', labelDe:'Übernachtungen', labelIt:'Pernottamenti', component:OvernightModule },
+  { id:'intensity', labelDe:'Langlauf-Intensität', labelIt:'Peso del fondo', component:IntensityModule },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -43,7 +43,7 @@ const LANGUAGE_KEY = 'dns-analytics-language';
 function detectLanguage(): Language {
   const stored = window.localStorage.getItem(LANGUAGE_KEY);
   if (stored === 'de' || stored === 'it') return stored;
-  return window.navigator.language.toLowerCase().startsWith('it') ? 'it' : 'de';
+  return 'de';
 }
 
 export default function App() {
@@ -90,6 +90,7 @@ export default function App() {
 
   const tab = useMemo(() => TABS.find(t=>t.id===active) ?? TABS[0],[active]);
   const ActiveComponent = tab.component;
+  const tabLabel = language === 'de' ? tab.labelDe : tab.labelIt;
   const analyticsContract = DNS_DATA_CONTRACTS.find(c=>c.id==='analytics');
   const boundaryMode = getAnalyticsBoundaryMode(core);
   const coreHeader = formatDNSCoreHeaderStatus(
@@ -134,7 +135,7 @@ export default function App() {
     </header>
 
     <nav data-dns-tool-nav id="dns-analytics-nav" className="dns-tab-nav" aria-label="DNS Analytics">
-      <div className="dns-tab-nav-inner analytics-nav-inner" role="tablist" aria-label="DNS Analytics modules">
+      <div className="dns-tab-nav-inner analytics-nav-inner" role="tablist" aria-label={language === 'de' ? 'DNS Analytics Module' : 'Moduli DNS Analytics'}>
         {TABS.map((t,index)=><button
           key={t.id}
           ref={(node)=>{ tabRefs.current[t.id]=node; }}
@@ -164,7 +165,7 @@ export default function App() {
             tabRefs.current[next.id]?.focus();
             window.scrollTo({top:0,behavior:'smooth'});
           }}
-        >{t.label}</button>)}
+        >{language === 'de' ? t.labelDe : t.labelIt}</button>)}
         <button
           type="button"
           className="analytics-print-button"
@@ -184,11 +185,11 @@ export default function App() {
 
     <main className="analytics-page">
       <div className="analytics-context">
-        <div><strong>WS 2025-26</strong><span> · {tab.label}</span></div>
+        <div><strong>{language === 'de' ? 'WS 2025-26' : 'SI 2025-26'}</strong><span> · {tabLabel}</span></div>
         <div className="analytics-context-meta">
           {language === 'de'
             ? `A.2.3 · Datenlayer: ${boundaryMode} · lokale Analysedaten erhalten`
-            : `A.2.3 · data layer: ${boundaryMode} · dati analitici locali preservati`}
+            : `A.2.3 · livello dati: ${boundaryMode} · dati analitici locali preservati`}
         </div>
       </div>
 
@@ -214,7 +215,7 @@ export default function App() {
         aria-labelledby={`analytics-tab-${active}`}
         tabIndex={0}
       >
-        <ActiveComponent/>
+        <ActiveComponent language={language}/>
       </section>
     </main>
 
@@ -223,6 +224,6 @@ export default function App() {
       <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
     </footer>
 
-    <AnalyticsPrintSheet active={printActive} title={tab.label}><ActiveComponent/></AnalyticsPrintSheet>
+    <AnalyticsPrintSheet active={printActive} title={tabLabel} language={language}><ActiveComponent language={language}/></AnalyticsPrintSheet>
   </div></AnalyticsLiveProvider>;
 }
