@@ -55,14 +55,14 @@ function stackedPercent(values:number[][]){
 }
 
 export function OverviewModule(){
-  const {snapshot,overviewLiveReady,annualLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady),[snapshot,overviewLiveReady]);
-  const annualData=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady),[snapshot,annualLiveReady]);
+  const {snapshot,overviewLiveReady,annualLiveReady,publicBaseline}=useAnalyticsLive();
+  const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady,publicBaseline),[snapshot,overviewLiveReady,publicBaseline]);
+  const annualData=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady,publicBaseline),[snapshot,annualLiveReady,publicBaseline]);
   const kpis=useMemo(()=>deriveOverviewKpis(data,annualData),[data,annualData]);
   const regionColors=REGIONS.map((_,i)=>i===2?COLORS.deep:COLORS.light);
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : 'Compatibility dataset · A.2.1'}
+      {data.source==='live' ? 'DNS_Core LIVE · parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
     </div>
 
     <div className="analytics-metrics">
@@ -124,15 +124,15 @@ export function OverviewModule(){
 }
 
 export function AnnualModule(){
-  const {snapshot,annualLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady),[snapshot,annualLiveReady]);
+  const {snapshot,annualLiveReady,publicBaseline}=useAnalyticsLive();
+  const data=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady,publicBaseline),[snapshot,annualLiveReady,publicBaseline]);
   const idx=(arr:readonly number[])=>arr.map(v=>v/arr[0]*100);
   const dnsTotal=data.qty.wkd.map((v,i)=>v+data.qty.skd[i]);
   const areaTotal=data.qty.wka.map((v,i)=>v+data.qty.ska[i]);
   const kpis=useMemo(()=>deriveAnnualKpis(data),[data]);
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core historical · annual parity verified' : 'Compatibility dataset · A.2.1'}
+      {data.source==='live' ? 'DNS_Core historical · annual parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
     </div>
     <div className="analytics-metrics">
       <Metric label={kpis.dnsSkIsRecord?'DNS SK — Rekord':'DNS SK — aktueller Wert'} sublabel={kpis.dnsSkIsRecord?'DNS SK — record':'DNS SK — valore attuale'} value={integer(kpis.dnsSk)} note={`${kpis.dnsSkGrowthPct>=0?'↑ +':'↓ '}${Math.abs(kpis.dnsSkGrowthPct).toFixed(0)}% vs. 2022-23`} top/>
@@ -208,8 +208,8 @@ export function AnnualModule(){
 }
 
 export function RegionalModule(){
-  const {snapshot,regionalLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectRegionalDataset(snapshot,regionalLiveReady),[snapshot,regionalLiveReady]);
+  const {snapshot,regionalLiveReady,publicBaseline}=useAnalyticsLive();
+  const data=useMemo(()=>selectRegionalDataset(snapshot,regionalLiveReady,publicBaseline),[snapshot,regionalLiveReady,publicBaseline]);
   const qty=data.qty;
   const rev=data.revenue;
   const pctQ=stackedPercent(qty);

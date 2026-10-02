@@ -20,6 +20,8 @@ export type PublicBaselineMismatch = {
   remote: unknown;
 };
 
+export type PublicBaselineData = ReturnType<typeof localBaseline>;
+
 export type PublicBaselineParity = {
   state: 'ready' | 'missing' | 'error';
   matches: boolean;
@@ -28,6 +30,7 @@ export type PublicBaselineParity = {
   revision?: number;
   sourceSha256?: string;
   error?: string;
+  baseline?: PublicBaselineData;
 };
 
 function localBaseline() {
@@ -158,6 +161,7 @@ export async function loadPublicBaselineParity():Promise<PublicBaselineParity> {
       sourceSha256:typeof source?.auditSourceSha256==='string'
         ? String(source.auditSourceSha256)
         : undefined,
+      baseline:mismatches.length===0 ? data.baseline as PublicBaselineData : undefined,
     };
   } catch (error) {
     return {

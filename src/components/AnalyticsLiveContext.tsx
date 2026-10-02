@@ -1,5 +1,7 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import type { LiveAnalyticsSnapshot } from '../services/liveAnalytics';
+import { loadPublicBaselineParity, type PublicBaselineData } from '../services/publicBaseline';
+import { useEffect, useState } from 'react';
 import {
   compareLiveToCompatibility,
   compareRegionalToCompatibility,
@@ -29,6 +31,8 @@ type AnalyticsLiveContextValue = {
   advancedLiveReady: boolean;
   overnightLiveReady: boolean;
   intensityLiveReady: boolean;
+  publicBaseline: PublicBaselineData | null;
+  publicBaselineReady: boolean;
 };
 
 const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
@@ -41,6 +45,8 @@ const AnalyticsLiveContext = createContext<AnalyticsLiveContextValue>({
   advancedLiveReady: false,
   overnightLiveReady: false,
   intensityLiveReady: false,
+  publicBaseline: null,
+  publicBaselineReady: false,
 });
 
 export function AnalyticsLiveProvider({
@@ -50,6 +56,18 @@ export function AnalyticsLiveProvider({
   snapshot: LiveAnalyticsSnapshot | null;
   children: ReactNode;
 }) {
+  const [publicBaseline,setPublicBaseline]=useState<PublicBaselineData|null>(null);
+  const [publicBaselineReady,setPublicBaselineReady]=useState(false);
+  useEffect(()=>{
+    let active=true;
+    void loadPublicBaselineParity().then(result=>{
+      if (!active) return;
+      setPublicBaseline(result.matches && result.baseline ? result.baseline : null);
+      setPublicBaselineReady(result.matches && !!result.baseline);
+    });
+    return()=>{active=false};
+  },[]);
+
   const summary = paritySummary(compareLiveToCompatibility(snapshot));
   const regionalSummary = regionalParitySummary(compareRegionalToCompatibility(snapshot));
   const kpSummary = kpParitySummary(compareKpToCompatibility(snapshot));
@@ -68,6 +86,8 @@ export function AnalyticsLiveProvider({
     advancedLiveReady: advancedSummary.ready,
     overnightLiveReady: overnightSummary.ready,
     intensityLiveReady: intensitySummary.ready,
+    publicBaseline,
+    publicBaselineReady,
   }}>
     {children}
   </AnalyticsLiveContext.Provider>;

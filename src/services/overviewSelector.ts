@@ -1,11 +1,12 @@
 import { REGIONS, seasonOverview } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 const PRODUCT_CODES = ['day','wk-area','wk-dns','sk-area','sk-dns'] as const;
 
 export type OverviewDataset = {
-  source: 'live' | 'compatibility';
+  source: 'live' | 'public' | 'compatibility';
   totalTickets: number;
   totalRevenue: number;
   avgPrice: number;
@@ -22,8 +23,13 @@ export type OverviewDataset = {
 export function selectOverviewDataset(
   snapshot: LiveAnalyticsSnapshot | null,
   liveReady: boolean,
+  publicBaseline?: PublicBaselineData | null,
 ): OverviewDataset {
   const sales = snapshot?.sales?.aggregate;
+  if ((!liveReady || !sales) && publicBaseline) {
+    const b=publicBaseline.seasonOverview;
+    return {source:'public',totalTickets:b.totalTickets,totalRevenue:b.totalRevenue,avgPrice:b.avgPrice,topRegion:b.topRegion,topRegionRevenue:b.topRegionRevenue,topRegionTickets:b.topRegionTickets,regionQty:[...b.regionQty],regionRevenue:[...b.regionRevenue],ticketQty:[...b.ticketQty],ticketRevenue:[...b.ticketRevenue],channels:{labels:[...b.channels.labels],values:[...b.channels.values]}};
+  }
   if (!liveReady || !sales) {
     return {
       source:'compatibility',
