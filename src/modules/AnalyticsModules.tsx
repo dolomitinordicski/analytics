@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
-import { Alert, BilingualText, Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading, SourceBadge } from '../components/Ui';
+import { Alert, BilingualText, Card, EditorialSummary, Insight, MethodologyPanel, Metric, ReferencePanel, SectionHeading, SourceBadge } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
@@ -28,6 +28,13 @@ import {
   overnightMethodology,
   reliabilityMethodology,
 } from '../data/editorial';
+import {
+  advancedReferenceSources,
+  crossCuttingReferenceLimits,
+  overnightReferenceSources,
+  reliabilityReferenceSources,
+  salesReferenceSources,
+} from '../data/referenceSources';
 import {
   legacyAdvancedCopy,
   legacyOverviewNotes,
@@ -118,6 +125,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
       {overviewInsights.map(x=><Insight key={x[0]} n={x[0]} de={x[1]} it={x[2]} bodyDe={x[3]} bodyIt={x[4]} tag={x[5]}/>)}
     </div>
     <EditorialSummary {...editorialSummaries.overview}/>
+    <ReferencePanel titleDe="Datenquellen & Qualität" titleIt="Fonti dati & qualità" items={salesReferenceSources}/>
   </Module>;
 }
 
@@ -377,6 +385,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       </tbody></table></div>
     </Card>
     <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen" titleIt="Note metodologiche & fonti" items={reliabilityMethodology}/>
+    <ReferencePanel titleDe="KP-Datenquellen & Zuverlässigkeit" titleIt="Fonti KP & affidabilità" items={reliabilityReferenceSources}/>
     <EditorialSummary {...editorialSummaries.reliability}/>
   </Module>;
 }
@@ -474,6 +483,8 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
       <span className="analytics-lang-it">Le assunzioni e le fonti dell’HTML originale restano archiviate nel dataset di preservazione. Per calcolo e interpretazione fa fede esclusivamente il protocollo verificato seguente.</span>
     </Alert>
     <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen — verifiziertes Protokoll" titleIt="Note metodologiche & fonti — protocollo verificato" items={advancedMethodology}/>
+    <ReferencePanel titleDe="Referenzwerte & Quellenqualität" titleIt="Valori di riferimento & qualità fonti" items={advancedReferenceSources}/>
+    <ReferencePanel titleDe="Übergreifende Grenzen" titleIt="Limiti trasversali" items={crossCuttingReferenceLimits}/>
   </Module>;
 }
 
@@ -564,6 +575,8 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       <span className="analytics-lang-de">Quelle: ASTAT — Landesinstitut für Statistik, monatliche Tourismusentwicklung (Dez. 2025–März 2026). Provinzkontext, nicht DNS-spezifisch. Die Summe Dez–März umfasst ganz Südtirol.</span>
       <span className="analytics-lang-it">{legacyOvernightCopy.provinceSource.replace('Quelle · Fonte: ','Fonte: ')}</span>
     </div>
+    <ReferencePanel titleDe="Touristische Referenzquellen & Vergleichbarkeit" titleIt="Fonti turistiche & comparabilità" items={overnightReferenceSources}/>
+    <ReferencePanel titleDe="Statistische Grenzen" titleIt="Limiti statistici" items={crossCuttingReferenceLimits}/>
   </Module>;
 }
 
