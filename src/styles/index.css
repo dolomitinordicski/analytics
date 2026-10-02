@@ -392,12 +392,15 @@
 
 
 .analytics-editorial-summary {
-  @apply my-4 grid gap-3 rounded-lg bg-dns-deep px-5 py-4 md:grid-cols-2;
+  @apply my-4;
 }
-.analytics-editorial-summary p {
-  @apply m-0 text-sm italic leading-6 text-white;
+.analytics-editorial-summary .dns-insight-body {
+  @apply grid gap-3 md:grid-cols-2;
 }
-.analytics-editorial-summary p:first-child {
+.analytics-editorial-summary .dns-insight-body p {
+  @apply m-0 italic;
+}
+.analytics-editorial-summary .dns-insight-body p:first-child {
   @apply border-dns-light/30 text-dns-light md:border-r md:pr-4;
 }
 .analytics-methodology {
