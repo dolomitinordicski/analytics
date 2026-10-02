@@ -72,17 +72,17 @@ export function OverviewModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Verkäufe nach Region" it="Vendite per regione"/>
     <div className="analytics-grid-2">
-      <Card title="Anzahl Tickets / Quantità" subtitle="nach Region · per regione">
+      <Card titleDe="Anzahl Tickets" titleIt="Quantità biglietti" subtitleDe="nach Region" subtitleIt="per regione">
         <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionQty],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
-      <Card title="Einnahmen / Entrate (€)" subtitle="nach Region · per regione">
+      <Card titleDe="Einnahmen (€)" titleIt="Entrate (€)" subtitleDe="nach Region" subtitleIt="per regione">
         <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.regionRevenue],backgroundColor:regionColors,borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Jahresvergleich · Diagramme" it="Confronto annuale · grafici comparativi"/>
     <div className="analytics-grid-3">
-      <Card title="Jahresvergleich Tickets" subtitle="Confronto annuale biglietti">
+      <Card titleDe="Jahresvergleich Tickets" titleIt="Confronto annuale biglietti">
         <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[
           {label:'2025-26',data:[...data.ticketQty],backgroundColor:COLORS.year1},
           {label:'2024-25',data:[annualData.qty.day[2],annualData.qty.wka[2],annualData.qty.wkd[2],annualData.qty.ska[2],annualData.qty.skd[2]],backgroundColor:COLORS.year2},
@@ -90,10 +90,10 @@ export function OverviewModule({language}:AnalyticsModuleProps){
           {label:'2022-23',data:[annualData.qty.day[0],annualData.qty.wka[0],annualData.qty.wkd[0],annualData.qty.ska[0],annualData.qty.skd[0]],backgroundColor:COLORS.year4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,color:COLORS.mid,font:{size:9}}}},scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
-      <Card title="Tickettyp — Menge" subtitle="Tipo biglietto — quantità">
+      <Card titleDe="Tickettyp — Menge" titleIt="Tipo biglietto — quantità">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketQty],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
-      <Card title="Vertriebskanal" subtitle="Canale di vendita">
+      <Card titleDe="Vertriebskanal" titleIt="Canale di vendita">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
         <div className="analytics-note-small analytics-legacy-inline">{legacyOverviewNotes.channelMix}</div>
       </Card>
@@ -101,10 +101,10 @@ export function OverviewModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Einnahmen nach Tickettyp" it="Entrate per tipo"/>
     <div className="analytics-grid-2">
-      <Card title="Einnahmen nach Tickettyp" subtitle="Entrate per tipo biglietto">
+      <Card titleDe="Einnahmen nach Tickettyp" titleIt="Entrate per tipo di biglietto">
         <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[{data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:0,borderRadius:4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,beginAtZero:true,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1000).toFixed(0)+'k'}}}}} as any}/>
       </Card>
-      <Card title="Einnahmen (%) vs. Menge (%)" subtitle="Entrate (%) vs. quantità (%)">
+      <Card titleDe="Einnahmen (%) vs. Menge (%)" titleIt="Entrate (%) vs. quantità (%)">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...TICKET_TYPES],datasets:[
           {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
           {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
@@ -168,7 +168,7 @@ export function AnnualModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Trendentwicklung — Index 100 · DNS vs. Area" it="Sviluppo trend — Indice 100 · DNS vs. Area"/>
     <div className="analytics-grid-2">
-      <Card title="Trendentwicklung pro Tickettyp — Index 100" subtitle="Sviluppo per tipo biglietto — indice base 100" accent>
+      <Card titleDe="Trendentwicklung pro Tickettyp — Index 100" titleIt="Sviluppo per tipo di biglietto — indice base 100" accent>
         <ChartCanvas config={{type:'line',data:{labels:[...SEASONS],datasets:[
           {label:'DAY',data:idx(data.qty.day),borderColor:COLORS.day,backgroundColor:'transparent',tension:.4},
           {label:'WK Area',data:idx(data.qty.wka),borderColor:COLORS.wkArea,backgroundColor:'transparent',tension:.4},
@@ -177,7 +177,7 @@ export function AnnualModule({language}:AnalyticsModuleProps){
           {label:'SK DNS',data:idx(data.qty.skd),borderColor:COLORS.skDns,backgroundColor:'transparent',tension:.4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:axis}}} as any}/>
       </Card>
-      <Card title="DNS-Produkte vs. Area-Produkte — Index 100" subtitle="Prodotti DNS vs. Area — indice base 100" accent>
+      <Card titleDe="DNS-Produkte vs. Area-Produkte — Index 100" titleIt="Prodotti DNS vs. prodotti Area — indice base 100" accent>
         <ChartCanvas config={{type:'line',data:{labels:[...SEASONS],datasets:[
           {label:'DNS',data:dnsTotal.map(v=>v/dnsTotal[0]*100),borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4},
           {label:'Area',data:areaTotal.map(v=>v/areaTotal[0]*100),borderColor:COLORS.wkArea,backgroundColor:'rgba(139,58,47,.06)',fill:true,tension:.4},
@@ -198,10 +198,10 @@ export function AnnualModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Einnahmentrend · Zusammensetzung nach Jahr" it="Trend entrate · composizione per anno"/>
     <div className="analytics-grid-2">
-      <Card title="Gesamteinnahmen — 4-Jahrestrend">
+      <Card titleDe="Gesamteinnahmen — 4-Jahrestrend" titleIt="Entrate totali — trend 4 anni">
         <ChartCanvas height={190} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.totalRevenue],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+(Number(v)/1e6).toFixed(2)+'M'}}}}} as any}/>
       </Card>
-      <Card title="Einnahmen-Zusammensetzung pro Jahr">
+      <Card titleDe="Einnahmen-Zusammensetzung pro Jahr" titleIt="Composizione entrate per anno">
         <ChartCanvas height={190} config={{type:'bar',data:{labels:[...SEASONS],datasets:[
           {label:'DAY',data:[...data.revenueByType.day],backgroundColor:COLORS.day},
           {label:'WK Area',data:[...data.revenueByType.wka],backgroundColor:COLORS.wkArea},
@@ -214,18 +214,18 @@ export function AnnualModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Delta 2022-23 → 2025-26 & Ø Preise" it="Variazione 2022-23 → 2025-26 & prezzi medi"/>
     <div className="analytics-grid-2">
-      <Card title="Δ Menge & Einnahmen" subtitle="Δ quantità & entrate">
+      <Card titleDe="Δ Menge & Einnahmen" titleIt="Δ quantità & entrate">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Δ Menge</th><th>Δ Einnahmen</th><th>% Menge</th><th>% Einnahmen</th></tr></thead><tbody>
           {deltaRows.map(row=><tr key={row.type}><td>{row.type}</td><td>{row.qty>0?'+':''}{integer(row.qty)}</td><td>{row.revenue>0?'+':''}{euro(row.revenue)}</td><td>{row.qtyPct>0?'+':''}{pct(row.qtyPct,Math.abs(row.qtyPct)<10?2:1)}</td><td>{row.revenuePct>0?'+':''}{pct(row.revenuePct,Math.abs(row.revenuePct)<10?2:1)}</td></tr>)}
         </tbody></table></div>
       </Card>
-      <Card title="Ø Ticketpreis WS 2025-26" subtitle="Prezzo medio per tipo">
+      <Card titleDe="Ø Ticketpreis WS 2025-26" titleIt="Prezzo medio per tipo SI 2025-26">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Ø Preis</th></tr></thead><tbody>
           {priceRows.map(row=><tr key={row.type}><td>{row.type}</td><td><strong>€ {row.value.toFixed(2).replace('.',',')}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
     </div>
-    <Card title="Ø Preis-Trend" subtitle="Trend prezzo medio">
+    <Card titleDe="Ø Preis-Trend" titleIt="Trend prezzo medio">
       <ChartCanvas height={180} config={{type:'line',data:{labels:[...SEASONS],datasets:[{data:[...data.avgPrice],borderColor:COLORS.deep,backgroundColor:'rgba(13,77,94,.08)',fill:true,tension:.4}]},options:{...baseOptions,scales:{x:axis,y:{...axis,ticks:{...axis.ticks,callback:(v:any)=>'€'+Number(v).toFixed(0)}}}}} as any}/>
     </Card>
     <EditorialSummary {...editorialSummaries.annual}/>
@@ -248,18 +248,18 @@ export function RegionalModule({language}:AnalyticsModuleProps){
     />
 
     <div className="analytics-metrics">
-      <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value={kpis.dayRegion} note={`${pct(kpis.daySharePct)} DAY-Anteil · quota DAY`} top/>
-      <Metric label="SK Area Schwerpunkt" sublabel="SK Area più radicata" value={kpis.skAreaRegion} note={`${integer(kpis.skAreaQty)} pz · ${pct(kpis.skAreaNetworkSharePct)} del totale SK Area`}/>
-      <Metric label="DNS WK Kerngebiet" sublabel="Cuore del DNS WK" value={kpis.dnsWkRegion} note={`${integer(kpis.dnsWkQty)} pz · ${pct(kpis.dnsWkNetworkSharePct)} del totale WK DNS`}/>
-      <Metric label="Ausgewogenes Profil" sublabel="Profilo più diversificato" value={kpis.diversifiedRegion} note="Mix der Nicht-DAY-Produkte · mix prodotti non-DAY"/>
+      <Metric label="DAY-geprägte Region" sublabel="Regione a forte vocazione DAY" value={kpis.dayRegion} noteDe={`${pct(kpis.daySharePct)} DAY-Anteil`} noteIt={`${pct(kpis.daySharePct)} quota DAY`} top/>
+      <Metric label="SK Area Schwerpunkt" sublabel="SK Area più radicata" value={kpis.skAreaRegion} noteDe={`${integer(kpis.skAreaQty)} Stk. · ${pct(kpis.skAreaNetworkSharePct)} des SK-Area-Gesamtwerts`} noteIt={`${integer(kpis.skAreaQty)} pz · ${pct(kpis.skAreaNetworkSharePct)} del totale SK Area`}/>
+      <Metric label="DNS WK Kerngebiet" sublabel="Cuore del DNS WK" value={kpis.dnsWkRegion} noteDe={`${integer(kpis.dnsWkQty)} Stk. · ${pct(kpis.dnsWkNetworkSharePct)} des DNS-WK-Gesamtwerts`} noteIt={`${integer(kpis.dnsWkQty)} pz · ${pct(kpis.dnsWkNetworkSharePct)} del totale WK DNS`}/>
+      <Metric label="Ausgewogenes Profil" sublabel="Profilo più diversificato" value={kpis.diversifiedRegion} noteDe="Mix der Nicht-DAY-Produkte" noteIt="Mix dei prodotti non-DAY"/>
     </div>
 
     <SectionHeading de="Ticketmix pro Region — 100%" it="Composizione biglietti per regione — 100%"/>
     <div className="analytics-grid-2">
-      <Card title="Menge (%) nach Tickettyp" subtitle="Quantità (%) per tipo biglietto" accent>
+      <Card titleDe="Menge (%) nach Tickettyp" titleIt="Quantità (%) per tipo di biglietto" accent>
         <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:datasetsFrom(pctQ)},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true,max:100,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
-      <Card title="Einnahmen (%) nach Tickettyp" subtitle="Entrate (%) per tipo biglietto" accent>
+      <Card titleDe="Einnahmen (%) nach Tickettyp" titleIt="Entrate (%) per tipo di biglietto" accent>
         <ChartCanvas config={{type:'bar',data:{labels:[...REGIONS],datasets:datasetsFrom(pctR)},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true,max:100,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
     </div>
@@ -269,13 +269,13 @@ export function RegionalModule({language}:AnalyticsModuleProps){
       {TICKET_TYPES.map((t,i)=><Card key={t} title={t}>
         <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...qty[i]],backgroundColor:qty[i].map(v=>v===Math.max(...qty[i])?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>)}
-      <Card title="Gesamteinnahmen nach Region" subtitle="Entrate totali per regione">
+      <Card titleDe="Gesamteinnahmen nach Region" titleIt="Entrate totali per regione">
         <ChartCanvas height={170} config={{type:'bar',data:{labels:[...REGIONS],datasets:[{data:[...data.totalRevenue],backgroundColor:data.totalRevenue.map(v=>v===Math.max(...data.totalRevenue)?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,scales:{x:{...axis,ticks:{...axis.ticks,maxRotation:40,autoSkip:false}},y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Heatmap — Menge pro Region & Tickettyp" it="Heatmap — quantità per regione e tipo"/>
-    <Card title="Regionale Verteilung" subtitle="Distribuzione regionale">
+    <Card titleDe="Regionale Verteilung" titleIt="Distribuzione regionale">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Region</th>{TICKET_TYPES.map(t=><th key={t}>{t}</th>)}<th>Entrate</th></tr></thead><tbody>
         {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(data.totalRevenue[i])}</td></tr>)}
       </tbody></table></div>
@@ -312,15 +312,15 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       <Metric label="Netzöffnung am 20.01.2026" sublabel="Rete aperta" value={pct(totalOpen/totalPot*100)} note={`${totalOpen.toFixed(1)} / ${totalPot.toFixed(0)} km`}/>
       <Metric label="KS-Anteil an geöffneten Loipen" sublabel="Quota neve artificiale" value={pct(totalOpen ? totalKs/totalOpen*100 : 0)} note={`${totalKs.toFixed(1)} km KS`}/>
       <Metric label="Netzöffnung am 23.12.2025" sublabel="Apertura rete" value={pct(totalPot ? totalOpen1/totalPot*100 : 0)} note="Milestone 1"/>
-      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} note={mostReliable ? `${pct(mostReliable.pct3,0)} alle 3 milestone` : '—'} top/>
+      <Metric label="Höchste Reliability" sublabel="Regione più affidabile" value={mostReliable?.r ?? '—'} noteDe={mostReliable ? `${pct(mostReliable.pct3,0)} an allen 3 Meilensteinen` : '—'} noteIt={mostReliable ? `${pct(mostReliable.pct3,0)} alle 3 milestone` : '—'} top/>
     </div>
 
     <SectionHeading de="KP — Kunstschnee-Index pro Region" it="KP per regione — indice neve artificiale"/>
     <div className="analytics-grid-2">
-      <Card title="KP pro Region — KS km / Potenzial km (max 100%)">
+      <Card titleDe="KP pro Region — KS-km / potenzielle km (max. 100%)" titleIt="KP per regione — km KS / km potenziali (max 100%)">
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(d=>d.r),datasets:[{data:sorted.map(d=>d.kp),backgroundColor:sorted.map(d=>d.kp>=70?COLORS.deep:d.kp>=30?COLORS.mid:COLORS.light),borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}},y:axis}}} as any}/>
       </Card>
-      <Card title="KS · NS · nicht geöffnet — al 20.01.2026">
+      <Card titleDe="KS · NS · nicht geöffnet — 20.01.2026" titleIt="KS · NS · non aperto — 20.01.2026">
         <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
           {label:'KS',data:rows.map(d=>d.ks3),backgroundColor:COLORS.deep},
           {label:'Aperti senza KS',data:rows.map(d=>Math.max(0,d.tot3-d.ks3)),backgroundColor:COLORS.light},
@@ -331,14 +331,14 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="% Pistenöffnung — 3 Meilensteine pro Region" it="% piste aperte per regione — nelle 3 milestone"/>
     <div className="analytics-grid-2">
-      <Card title="% Pistenöffnung pro Region & Meilenstein">
+      <Card titleDe="% Pistenöffnung pro Region & Meilenstein" titleIt="% piste aperte per regione e milestone">
         <ChartCanvas config={{type:'bar',data:{labels:rows.map(d=>d.r),datasets:[
           {label:'23.12.2025',data:rows.map(d=>d.pct1),backgroundColor:COLORS.year4},
           {label:'06.01.2026',data:rows.map(d=>d.pct2),backgroundColor:COLORS.wkDns},
           {label:'20.01.2026',data:rows.map(d=>d.pct3),backgroundColor:COLORS.deep},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
-      <Card title="Tabelle — KP pro Region WS 2025-26">
+      <Card titleDe="Tabelle — KP pro Region WS 2025-26" titleIt="Tabella — KP per regione SI 2025-26">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Regione</th><th>Pot.</th><th>23.12</th><th>06.01</th><th>20.01</th><th>KP</th></tr></thead><tbody>
           {rows.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
         </tbody></table></div>
@@ -347,14 +347,14 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="DNS Gesamtbild · Klassifikation nach KP-Index" it="Quadro complessivo DNS · Classificazione per indice KP"/>
     <div className="analytics-grid-2">
-      <Card title="DNS — KS · offen ohne KS · nicht geöffnet (20.01)" subtitle="DNS — KS · aperte senza KS · non aperte (20.01)">
+      <Card titleDe="DNS — KS · offen ohne KS · nicht geöffnet (20.01)" titleIt="DNS — KS · aperte senza KS · non aperte (20.01)">
         <div className="analytics-kpi-stack">
           <div><span>KS</span><strong>{totalKs.toFixed(1)} km</strong></div>
           <div><span>Aperte senza KS</span><strong>{Math.max(0,totalOpen-totalKs).toFixed(1)} km</strong></div>
           <div><span>Non aperte</span><strong>{Math.max(0,totalPot-totalOpen).toFixed(1)} km</strong></div>
         </div>
       </Card>
-      <Card title="Klassifikation nach KP-Index" subtitle="Classificazione per indice KP">
+      <Card titleDe="Klassifikation nach KP-Index" titleIt="Classificazione per indice KP">
         <div className="analytics-legacy-list">
           {legacyReliabilityCopy.classification.map(item=><div key={item}>{item}</div>)}
         </div>
@@ -367,7 +367,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       de={partnerData.source==='live' ? 'DNS_Core historisch · Partnerparität geprüft' : partnerData.source==='public' ? 'DNS_Core öffentliche Baseline · Partner Zero-Loss geprüft' : 'Partnerdetail · Kompatibilitätsdatensatz · A.2.1'}
       it={partnerData.source==='live' ? 'DNS_Core storico · parità partner verificata' : partnerData.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss partner verificato' : 'Dettaglio partner · dataset di compatibilità · A.2.1'}
     />
-    <Card title="KP pro Partner — km KS / km potenziali individuali">
+    <Card titleDe="KP pro Partner — KS-km / individuelle potenzielle km" titleIt="KP per partner — km KS / km potenziali individuali">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th>Aperto</th><th>KP</th></tr></thead><tbody>
         {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded?' · escluso':''}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
       </tbody></table></div>
@@ -408,13 +408,13 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
     </div>
     <div className="analytics-metrics">
       <Metric label="Wochenkarten gesamt" sublabel="Settimanali totali" value={integer(observed.weeklyTicketsNetwork)} note="Network"/>
-      <Metric label="Geschätzte Übernachtungen" sublabel="Pernottamenti stimati" value={integer(derived.nightsNet)} note={`${share}% · ${nights} Nächte`}/>
-      <Metric label="Direkte Wertschöpfung" sublabel="Valore diretto" value={`€ ${(derived.directNet/1e6).toFixed(2)} Mio`} note={`€ ${spend}/Nacht`}/>
-      <Metric label="Gesamtwirkung" sublabel="Impatto totale" value={`€ ${(derived.totalNet/1e6).toFixed(2)} Mio`} note={`× ${mult.toFixed(2)} Multiplikator`} top/>
+      <Metric label="Geschätzte Übernachtungen" sublabel="Pernottamenti stimati" value={integer(derived.nightsNet)} noteDe={`${share}% · ${nights} Nächte`} noteIt={`${share}% · ${nights} notti`}/>
+      <Metric label="Direkte Wertschöpfung" sublabel="Valore diretto" value={`€ ${(derived.directNet/1e6).toFixed(2)} Mio`} noteDe={`€ ${spend}/Nacht`} noteIt={`€ ${spend}/notte`}/>
+      <Metric label="Gesamtwirkung" sublabel="Impatto totale" value={`€ ${(derived.totalNet/1e6).toFixed(2)} Mio`} noteDe={`× ${mult.toFixed(2)} Multiplikator`} noteIt={`× ${mult.toFixed(2)} moltiplicatore`} top/>
     </div>
 
     <SectionHeading de="Wochenkarten — Direkte Wertschöpfung" it="Settimanali — valore economico diretto"/>
-    <Card title="Interaktiver Simulator · Simulatore interattivo" accent>
+    <Card titleDe="Interaktiver Simulator" titleIt="Simulatore interattivo" accent>
       <div className="analytics-sliders">
         <Slider label="Nächte / notti" value={nights} min={3} max={10} step={.5} onChange={setNights}/>
         <Slider label="Übernachtungsquote / quota" value={share} min={40} max={100} step={5} onChange={setShare} suffix="%"/>
@@ -426,14 +426,14 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Südtirol vs. Gesamtnetzwerk" it="Alto Adige vs. intero network"/>
     <div className="analytics-grid-2">
-      <Card title="Wertschöpfung — Vergleich">
+      <Card titleDe="Wertschöpfung — Vergleich" titleIt="Valore economico — confronto">
         <BilingualNote de={legacyAdvancedCopy.southTyrolScopeDe} it={legacyAdvancedCopy.southTyrolScopeIt}/>
         <ChartCanvas config={{type:'bar',data:{labels:['Südtirol · Alto Adige','Network · intero'],datasets:[
           {label:'Direkt',data:[derived.directAA,derived.directNet],backgroundColor:COLORS.deep},
           {label:'Multiplikator',data:[derived.directAA*(mult-1),derived.directNet*(mult-1)],backgroundColor:COLORS.light},
         ]},options:{...baseOptions,indexAxis:'y',plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:{...axis,stacked:true},y:{...axis,stacked:true}}}} as any}/>
       </Card>
-      <Card title="Ticketeinnahmen → Territorialer Impact" subtitle="Incasso biglietti → impatto territoriale">
+      <Card titleDe="Ticketeinnahmen → territorialer Impact" titleIt="Incasso biglietti → impatto territoriale">
         <div className="analytics-impact-flow">
           <div><span>Einnahmen Wochenkarten · Incasso settimanali</span><strong>{euro(observed.weeklyRevenueNetwork)}</strong><small>{`WK DNS ${euro(observed.weeklyRevenueDns)} + WK Area ${euro(observed.weeklyRevenueArea)}`}</small></div>
           <div className="analytics-impact-arrow">↓</div>
@@ -445,10 +445,10 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Aufschlüsselung der Ausgaben (Struktur ASTAT)" it="Ripartizione spesa (struttura ASTAT)"/>
     <div className="analytics-grid-2">
-      <Card title="Direkte Wertschöpfung nach Ausgabeposten">
+      <Card titleDe="Direkte Wertschöpfung nach Ausgabeposten" titleIt="Valore diretto per voce di spesa">
         <ChartCanvas config={{type:'doughnut',data:{labels:advancedDefaults.astat.map(v=>v.it),datasets:[{data:advancedDefaults.astat.map(v=>derived.directNet*v.q),backgroundColor:advancedDefaults.astat.map(v=>v.c),borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'58%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
-      <Card title="Werte nach Ausgabeposten · Network">
+      <Card titleDe="Werte nach Ausgabeposten · Network" titleIt="Valori per voce di spesa · network">
         <table className="analytics-table"><thead><tr><th>Posten</th><th>%</th><th>EUR</th></tr></thead><tbody>{advancedDefaults.astat.map(v=><tr key={v.it}><td>{v.de} · {v.it}</td><td>{pct(v.q*100,1)}</td><td>{euro(derived.directNet*v.q)}</td></tr>)}</tbody></table>
       </Card>
     </div>
@@ -506,16 +506,16 @@ export function OvernightModule({language}:AnalyticsModuleProps){
     </Alert>
     <BilingualNote de={legacyOvernightCopy.basisDe} it={legacyOvernightCopy.basisIt}/>
     <div className="analytics-metrics">
-      <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(historicalTotal)} note={`WS 2024-25 · ${historicalRows.length} Gebiete · ${historicalRows.length} aree`}/>
+      <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(historicalTotal)} noteDe={`WS 2024-25 · ${historicalRows.length} Gebiete`} noteIt={`SI 2024-25 · ${historicalRows.length} aree`}/>
       <Metric label="Top-Gebiet" sublabel="Area top" value={historicalTop?.area ?? '—'} note={historicalTop?`${integer(Number(historicalTop.pn[0]))} · ${pct(Number(historicalTop.pn[0])/historicalTotal*100)}`:'—'} top/>
-      <Metric label="Gebiete" sublabel="Aree" value={historicalRows.length} note="DNS Netzwerk · network"/>
-      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(historicalAverage)} note="Durchschnitt · media"/>
+      <Metric label="Gebiete" sublabel="Aree" value={historicalRows.length} noteDe="DNS Netzwerk" noteIt="Network DNS"/>
+      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(historicalAverage)} noteDe="Durchschnitt" noteIt="Media"/>
     </div>
     <div className="analytics-grid-2">
-      <Card title="Übernachtungen pro Gebiet — WS 2024-25" subtitle="Pernottamenti per area — SI 2024-25">
+      <Card titleDe="Übernachtungen pro Gebiet — WS 2024-25" titleIt="Pernottamenti per area — SI 2024-25">
         <ChartCanvas config={{type:'bar',data:{labels:historicalSorted.map(a=>a.area),datasets:[{data:historicalSorted.map(a=>a.pn[0]),backgroundColor:historicalSorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
       </Card>
-      <Card title="Datentabelle · Zeitreihe (Basis)" subtitle="Tabella dati · serie storica (base)">
+      <Card titleDe="Datentabelle · Zeitreihe (Basis)" titleIt="Tabella dati · serie storica (base)">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet · Area</th><th>PN 2024-25</th><th>Anteil · Quota</th><th>PN 2025-26</th></tr></thead><tbody>
           {historicalRows.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(Number(a.pn[0])/historicalTotal*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
         </tbody></table></div>
@@ -526,16 +526,16 @@ export function OvernightModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Übernachtungen pro Gebiet — WS 2025-26" it="Pernottamenti per area — SI 2025-26"/>
     <div className="analytics-grid-2">
-      <Card title="Übernachtungen pro Gebiet (sortiert)">
+      <Card titleDe="Übernachtungen pro Gebiet (sortiert)" titleIt="Pernottamenti per area (ordinati)">
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn2526),backgroundColor:sorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
       </Card>
-      <Card title="Anteil pro Gebiet">
+      <Card titleDe="Anteil pro Gebiet" titleIt="Quota per area">
         <ChartCanvas config={{type:'doughnut',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.pn2526),backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light,COLORS.day,COLORS.wkArea,COLORS.skArea,COLORS.wkDns,COLORS.skDns],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
     </div>
 
     <SectionHeading de="Datentabelle · Zeitreihe" it="Tabella dati · serie storica"/>
-    <Card title="WS 2025-26 vs. WS 2024-25">
+    <Card titleDe="WS 2025-26 vs. WS 2024-25" titleIt="SI 2025-26 vs. SI 2024-25">
       <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet</th><th>2025-26</th><th>Anteil</th><th>2024-25</th><th>Δ</th></tr></thead><tbody>
         {sorted.map(a=><tr key={a.areaId}><td><RegionLabel name={a.area} compact/></td><td><strong>{integer(a.pn2526)}</strong></td><td>{pct(a.pn2526/total2526*100)}</td><td>{integer(a.pn2425)}</td><td className={a.pn2526-a.pn2425>=0?'is-positive':'is-negative'}>{integer(a.pn2526-a.pn2425)}</td></tr>)}
       </tbody></table></div>
@@ -548,10 +548,10 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       {legacyOvernightCopy.months.map((m,i)=><Metric key={m.de} label={m.de} sublabel={m.it} value={integer(monthly[i] ?? m.nights)} note={`Übernachtungen · presenze (${m.nightsDelta>0?'+':''}${m.nightsDelta.toFixed(1).replace('.',',')}%) · ${integer(m.arrivals)} Ankünfte/arrivi (${m.arrivalsDelta>0?'+':''}${m.arrivalsDelta.toFixed(1).replace('.',',')}%)`}/>)}
     </div>
     <div className="analytics-metrics">
-      <Metric label="Summe Dez–März 2025/26" sublabel="Totale dic–mar 2025/26" value={integer(legacyOvernightCopy.winterWindowNights)} note="Übernachtungen · presenze — FAIR-Zeitfenster / finestra FAIR"/>
+      <Metric label="Summe Dez–März 2025/26" sublabel="Totale dic–mar 2025/26" value={integer(legacyOvernightCopy.winterWindowNights)} noteDe="Übernachtungen — FAIR-Zeitfenster" noteIt="Presenze — finestra FAIR"/>
       <Metric label="Ankünfte Dez–März" sublabel="Arrivi dic–mar" value={integer(legacyOvernightCopy.winterWindowArrivals)} note="01.12.2025–31.03.2026"/>
-      <Metric label="Saison gesamt 2025/26" sublabel="Stagione totale 2025/26" value="14,8 Mio" note={`${integer(legacyOvernightCopy.seasonTotalArrivals)} Ankünfte/arrivi`}/>
-      <Metric label="Top-Gemeinde März" sublabel="Comune top marzo" value={legacyOvernightCopy.topMunicipalityMarch} note={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} presenze`} top/>
+      <Metric label="Saison gesamt 2025/26" sublabel="Stagione totale 2025/26" value="14,8 Mio" noteDe={`${integer(legacyOvernightCopy.seasonTotalArrivals)} Ankünfte`} noteIt={`${integer(legacyOvernightCopy.seasonTotalArrivals)} arrivi`}/>
+      <Metric label="Top-Gemeinde März" sublabel="Comune top marzo" value={legacyOvernightCopy.topMunicipalityMarch} noteDe={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} Übernachtungen`} noteIt={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} presenze`} top/>
     </div>
     <div className="analytics-note-small analytics-legacy-inline">{legacyOvernightCopy.provinceSource}</div>
   </Module>;
@@ -590,10 +590,10 @@ export function IntensityModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Intensität pro Gebiet — WK-basiert (robust)" it="Intensità per area — basata su WK (robusta)"/>
     <div className="analytics-grid-2">
-      <Card title="% Langlauf-Übernachtungen / Gesamt (WK-Proxy)">
+      <Card titleDe="% Langlauf-Übernachtungen / Gesamt (WK-Proxy)" titleIt="% pernottamenti fondo / totale (proxy WK)">
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.intWK),backgroundColor:sorted.map(a=>a.intWK>=2?COLORS.deep:a.intWK>=1?COLORS.mid:COLORS.light),borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>Number(v).toFixed(1)+'%'}},y:axis}}} as any}/>
       </Card>
-      <Card title="WK-Tickets vs. Pernottamenti totali — Verhältnis">
+      <Card titleDe="WK-Tickets vs. Gesamtübernachtungen — Verhältnis" titleIt="Ticket WK vs. pernottamenti totali — rapporto">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet</th><th>SWDNS</th><th>PN stimati</th><th>PN totali</th><th>Intensität</th></tr></thead><tbody>
           {sorted.map(a=><tr key={a.area}><td><RegionLabel name={a.area} compact/></td><td>{integer(a.wk)}</td><td>{integer(a.pnWK)}</td><td>{integer(a.pn)}</td><td><strong>{pct(a.intWK,2)}</strong></td></tr>)}
         </tbody></table></div>
@@ -602,10 +602,10 @@ export function IntensityModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Szenario inkl. Tageskarten (explorativ)" it="Scenario incl. giornalieri (esplorativo)"/>
     <div className="analytics-grid-2">
-      <Card title="% Intensität inkl. Tageskarten-Schätzung">
+      <Card titleDe="% Intensität inkl. Tageskarten-Schätzung" titleIt="% intensità incl. stima giornalieri">
         <ChartCanvas config={{type:'bar',data:{labels:[...areas].sort((a,b)=>b.intDAY-a.intDAY).map(a=>a.area),datasets:[{data:[...areas].sort((a,b)=>b.intDAY-a.intDAY).map(a=>a.intDAY),backgroundColor:COLORS.wkArea,borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>Number(v).toFixed(1)+'%'}},y:axis}}} as any}/>
       </Card>
-      <Card title="Vergleich WK-Szenario vs. WK+DAY-Szenario">
+      <Card titleDe="Vergleich WK-Szenario vs. WK+DAY-Szenario" titleIt="Confronto scenario WK vs. scenario WK+DAY">
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[
           {label:'WK (robust)',data:sorted.map(a=>a.intWK),backgroundColor:COLORS.deep},
           {label:'WK+DAY (explorativ)',data:sorted.map(a=>a.intDAY),backgroundColor:'rgba(139,58,47,.5)'},
