@@ -1,6 +1,7 @@
 import { kpRegions } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 const MILESTONE_DATES=['2025-12-23','2026-01-06','2026-01-20'] as const;
 
@@ -21,7 +22,7 @@ export type ReliabilityAreaRow = {
 };
 
 export type ReliabilityDataset = {
-  source:'live'|'compatibility';
+  source:'live'|'public'|'compatibility';
   rows:ReliabilityAreaRow[];
 };
 
@@ -38,16 +39,28 @@ function finalize(row:Omit<ReliabilityAreaRow,'pct1'|'pct2'|'pct3'|'kp'>):Reliab
 export function selectReliabilityDataset(
   snapshot:LiveAnalyticsSnapshot|null,
   liveReady:boolean,
+  publicBaseline?:PublicBaselineData|null,
 ):ReliabilityDataset {
   const kp=snapshot?.kp;
+  const baselineRows=(publicBaseline?.kpRegions ?? kpRegions).map(row=>finalize({
+    r:String(row.r),
+    pot:Number(row.pot),
+    tot1:Number(row.tot1),
+    ks1:Number(row.ks1),
+    tot2:Number(row.tot2),
+    ks2:Number(row.ks2),
+    tot3:Number(row.tot3),
+    ks3:Number(row.ks3),
+    note:String(row.note ?? ''),
+  }));
   if (!liveReady || !kp) {
     return {
-      source:'compatibility',
-      rows:kpRegions.map(row=>({...row})),
+      source:publicBaseline?'public':'compatibility',
+      rows:baselineRows,
     };
   }
 
-  const rows=kpRegions.map(legacy=>{
+  const rows=baselineRows.map(legacy=>{
     const areaId=resolveAnalyticsReportingAreaId(legacy.r);
     const points=MILESTONE_DATES.map(date=>{
       const milestone=kp.milestones.find(m=>m.date===date);
