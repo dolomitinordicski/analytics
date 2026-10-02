@@ -32,6 +32,7 @@ const overnightSelector = read('src/services/overnightSelector.ts');
 const intensitySelector = read('src/services/intensitySelector.ts');
 const editorial = read('src/data/editorial.ts');
 const ui = read('src/components/Ui.tsx');
+const legacy = read('src/data/legacyDashboard.ts');
 
 const requiredTabs = [
   'overview','annual','regions','reliability','advanced','overnights','intensity',
@@ -228,6 +229,48 @@ for (const [label, content, tokens] of [
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.10 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.10 editorial analyses and methodology/source protocol are integrated');
+
+
+const legacySourceTokens = [
+  'Büro 77% · Online 15% · Loipe 7%',
+  'Esterno: Entrate · Interno: quantità',
+  'Osttirol — starke lokale SK Area Verankerung',
+  '3 Zinnen — starker Beitrag zum DNS WK',
+  'Comelico & Cortina — strategische Reichweite',
+  'Ahrntal+Sand — stark bei DAY, Potenzial für DNS',
+  'Hebelwirkung des Langlaufs',
+  'Wochenkarte = Aufenthalt',
+  'Langlauf = sanfter Tourismus',
+  'Break-Even: ab 5,1 Skitagen',
+  'weeklyRevenue: 425398',
+  'total2425: 5650468',
+  "topArea2425: 'Gröden'",
+  'winterWindowNights: 12133762',
+  'winterWindowArrivals: 2764842',
+  'topMunicipalityMarchNights: 166322',
+  'Biathlon Antholz vom KP ausgeschlossen',
+  'Osttirol vorläufig',
+];
+for (const token of legacySourceTokens) {
+  if (!legacy.includes(token)) fail(`legacy HTML content missing from preservation dataset: ${token}`);
+}
+if (!process.exitCode) ok('legacy dns_dashboardf.html editorial/context content is preserved');
+
+const legacyRenderTokens = [
+  'legacyOverviewNotes.channelMix',
+  'legacyAnnualDelta.map',
+  'legacyAnnualPrices2025.map',
+  'legacyRegionalInsights.map',
+  'legacyReliabilityCopy.classification.map',
+  'legacyAdvancedCopy.insights.map',
+  'legacyOvernightCopy.total2425',
+  'legacyOvernightCopy.months.map',
+  'legacyOvernightCopy.provinceSource',
+];
+for (const token of legacyRenderTokens) {
+  if (!modules.includes(token)) fail(`legacy HTML content is preserved but not rendered: ${token}`);
+}
+if (!process.exitCode) ok('legacy HTML content is rendered in the current Analytics modules');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
