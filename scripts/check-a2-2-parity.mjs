@@ -168,7 +168,7 @@ for (const [label, content, tokens] of [
   ['KP milestone aggregate', liveAnalytics, ['kpMilestones','byAreaMilestone','source:\'validation\'','source:\'entries\'']],
   ['KP parity gate', parity, ['compareKpToCompatibility','kpParitySummary','kp-potential-','kp-opened-','kp-artificial-']],
   ['Reliability selector', reliabilitySelector, ['selectReliabilityDataset','source:\'live\'','MILESTONE_DATES']],
-  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP parity verified','Partner detail · Compatibility dataset']],
+  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP parity verified','partner zero-loss verified']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.4 ${label} missing: ${token}`);
 }
@@ -178,7 +178,7 @@ for (const [label, content, tokens] of [
   ['historical adapter', liveAnalytics, ['historicalSeasonRecords','historicalSalesRows','historicalKpSnapshot','historical-season-records']],
   ['KP partner parity', parity, ['compareKpPartnersToCompatibility','kpPartnerParitySummary','kp-partner-pot-','kp-partner-open3-']],
   ['KP partner selector', kpPartnerSelector, ['selectKpPartnerDataset','item.label===legacy.p','source:\'live\'']],
-  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historical · partner parity verified']],
+  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historical · partner parity verified','DNS_Core public baseline · partner zero-loss verified']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.5 ${label} missing: ${token}`);
 }
@@ -305,11 +305,26 @@ for (const [label, content, tokens] of [
   ['Advanced public fallback', advancedSelector, ['PublicBaselineData','weeklyRevenueArea','publicBaseline?.seasonOverview.ticketRevenue']],
   ['Overnight public fallback', overnightSelector, ['PublicBaselineData','publicBaseline?.overnightAreas','source:publicBaseline?\'public\':\'compatibility\'']],
   ['Intensity public fallback', intensitySelector, ['PublicBaselineData','publicBaseline?.intensityAreas','source:publicBaseline?\'public\':\'compatibility\'']],
-  ['H2 module routing', modules, ['publicBaseline','DNS_Core public baseline · KP','DNS_Core public baseline · observed inputs','DNS_Core public baseline · PN','DNS_Core public baseline · intensity']],
+  ['H2 module routing', modules, ['publicBaseline','DNS_Core public baseline · zero-loss verified','DNS_Core public baseline · observed inputs','DNS_Core public baseline · PN','DNS_Core public baseline · intensity']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.11H2 ${label} missing: ${token}`);
 }
 if (!process.exitCode) ok('A.3.11H2 remaining modules prefer the verified public baseline before local compatibility data');
+
+for (const [label, content, tokens] of [
+  ['source badge component', ui, ['SourceBadge','data-analytics-source','AnalyticsSourceState']],
+  ['source state CSS', css, ['is-public','is-fair','is-historical','is-compatibility']],
+  ['source rendering', modules, ['<SourceBadge state={data.source}>','partnerData.source===\'public\'','Monthly context · historical source']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.11I ${label} missing: ${token}`);
+}
+if (modules.includes("data.source==='live' ? 'DNS_Core LIVE · regional parity verified' : 'Compatibility dataset · A.2.1'")) {
+  fail('A.3.11I Regional public source is still mislabeled as compatibility');
+}
+if (modules.includes("partnerData.source==='live' ? 'DNS_Core historical · partner parity verified' : 'Partner detail · Compatibility dataset · A.2.1'")) {
+  fail('A.3.11I KP partner public source is still mislabeled as compatibility');
+}
+if (!process.exitCode) ok('A.3.11I source-state UI is canonical across live/public/fair/historical/compatibility');
 
 if (pkg.devDependencies?.tailwindcss?.startsWith('^4.') !== true || !pkg.devDependencies?.['@tailwindcss/vite']) {
   fail('Tailwind v4 / Vite integration is not configured');
