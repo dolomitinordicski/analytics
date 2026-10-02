@@ -95,3 +95,10 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
     </div>
   </article>;
 }
+
+
+export type AnalyticsSourceState = 'live'|'public'|'compatibility'|'historical'|'fair';
+
+export function SourceBadge({state,children}:{state:AnalyticsSourceState;children:ReactNode}) {
+  return <div className={`analytics-source-badge is-${state}`} data-analytics-source={state}>{children}</div>;
+}
