@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { formatDNSCoreHeaderStatus } from '@dolomitinordicski/dns-shared-data/ui/header-status';
+import { initDNSFooterRuntime } from '@dolomitinordicski/dns-shared-data/ui/footer';
 import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
 import { LiveSourcePanel } from './components/LiveSourcePanel';
@@ -46,6 +47,7 @@ function detectLanguage(): Language {
 }
 
 export default function App() {
+  useEffect(() => { initDNSFooterRuntime(); }, []);
   const [active,setActive] = useState<TabId>(() => {
     const hash = window.location.hash.replace(/^#/, '') as TabId;
     return TABS.some(tab => tab.id === hash) ? hash : 'overview';
@@ -216,7 +218,7 @@ export default function App() {
       </section>
     </main>
 
-    <footer className="analytics-footer">
+    <footer data-dns-tool-footer className="analytics-footer">
       <span>Dolomiti NordicSki</span>
       <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
     </footer>

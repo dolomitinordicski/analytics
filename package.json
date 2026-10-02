@@ -12,7 +12,7 @@
     "check:zero-loss": "node scripts/check-zero-loss-golden.mjs"
   },
   "dependencies": {
-    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#07f321f8230054212db3e08ba6542e1f1777450d",
+    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#6a31dbac014b89916dfec91313e6fb0658b0f3b9",
     "chart.js": "^4.4.8",
     "firebase": "^12.6.0",
     "react": "^18.3.1",
