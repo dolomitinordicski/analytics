@@ -1,6 +1,7 @@
 import { intensityAreas } from '../data/analyticsData';
 import { resolveAnalyticsReportingAreaId } from '../data/scopes';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 export type IntensityInputRow = {
   areaId:string;
@@ -11,7 +12,7 @@ export type IntensityInputRow = {
 };
 
 export type IntensityDataset = {
-  source:'live'|'compatibility';
+  source:'live'|'public'|'compatibility';
   rows:IntensityInputRow[];
 };
 
@@ -26,8 +27,8 @@ const LABELS:Record<string,string>={
   'cortina-d-ampezzo':"Cortina d'Ampezzo",
 };
 
-function compatibilityRows():IntensityInputRow[] {
-  return intensityAreas.map(row=>({
+function baselineRows(sourceRows:ReadonlyArray<{area:string;wk:number;day:number;pn:number}>):IntensityInputRow[] {
+  return sourceRows.map(row=>({
     areaId:resolveAnalyticsReportingAreaId(row.area) ?? row.area,
     area:row.area,
     wk:Number(row.wk),
@@ -39,9 +40,11 @@ function compatibilityRows():IntensityInputRow[] {
 export function selectIntensityDataset(
   snapshot:LiveAnalyticsSnapshot|null,
   ready:boolean,
+  publicBaseline?:PublicBaselineData|null,
 ):IntensityDataset {
   if (!ready || !snapshot?.sales?.aggregate || !snapshot.fair) {
-    return {source:'compatibility',rows:compatibilityRows()};
+    const sourceRows=publicBaseline?.intensityAreas ?? intensityAreas;
+    return {source:publicBaseline?'public':'compatibility',rows:baselineRows(sourceRows)};
   }
 
   const fairPn=new Map<string,number>();
