@@ -244,6 +244,18 @@ for (const forbidden of ['value="2.355"','value="+97%"','value="+20,2%"','value=
 }
 if (!process.exitCode) ok('A.3.11B visible KPIs are derived from the active datasets');
 
+for (const [label, content, tokens] of [
+  ['methodology labels', ui, ['Beobachtet','Osservato','Externe Quelle','Fonte esterna','Quelle öffnen','Apri fonte']],
+  ['Advanced provenance cleanup', modules, ['Für Berechnung und Interpretation gilt ausschließlich','fa fede esclusivamente il protocollo verificato']],
+  ['Overnight structure warning', modules, ['Historische Darstellung mit 9 Gebieten','aktuelle FAIR-Struktur verwendet 8','Rappresentazione storica a 9 aree']],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`A.3.11E ${label} missing: ${token}`);
+}
+if (modules.includes('title="Ausgangs-HTML — Annahmen, Grenzen & Quellen"')) {
+  fail('A.3.11E duplicate legacy methodology/source card is still rendered as authoritative content');
+}
+if (!process.exitCode) ok('A.3.11E verified provenance is authoritative and legacy sources are clearly archival');
+
 
 const legacySourceTokens = [
   'Büro 77% · Online 15% · Loipe 7%',

@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
-import { Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading } from '../components/Ui';
+import { Alert, Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
@@ -435,20 +435,10 @@ export function AdvancedModule(){
     <div className="analytics-insights">
       {legacyAdvancedCopy.insights.map(item=><Insight key={item.n} {...item}/>)}
     </div>
-    <Card title="Ausgangs-HTML — Annahmen, Grenzen & Quellen" subtitle="HTML originale — assunzioni, limiti & fonti">
-      <div className="analytics-legacy-columns">
-        <div>
-          <strong className="analytics-lang-de">Annahmen</strong>
-          <strong className="analytics-lang-it">Assunzioni</strong>
-          <ul>{legacyAdvancedCopy.assumptionsDe.map((item,i)=><li key={item}><span className="analytics-lang-de">{item}</span><span className="analytics-lang-it">{legacyAdvancedCopy.assumptionsIt[i]}</span></li>)}</ul>
-        </div>
-        <div>
-          <p className="analytics-lang-de">{legacyAdvancedCopy.limitsDe}</p>
-          <p className="analytics-lang-it">{legacyAdvancedCopy.limitsIt}</p>
-          <div className="analytics-note-small">{legacyAdvancedCopy.sources}</div>
-        </div>
-      </div>
-    </Card>
+    <Alert variant="info">
+      <span className="analytics-lang-de">Die Annahmen und Quellen aus dem Ausgangs-HTML bleiben im Preservation-Datensatz archiviert. Für Berechnung und Interpretation gilt ausschließlich das nachstehende verifizierte Protokoll.</span>
+      <span className="analytics-lang-it">Le assunzioni e le fonti dell’HTML originale restano archiviate nel dataset di preservazione. Per calcolo e interpretazione fa fede esclusivamente il protocollo verificato seguente.</span>
+    </Alert>
     <MethodologyPanel titleDe="Methodische Anmerkungen & Quellen — verifiziertes Protokoll" titleIt="Note metodologiche & fonti — protocollo verificato" items={advancedMethodology}/>
   </Module>;
 }
@@ -474,6 +464,10 @@ export function OvernightModule(){
     </div>
 
     <SectionHeading de="Historische Basis aus Ausgangs-HTML — WS 2024-25" it="Base storica dal file HTML originale — SI 2024-25"/>
+    <Alert variant="warning">
+      <span className="analytics-lang-de">Historische Darstellung mit 9 Gebieten: Seiser Alm und Gröden waren getrennt. Die aktuelle FAIR-Struktur verwendet 8 kanonische Reporting Areas. Direkte Gebietsvergleiche sind erst nach Aggregation auf die kanonische Struktur zulässig.</span>
+      <span className="analytics-lang-it">Rappresentazione storica a 9 aree: Alpe di Siusi e Val Gardena erano separate. La struttura FAIR attuale usa 8 reporting area canoniche. Il confronto diretto per area è valido solo dopo aggregazione alla struttura canonica.</span>
+    </Alert>
     <BilingualNote de={legacyOvernightCopy.basisDe} it={legacyOvernightCopy.basisIt}/>
     <div className="analytics-metrics">
       <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(legacyOvernightCopy.total2425)} note="WS 2024-25 · 9 Gebiete · 9 aree"/>
@@ -489,7 +483,7 @@ export function OvernightModule(){
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet · Area</th><th>PN 2024-25</th><th>Anteil · Quota</th><th>PN 2025-26</th></tr></thead><tbody>
           {overnightAreas.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(a.pn[0]/legacyOvernightCopy.total2425*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
         </tbody></table></div>
-        <div className="analytics-note-small analytics-legacy-inline">{legacyOvernightCopy.sourceNote}</div>
+        <div className="analytics-note-small analytics-legacy-inline"><strong>Legacy archive · </strong>{legacyOvernightCopy.sourceNote}</div>
       </Card>
     </div>
     <EditorialSummary de={legacyOvernightCopy.summaryDe} it={legacyOvernightCopy.summaryIt}/>
