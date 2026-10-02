@@ -18,8 +18,6 @@ import {
   SEASONS,
   TICKET_TYPES,
   advancedDefaults,
-  annual,
-  intensityAreas,
   overnightAreas,
   overviewInsights,
 } from '../data/analyticsData';
@@ -32,8 +30,6 @@ import {
 } from '../data/editorial';
 import {
   legacyAdvancedCopy,
-  legacyAnnualDelta,
-  legacyAnnualPrices2025,
   legacyOverviewNotes,
   legacyOvernightCopy,
   legacyRegionalInsights,
