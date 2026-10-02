@@ -1,5 +1,6 @@
 import { kpPartners } from '../data/analyticsData';
 import type { LiveAnalyticsSnapshot } from './liveAnalytics';
+import type { PublicBaselineData } from './publicBaseline';
 
 export type KpPartnerRow = {
   p:string;
@@ -12,7 +13,7 @@ export type KpPartnerRow = {
 };
 
 export type KpPartnerDataset = {
-  source:'live'|'compatibility';
+  source:'live'|'public'|'compatibility';
   rows:KpPartnerRow[];
 };
 
@@ -27,12 +28,22 @@ function byDate(snapshot:LiveAnalyticsSnapshot,rowId:string,date:string) {
 export function selectKpPartnerDataset(
   snapshot:LiveAnalyticsSnapshot|null,
   liveReady:boolean,
+  publicBaseline?:PublicBaselineData|null,
 ):KpPartnerDataset {
+  const baselineRows=(publicBaseline?.kpPartners ?? kpPartners).map(row=>({
+    p:String(row.p),
+    pot:Number(row.pot),
+    ks1:Number(row.ks1),
+    ks2:Number(row.ks2),
+    ks3:Number(row.ks3),
+    tot3:Number(row.tot3),
+    ...(row.excluded===true ? {excluded:true} : {}),
+  }));
   if (!snapshot?.kp || !liveReady) {
-    return {source:'compatibility',rows:kpPartners.map(row=>({...row}))};
+    return {source:publicBaseline?'public':'compatibility',rows:baselineRows};
   }
 
-  const rows=kpPartners.map(legacy=>{
+  const rows=baselineRows.map(legacy=>{
     const row=snapshot.kp?.rows.find(item=>item.label===legacy.p);
     if (!row) return {...legacy};
     const m1=byDate(snapshot,row.id,'2025-12-23');
