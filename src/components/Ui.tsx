@@ -101,8 +101,8 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
         <p className="analytics-lang-de">{item.noteDe}</p>
         <p className="analytics-lang-it">{item.noteIt}</p>
         <div className="analytics-methodology-source">
-          Quelle · Fonte: {item.source}{item.sourceYear ? ` · ${item.sourceYear}` : ''}
-          {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer"><span className="analytics-lang-de">Quelle öffnen</span><span className="analytics-lang-it">Apri fonte</span></a></>}
+          <BilingualText de="Quelle:" it="Fonte:"/> {item.source}{item.sourceYear ? ` · ${item.sourceYear}` : ''}
+          {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer"><BilingualText de="Quelle öffnen" it="Apri fonte"/></a></>}
         </div>
       </div>)}
     </div>
