@@ -126,12 +126,12 @@ export function LiveSourcePanel({
     <div className="analytics-live-copy">
       <strong>{language==='de'?'DNS_Core Live-Daten':'Dati live DNS_Core'}</strong>
       <span>{language==='de'
-        ? ' Für operative Analytics-Daten ist eine DNS-Anmeldung erforderlich. Bis dahin bleibt der validierte Compatibility-Datensatz aktiv.'
-        : ' Per i dati operativi di Analytics è necessario un accesso DNS. Fino ad allora resta attivo il dataset compatibility validato.'}</span>
+        ? ' Für operative Analytics-Daten ist eine DNS-Anmeldung erforderlich. Bis dahin bleibt die validierte öffentliche Baseline aktiv.'
+        : ' Per i dati operativi di Analytics è necessario un accesso DNS. Fino ad allora resta attiva la baseline pubblica validata.'}</span>
     </div>
     <div className="analytics-live-login">
       <input type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="E-Mail"/>
-      <input type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Password" onKeyDown={e=>{if(e.key==='Enter') void login();}}/>
+      <input type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder={language==='de'?'Passwort':'Password'} onKeyDown={e=>{if(e.key==='Enter') void login();}}/>
       <button type="button" disabled={busy||!email||!password} onClick={()=>void login()}>
         {busy ? '…' : (language==='de'?'Anmelden':'Accedi')}
       </button>
@@ -140,13 +140,13 @@ export function LiveSourcePanel({
       <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
         {publicBaseline?.state==='ready'
           ? (publicBaseline.matches
-              ? (language==='de' ? `Public Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblico: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
-              : (language==='de' ? `Public Baseline: ${publicBaseline.mismatchCount} Abweichungen` : `Baseline pubblico: ${publicBaseline.mismatchCount} differenze`))
+              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblico: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              : (language==='de' ? `Öffentliche Baseline: ${publicBaseline.mismatchCount} Abweichungen` : `Baseline pubblica: ${publicBaseline.mismatchCount} differenze`))
           : publicBaseline?.state==='missing'
-            ? (language==='de' ? 'Public Baseline: noch nicht veröffentlicht' : 'Baseline pubblico: non ancora pubblicato')
+            ? (language==='de' ? 'Öffentliche Baseline: noch nicht veröffentlicht' : 'Baseline pubblica: non ancora pubblicata')
             : publicBaseline?.state==='error'
-              ? (language==='de' ? 'Public Baseline: Fehler' : 'Baseline pubblico: errore')
-              : (language==='de' ? 'Public Baseline wird geprüft…' : 'Verifica baseline pubblico…')}
+              ? (language==='de' ? 'Öffentliche Baseline: Fehler' : 'Baseline pubblica: errore')
+              : (language==='de' ? 'Public Baseline wird geprüft…' : 'Verifica baseline pubblica…')}
       </span>
       <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
         {audit?.state==='ready'
@@ -166,7 +166,7 @@ export function LiveSourcePanel({
         {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
           <span>{item.path}</span>
           <strong>{String(item.remote)}</strong>
-          <small>local {String(item.local)}</small>
+          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
         </div>)}
       </div>
     </details>}
@@ -176,17 +176,7 @@ export function LiveSourcePanel({
         {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
           <span>{item.path}</span>
           <strong>{String(item.remote)}</strong>
-          <small>local {String(item.local)}</small>
-        </div>)}
-      </div>
-    </details>}
-    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
-      <summary>{language==='de'?'Public-Baseline Abweichungen anzeigen':'Mostra differenze baseline pubblico'}</summary>
-      <div className="analytics-live-diagnostic-grid">
-        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
-          <span>{item.path}</span>
-          <strong>{String(item.remote)}</strong>
-          <small>local {String(item.local)}</small>
+          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
         </div>)}
       </div>
     </details>}
@@ -208,25 +198,29 @@ export function LiveSourcePanel({
     <div className="analytics-live-meta">
       <span className={summary.ready?'is-ready':summary.different?'is-warning':''}>
         {language==='de'
-          ? `Parity: ${summary.matches}/${summary.available} match`
-          : `Parità: ${summary.matches}/${summary.available} corrispondenti`}
+          ? `Parität: ${summary.matches}/${summary.available} Übereinstimmungen`
+          : `Parità: ${summary.matches}/${summary.available} corrispondenze`}
       </span>
       <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
         {publicBaseline?.state==='ready'
-          ? (publicBaseline.matches ? `Public 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Public ${publicBaseline.mismatchCount} Δ`)
-          : publicBaseline?.state==='missing' ? 'Public snapshot —'
-          : publicBaseline?.state==='error' ? 'Public error'
-          : 'Public …'}
+          ? (publicBaseline.matches
+              ? (language==='de' ? `Öffentlich 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Pubblica 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              : (language==='de' ? `Öffentlich ${publicBaseline.mismatchCount} Δ` : `Pubblica ${publicBaseline.mismatchCount} Δ`))
+          : publicBaseline?.state==='missing' ? (language==='de'?'Öffentlicher Snapshot —':'Snapshot pubblico —')
+          : publicBaseline?.state==='error' ? (language==='de'?'Öffentliche Baseline: Fehler':'Baseline pubblica: errore')
+          : (language==='de'?'Öffentliche Baseline …':'Baseline pubblica …')}
       </span>
       <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
         {audit?.state==='ready'
           ? (audit.matches ? 'Zero-Loss 100% · 0 Δ' : `Zero-Loss ${audit.mismatchCount} Δ`)
-          : audit?.state==='missing' ? 'Zero-Loss snapshot —'
-          : audit?.state==='error' ? 'Zero-Loss error'
+          : audit?.state==='missing' ? (language==='de'?'Zero-Loss Snapshot —':'Snapshot zero-loss —')
+          : audit?.state==='error' ? (language==='de'?'Zero-Loss Fehler':'Errore zero-loss')
           : 'Zero-Loss …'}
       </span>
       <span>
-        Overview {summary.ready?'✓':'—'} · Annual {annualSummary.ready?'✓':'—'} · Regional {regionalSummary.ready?'✓':'—'} · Advanced {advancedSummary.ready?'✓':'—'} · Overnight {overnightSummary.ready?'✓':'—'} · Intensity {intensitySummary.ready?'✓':'—'} · Reliability {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Sales {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}
+        {language==='de'
+          ? <>Übersicht {summary.ready?'✓':'—'} · Jahresvergleich {annualSummary.ready?'✓':'—'} · Regionen {regionalSummary.ready?'✓':'—'} · Erweitert {advancedSummary.ready?'✓':'—'} · Übernachtungen {overnightSummary.ready?'✓':'—'} · Intensität {intensitySummary.ready?'✓':'—'} · Zuverlässigkeit {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Verkäufe {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}</>
+          : <>Panoramica {summary.ready?'✓':'—'} · Confronto annuale {annualSummary.ready?'✓':'—'} · Regioni {regionalSummary.ready?'✓':'—'} · Avanzate {advancedSummary.ready?'✓':'—'} · Pernottamenti {overnightSummary.ready?'✓':'—'} · Intensità {intensitySummary.ready?'✓':'—'} · Affidabilità {kpSummary.ready?'✓':'—'} · KP partner {kpPartnerSummary.ready?'✓':'—'} · Vendite {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}</>}
       </span>
       <button type="button" onClick={()=>void signOutAnalytics()}>
         {language==='de'?'Abmelden':'Esci'}
@@ -239,7 +233,7 @@ export function LiveSourcePanel({
         {[...checks,...annualChecks,...regionalChecks,...advancedChecks,...overnightChecks,...intensityChecks,...kpChecks,...kpPartnerChecks].filter(c=>c.status==='different').map(c=><div key={c.id}>
           <span>{c.label}</span>
           <strong>{c.live?.toLocaleString('de-DE')}</strong>
-          <small>legacy {c.legacy.toLocaleString('de-DE')} · Δ {c.delta?.toLocaleString('de-DE')}</small>
+          <small>{language==='de'?'Legacy':'Legacy'} {c.legacy.toLocaleString(language==='de'?'de-DE':'it-IT')} · Δ {c.delta?.toLocaleString(language==='de'?'de-DE':'it-IT')}</small>
         </div>)}
       </div>
     </details>}
@@ -249,7 +243,7 @@ export function LiveSourcePanel({
         {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
           <span>{item.path}</span>
           <strong>{String(item.remote)}</strong>
-          <small>local {String(item.local)}</small>
+          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
         </div>)}
       </div>
     </details>}
