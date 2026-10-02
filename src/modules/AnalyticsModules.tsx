@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChartCanvas } from '../components/ChartCanvas';
-import { Alert, Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading, SourceBadge } from '../components/Ui';
+import { Alert, BilingualText, Card, EditorialSummary, Insight, MethodologyPanel, Metric, SectionHeading, SourceBadge } from '../components/Ui';
 import { RegionLabel } from '../components/RegionLabel';
 import { useAnalyticsLive } from '../components/AnalyticsLiveContext';
 import { selectOverviewDataset } from '../services/overviewSelector';
@@ -42,6 +42,7 @@ const pct = (v:number,d=1) => `${v.toFixed(d).replace('.',',')}%`;
 const axis = { ticks:{ color:COLORS.mid, font:{ size:10, family:'Be Vietnam Pro' } }, grid:{ color:'rgba(65,116,131,.1)' } };
 const baseOptions = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} };
 const palette = [COLORS.day,COLORS.wkArea,COLORS.wkDns,COLORS.skArea,COLORS.skDns];
+type AnalyticsModuleProps = { language:'de'|'it' };
 
 function stackedPercent(values:number[][]){
   return values[0].map((_,i)=>{
@@ -50,7 +51,7 @@ function stackedPercent(values:number[][]){
   });
 }
 
-export function OverviewModule(){
+export function OverviewModule({language}:AnalyticsModuleProps){
   const {snapshot,overviewLiveReady,annualLiveReady,publicBaseline}=useAnalyticsLive();
   const data=useMemo(()=>selectOverviewDataset(snapshot,overviewLiveReady,publicBaseline),[snapshot,overviewLiveReady,publicBaseline]);
   const annualData=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady,publicBaseline),[snapshot,annualLiveReady,publicBaseline]);
@@ -119,7 +120,7 @@ export function OverviewModule(){
   </Module>;
 }
 
-export function AnnualModule(){
+export function AnnualModule({language}:AnalyticsModuleProps){
   const {snapshot,annualLiveReady,publicBaseline}=useAnalyticsLive();
   const data=useMemo(()=>selectAnnualDataset(snapshot,annualLiveReady,publicBaseline),[snapshot,annualLiveReady,publicBaseline]);
   const idx=(arr:readonly number[])=>arr.map(v=>v/arr[0]*100);
@@ -229,7 +230,7 @@ export function AnnualModule(){
   </Module>;
 }
 
-export function RegionalModule(){
+export function RegionalModule({language}:AnalyticsModuleProps){
   const {snapshot,regionalLiveReady,publicBaseline}=useAnalyticsLive();
   const data=useMemo(()=>selectRegionalDataset(snapshot,regionalLiveReady,publicBaseline),[snapshot,regionalLiveReady,publicBaseline]);
   const qty=data.qty;
@@ -285,7 +286,7 @@ export function RegionalModule(){
   </Module>;
 }
 
-export function ReliabilityModule(){
+export function ReliabilityModule({language}:AnalyticsModuleProps){
   const {snapshot,reliabilityLiveReady,kpPartnerLiveReady,publicBaseline}=useAnalyticsLive();
   const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady,publicBaseline),[snapshot,reliabilityLiveReady,publicBaseline]);
   const partnerData=useMemo(()=>selectKpPartnerDataset(snapshot,kpPartnerLiveReady,publicBaseline),[snapshot,kpPartnerLiveReady,publicBaseline]);
@@ -371,7 +372,7 @@ export function ReliabilityModule(){
   </Module>;
 }
 
-export function AdvancedModule(){
+export function AdvancedModule({language}:AnalyticsModuleProps){
   const {snapshot,advancedLiveReady,publicBaseline}=useAnalyticsLive();
   const observed=useMemo(()=>selectAdvancedObservedInputs(snapshot,advancedLiveReady,publicBaseline),[snapshot,advancedLiveReady,publicBaseline]);
   const [nights,setNights]=useState<number>(advancedDefaults.nightsPerWeeklyGuest);
@@ -465,7 +466,7 @@ export function AdvancedModule(){
   </Module>;
 }
 
-export function OvernightModule(){
+export function OvernightModule({language}:AnalyticsModuleProps){
   const {snapshot,overnightLiveReady,publicBaseline}=useAnalyticsLive();
   const data=useMemo(()=>selectOvernightDataset(snapshot,overnightLiveReady,publicBaseline),[snapshot,overnightLiveReady,publicBaseline]);
   const historicalRows=publicBaseline?.overnightAreas ?? overnightAreas;
@@ -549,7 +550,7 @@ export function OvernightModule(){
 }
 
 
-export function IntensityModule(){
+export function IntensityModule({language}:AnalyticsModuleProps){
   const {snapshot,intensityLiveReady,publicBaseline}=useAnalyticsLive();
   const dataset=useMemo(()=>selectIntensityDataset(snapshot,intensityLiveReady,publicBaseline),[snapshot,intensityLiveReady,publicBaseline]);
   const areas=dataset.rows.map(a=>({
