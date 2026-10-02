@@ -125,3 +125,52 @@ export function BilingualText({de,it,className=''}:{de:ReactNode;it:ReactNode;cl
     <span className={`analytics-lang-it ${className}`.trim()}>{it}</span>
   </>;
 }
+
+
+export function ReferencePanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
+  key:string;labelDe:string;labelIt:string;value?:string;source:string;reliability:'official'|'assumption'|'provisional';
+  noteDe:string;noteIt:string;scopeDe?:string;scopeIt?:string;sourceUrl?:string;
+}>}) {
+  const state = (reliability:'official'|'assumption'|'provisional') =>
+    reliability==='official' ? 'ready' : reliability==='assumption' ? 'warning' : 'error';
+  const label = (reliability:'official'|'assumption'|'provisional') => reliability==='official'
+    ? {de:'Offiziell / überprüfbar',it:'Ufficiale / verificabile'}
+    : reliability==='assumption'
+      ? {de:'Schätzung / deklarierte Annahme',it:'Stima / assunzione dichiarata'}
+      : {de:'Vorläufig / zu prüfen',it:'Provvisorio / da verificare'};
+
+  return <section className="analytics-reference-panel" data-dns-reveal>
+    <header className="analytics-reference-header">
+      <div className="analytics-card-title analytics-lang-de">{titleDe}</div>
+      <div className="analytics-card-title analytics-lang-it">{titleIt}</div>
+    </header>
+    <div className="analytics-reference-grid">
+      {items.map(item=>{
+        const reliability=label(item.reliability);
+        return <article key={item.key} className="analytics-reference-item">
+          <div className="analytics-reference-topline">
+            <div>
+              <strong className="analytics-lang-de">{item.labelDe}</strong>
+              <strong className="analytics-lang-it">{item.labelIt}</strong>
+            </div>
+            <span className="dns-status" data-status={state(item.reliability)}>
+              <span className="analytics-lang-de">{reliability.de}</span>
+              <span className="analytics-lang-it">{reliability.it}</span>
+            </span>
+          </div>
+          {item.value && <div className="analytics-reference-value">{item.value}</div>}
+          <p className="analytics-lang-de">{item.noteDe}</p>
+          <p className="analytics-lang-it">{item.noteIt}</p>
+          {(item.scopeDe || item.scopeIt) && <div className="analytics-reference-scope">
+            {item.scopeDe && <span className="analytics-lang-de">{item.scopeDe}</span>}
+            {item.scopeIt && <span className="analytics-lang-it">{item.scopeIt}</span>}
+          </div>}
+          <div className="analytics-reference-source">
+            <BilingualText de="Quelle:" it="Fonte:"/> {item.source}
+            {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer"><BilingualText de="Quelle öffnen" it="Apri fonte"/></a></>}
+          </div>
+        </article>;
+      })}
+    </div>
+  </section>;
+}
