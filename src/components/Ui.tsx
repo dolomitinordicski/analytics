@@ -41,10 +41,21 @@ export function Insight({ n, de, it, bodyDe, bodyIt, tag }: { n: string; de: str
 
 
 export function EditorialSummary({de,it}:{de:string;it:string}) {
-  return <div className="analytics-editorial-summary" data-dns-reveal>
-    <p className="analytics-lang-de">{de}</p>
-    <p className="analytics-lang-it">{it}</p>
-  </div>;
+  return <aside className="dns-insight analytics-editorial-summary" data-dns-reveal>
+    <div className="dns-insight-body">
+      <p className="analytics-lang-de">{de}</p>
+      <p className="analytics-lang-it">{it}</p>
+    </div>
+  </aside>;
+}
+
+export function Alert({title, children, variant = 'info'}:{title?:string;children:ReactNode;variant?:'info'|'success'|'warning'|'error'}) {
+  return <aside className="dns-alert" data-variant={variant} role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}>
+    <div>
+      {title && <div className="dns-alert-title">{title}</div>}
+      <div className="dns-alert-body">{children}</div>
+    </div>
+  </aside>;
 }
 
 export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
