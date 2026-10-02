@@ -130,9 +130,9 @@ export function LiveSourcePanel({
         : ' Per i dati operativi di Analytics è necessario un accesso DNS. Fino ad allora resta attiva la baseline pubblica validata.'}</span>
     </div>
     <div className="analytics-live-login">
-      <input type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="E-Mail"/>
-      <input type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder={language==='de'?'Passwort':'Password'} onKeyDown={e=>{if(e.key==='Enter') void login();}}/>
-      <button type="button" disabled={busy||!email||!password} onClick={()=>void login()}>
+      <input className="dns-input" type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="E-Mail"/>
+      <input className="dns-input" type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder={language==='de'?'Passwort':'Password'} onKeyDown={e=>{if(e.key==='Enter') void login();}}/>
+      <button className="dns-button" data-variant="primary" type="button" disabled={busy||!email||!password} onClick={()=>void login()}>
         {busy ? '…' : (language==='de'?'Anmelden':'Accedi')}
       </button>
     </div>
@@ -180,7 +180,7 @@ export function LiveSourcePanel({
         </div>)}
       </div>
     </details>}
-    {error && <div className="analytics-live-error" role="alert">{error}</div>}
+    {error && <div className="dns-alert analytics-live-error" data-variant="error" role="alert"><div className="dns-alert-body">{error}</div></div>}
   </section>;
 
   return <section className="analytics-live-panel" aria-label="DNS_Core live source">
@@ -222,7 +222,7 @@ export function LiveSourcePanel({
           ? <>Übersicht {summary.ready?'✓':'—'} · Jahresvergleich {annualSummary.ready?'✓':'—'} · Regionen {regionalSummary.ready?'✓':'—'} · Erweitert {advancedSummary.ready?'✓':'—'} · Übernachtungen {overnightSummary.ready?'✓':'—'} · Intensität {intensitySummary.ready?'✓':'—'} · Zuverlässigkeit {kpSummary.ready?'✓':'—'} · KP Partner {kpPartnerSummary.ready?'✓':'—'} · Verkäufe {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}</>
           : <>Panoramica {summary.ready?'✓':'—'} · Confronto annuale {annualSummary.ready?'✓':'—'} · Regioni {regionalSummary.ready?'✓':'—'} · Avanzate {advancedSummary.ready?'✓':'—'} · Pernottamenti {overnightSummary.ready?'✓':'—'} · Intensità {intensitySummary.ready?'✓':'—'} · Affidabilità {kpSummary.ready?'✓':'—'} · KP partner {kpPartnerSummary.ready?'✓':'—'} · Vendite {access?.canReadTicketSales?'✓':'—'} · KP {access?.canReadKp?'✓':'—'}</>}
       </span>
-      <button type="button" onClick={()=>void signOutAnalytics()}>
+      <button className="dns-button" data-variant="secondary" type="button" onClick={()=>void signOutAnalytics()}>
         {language==='de'?'Abmelden':'Esci'}
       </button>
     </div>
@@ -247,6 +247,6 @@ export function LiveSourcePanel({
         </div>)}
       </div>
     </details>}
-    {error && <div className="analytics-live-error" role="alert">{error}</div>}
+    {error && <div className="dns-alert analytics-live-error" data-variant="error" role="alert"><div className="dns-alert-body">{error}</div></div>}
   </section>;
 }
