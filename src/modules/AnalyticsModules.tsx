@@ -136,7 +136,7 @@ export function AnnualModule(){
       ['DNS WK',data.qty.wkd,data.revenueByType.wkd],
       ['DNS SK',data.qty.skd,data.revenueByType.skd],
     ] as const;
-    const rows=series.map(([type,qtySeries,revenueSeries])=>{
+    const rows:Array<{type:string;qty:number;revenue:number;qtyPct:number;revenuePct:number}>=series.map(([type,qtySeries,revenueSeries])=>{
       const qty=qtySeries[last]-qtySeries[first];
       const revenue=revenueSeries[last]-revenueSeries[first];
       return {type,qty,revenue,qtyPct:qtySeries[first]?qty/qtySeries[first]*100:0,revenuePct:revenueSeries[first]?revenue/revenueSeries[first]*100:0};
