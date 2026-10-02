@@ -87,9 +87,9 @@ export function OverviewModule(){
       <Card title="Jahresvergleich Tickets" subtitle="Confronto annuale biglietti">
         <ChartCanvas height={195} config={{type:'bar',data:{labels:[...TICKET_TYPES],datasets:[
           {label:'2025-26',data:[...data.ticketQty],backgroundColor:COLORS.year1},
-          {label:'2024-25',data:[74038,4448,4003,3597,1927],backgroundColor:COLORS.year2},
-          {label:'2023-24',data:[71264,4716,3693,1974,2139],backgroundColor:COLORS.year3},
-          {label:'2022-23',data:[66242,4371,1759,2422,1801],backgroundColor:COLORS.year4},
+          {label:'2024-25',data:[annualData.qty.day[2],annualData.qty.wka[2],annualData.qty.wkd[2],annualData.qty.ska[2],annualData.qty.skd[2]],backgroundColor:COLORS.year2},
+          {label:'2023-24',data:[annualData.qty.day[1],annualData.qty.wka[1],annualData.qty.wkd[1],annualData.qty.ska[1],annualData.qty.skd[1]],backgroundColor:COLORS.year3},
+          {label:'2022-23',data:[annualData.qty.day[0],annualData.qty.wka[0],annualData.qty.wkd[0],annualData.qty.ska[0],annualData.qty.skd[0]],backgroundColor:COLORS.year4},
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,color:COLORS.mid,font:{size:9}}}},scales:{x:axis,y:{...axis,beginAtZero:true}}}} as any}/>
       </Card>
       <Card title="Tickettyp — Menge" subtitle="Tipo biglietto — quantità">
@@ -130,6 +130,32 @@ export function AnnualModule(){
   const dnsTotal=data.qty.wkd.map((v,i)=>v+data.qty.skd[i]);
   const areaTotal=data.qty.wka.map((v,i)=>v+data.qty.ska[i]);
   const kpis=useMemo(()=>deriveAnnualKpis(data),[data]);
+  const deltaRows=useMemo(()=>{
+    const first=0;
+    const last=data.totalTickets.length-1;
+    const series=[
+      ['DAY',data.qty.day,data.revenueByType.day],
+      ['Area WK',data.qty.wka,data.revenueByType.wka],
+      ['Area SK',data.qty.ska,data.revenueByType.ska],
+      ['DNS WK',data.qty.wkd,data.revenueByType.wkd],
+      ['DNS SK',data.qty.skd,data.revenueByType.skd],
+    ] as const;
+    const rows=series.map(([type,qtySeries,revenueSeries])=>{
+      const qty=qtySeries[last]-qtySeries[first];
+      const revenue=revenueSeries[last]-revenueSeries[first];
+      return {type,qty,revenue,qtyPct:qtySeries[first]?qty/qtySeries[first]*100:0,revenuePct:revenueSeries[first]?revenue/revenueSeries[first]*100:0};
+    });
+    rows.push({type:'GESAMT / TOT',qty:data.totalTickets[last]-data.totalTickets[first],revenue:data.totalRevenue[last]-data.totalRevenue[first],qtyPct:data.totalTickets[first]?(data.totalTickets[last]-data.totalTickets[first])/data.totalTickets[first]*100:0,revenuePct:data.totalRevenue[first]?(data.totalRevenue[last]-data.totalRevenue[first])/data.totalRevenue[first]*100:0});
+    return rows;
+  },[data]);
+  const lastIndex=data.totalTickets.length-1;
+  const priceRows=[
+    {type:'DAY',value:data.qty.day[lastIndex]?data.revenueByType.day[lastIndex]/data.qty.day[lastIndex]:0},
+    {type:'Area WK',value:data.qty.wka[lastIndex]?data.revenueByType.wka[lastIndex]/data.qty.wka[lastIndex]:0},
+    {type:'Area SK',value:data.qty.ska[lastIndex]?data.revenueByType.ska[lastIndex]/data.qty.ska[lastIndex]:0},
+    {type:'DNS WK',value:data.qty.wkd[lastIndex]?data.revenueByType.wkd[lastIndex]/data.qty.wkd[lastIndex]:0},
+    {type:'DNS SK',value:data.qty.skd[lastIndex]?data.revenueByType.skd[lastIndex]/data.qty.skd[lastIndex]:0},
+  ];
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
       {data.source==='live' ? 'DNS_Core historical · annual parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
@@ -191,12 +217,12 @@ export function AnnualModule(){
     <div className="analytics-grid-2">
       <Card title="Δ Menge & Einnahmen" subtitle="Δ quantità & entrate">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Δ Menge</th><th>Δ Einnahmen</th><th>% Menge</th><th>% Einnahmen</th></tr></thead><tbody>
-          {legacyAnnualDelta.map(row=><tr key={row.type}><td>{row.type}</td><td>{row.qty>0?'+':''}{integer(row.qty)}</td><td>{row.revenue>0?'+':''}{euro(row.revenue)}</td><td>{row.qtyPct>0?'+':''}{pct(row.qtyPct,Math.abs(row.qtyPct)<10?2:1)}</td><td>{row.revenuePct>0?'+':''}{pct(row.revenuePct,Math.abs(row.revenuePct)<10?2:1)}</td></tr>)}
+          {deltaRows.map(row=><tr key={row.type}><td>{row.type}</td><td>{row.qty>0?'+':''}{integer(row.qty)}</td><td>{row.revenue>0?'+':''}{euro(row.revenue)}</td><td>{row.qtyPct>0?'+':''}{pct(row.qtyPct,Math.abs(row.qtyPct)<10?2:1)}</td><td>{row.revenuePct>0?'+':''}{pct(row.revenuePct,Math.abs(row.revenuePct)<10?2:1)}</td></tr>)}
         </tbody></table></div>
       </Card>
       <Card title="Ø Ticketpreis WS 2025-26" subtitle="Prezzo medio per tipo">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Tickettyp</th><th>Ø Preis</th></tr></thead><tbody>
-          {legacyAnnualPrices2025.map(row=><tr key={row.type}><td>{row.type}</td><td><strong>€ {row.value.toFixed(2).replace('.',',')}</strong></td></tr>)}
+          {priceRows.map(row=><tr key={row.type}><td>{row.type}</td><td><strong>€ {row.value.toFixed(2).replace('.',',')}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
     </div>
@@ -264,9 +290,9 @@ export function RegionalModule(){
 }
 
 export function ReliabilityModule(){
-  const {snapshot,reliabilityLiveReady,kpPartnerLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady),[snapshot,reliabilityLiveReady]);
-  const partnerData=useMemo(()=>selectKpPartnerDataset(snapshot,kpPartnerLiveReady),[snapshot,kpPartnerLiveReady]);
+  const {snapshot,reliabilityLiveReady,kpPartnerLiveReady,publicBaseline}=useAnalyticsLive();
+  const data=useMemo(()=>selectReliabilityDataset(snapshot,reliabilityLiveReady,publicBaseline),[snapshot,reliabilityLiveReady,publicBaseline]);
+  const partnerData=useMemo(()=>selectKpPartnerDataset(snapshot,kpPartnerLiveReady,publicBaseline),[snapshot,kpPartnerLiveReady,publicBaseline]);
   const rows=data.rows;
   const sorted=[...rows].sort((a,b)=>b.kp-a.kp);
   const totalPot=rows.reduce((s,d)=>s+d.pot,0);
@@ -277,7 +303,7 @@ export function ReliabilityModule(){
 
   return <Module>
     <div className={`analytics-source-badge is-${data.source}`}>
-      {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : 'Compatibility dataset · A.2.1'}
+      {data.source==='live' ? 'DNS_Core LIVE · KP parity verified' : data.source==='public' ? 'DNS_Core public baseline · zero-loss verified' : 'Compatibility dataset · A.2.1'}
     </div>
     <BilingualNote de={legacyReliabilityCopy.legendDe} it={legacyReliabilityCopy.legendIt}/>
 
@@ -350,8 +376,8 @@ export function ReliabilityModule(){
 }
 
 export function AdvancedModule(){
-  const {snapshot,advancedLiveReady}=useAnalyticsLive();
-  const observed=useMemo(()=>selectAdvancedObservedInputs(snapshot,advancedLiveReady),[snapshot,advancedLiveReady]);
+  const {snapshot,advancedLiveReady,publicBaseline}=useAnalyticsLive();
+  const observed=useMemo(()=>selectAdvancedObservedInputs(snapshot,advancedLiveReady,publicBaseline),[snapshot,advancedLiveReady,publicBaseline]);
   const [nights,setNights]=useState<number>(advancedDefaults.nightsPerWeeklyGuest);
   const [share,setShare]=useState<number>(advancedDefaults.overnightShare*100);
   const [spend,setSpend]=useState<number>(advancedDefaults.spendPerNight);
@@ -370,7 +396,7 @@ export function AdvancedModule(){
   },[nights,share,spend,mult,dayShare]);
   return <Module>
     <div className={`analytics-source-badge is-${observed.source}`}>
-      {observed.source==='live' ? 'DNS_Core historical · observed inputs verified' : 'Compatibility dataset · observed inputs A.2.1'}
+      {observed.source==='live' ? 'DNS_Core historical · observed inputs verified' : observed.source==='public' ? 'DNS_Core public baseline · observed inputs zero-loss verified' : 'Compatibility dataset · observed inputs A.2.1'}
     </div>
     <BilingualNote de={legacyAdvancedCopy.introDe} it={legacyAdvancedCopy.introIt}/>
     <div className="analytics-assumption-note">
@@ -444,16 +470,21 @@ export function AdvancedModule(){
 }
 
 export function OvernightModule(){
-  const {snapshot,overnightLiveReady}=useAnalyticsLive();
-  const data=useMemo(()=>selectOvernightDataset(snapshot,overnightLiveReady),[snapshot,overnightLiveReady]);
+  const {snapshot,overnightLiveReady,publicBaseline}=useAnalyticsLive();
+  const data=useMemo(()=>selectOvernightDataset(snapshot,overnightLiveReady,publicBaseline),[snapshot,overnightLiveReady,publicBaseline]);
+  const historicalRows=publicBaseline?.overnightAreas ?? overnightAreas;
+  const historicalTotal=historicalRows.reduce((sum,row)=>sum+Number(row.pn[0]),0);
+  const historicalSorted=[...historicalRows].sort((a,b)=>Number(b.pn[0])-Number(a.pn[0]));
+  const historicalTop=historicalSorted[0];
+  const historicalAverage=historicalRows.length?historicalTotal/historicalRows.length:0;
   const sorted=[...data.rows].sort((a,b)=>b.pn2526-a.pn2526);
   const total2526=data.rows.reduce((s,a)=>s+a.pn2526,0);
   const total2425=data.rows.reduce((s,a)=>s+a.pn2425,0);
   const top=sorted[0];
   const monthly=data.monthly;
   return <Module>
-    <div className={`analytics-source-badge is-${data.source==='fair'?'live':'compatibility'}`}>
-      {data.source==='fair' ? 'DNS FAIR · PN parity verified · 8 reporting areas' : 'Compatibility dataset · PN A.2.1'}
+    <div className={`analytics-source-badge is-${data.source==='fair'?'live':data.source}`}>
+      {data.source==='fair' ? 'DNS FAIR · PN parity verified · 8 reporting areas' : data.source==='public' ? 'DNS_Core public baseline · PN zero-loss verified' : 'Compatibility dataset · PN A.2.1'}
     </div>
 
     <div className="analytics-metrics">
@@ -470,18 +501,18 @@ export function OvernightModule(){
     </Alert>
     <BilingualNote de={legacyOvernightCopy.basisDe} it={legacyOvernightCopy.basisIt}/>
     <div className="analytics-metrics">
-      <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(legacyOvernightCopy.total2425)} note="WS 2024-25 · 9 Gebiete · 9 aree"/>
-      <Metric label="Top-Gebiet" sublabel="Area top" value={legacyOvernightCopy.topArea2425} note={`${integer(legacyOvernightCopy.topArea2425Value)} · ${pct(legacyOvernightCopy.topArea2425Share)}`} top/>
-      <Metric label="Gebiete" sublabel="Aree" value={legacyOvernightCopy.areas2425} note="DNS Netzwerk · network"/>
-      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(legacyOvernightCopy.average2425)} note="Durchschnitt · media"/>
+      <Metric label="Übernachtungen gesamt" sublabel="Pernottamenti totali" value={integer(historicalTotal)} note={`WS 2024-25 · ${historicalRows.length} Gebiete · ${historicalRows.length} aree`}/>
+      <Metric label="Top-Gebiet" sublabel="Area top" value={historicalTop?.area ?? '—'} note={historicalTop?`${integer(Number(historicalTop.pn[0]))} · ${pct(Number(historicalTop.pn[0])/historicalTotal*100)}`:'—'} top/>
+      <Metric label="Gebiete" sublabel="Aree" value={historicalRows.length} note="DNS Netzwerk · network"/>
+      <Metric label="Ø pro Gebiet" sublabel="Media per area" value={integer(historicalAverage)} note="Durchschnitt · media"/>
     </div>
     <div className="analytics-grid-2">
       <Card title="Übernachtungen pro Gebiet — WS 2024-25" subtitle="Pernottamenti per area — SI 2024-25">
-        <ChartCanvas config={{type:'bar',data:{labels:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map(a=>a.area),datasets:[{data:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map(a=>a.pn[0]),backgroundColor:[...overnightAreas].sort((a,b)=>b.pn[0]-a.pn[0]).map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
+        <ChartCanvas config={{type:'bar',data:{labels:historicalSorted.map(a=>a.area),datasets:[{data:historicalSorted.map(a=>a.pn[0]),backgroundColor:historicalSorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
       </Card>
       <Card title="Datentabelle · Zeitreihe (Basis)" subtitle="Tabella dati · serie storica (base)">
         <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Gebiet · Area</th><th>PN 2024-25</th><th>Anteil · Quota</th><th>PN 2025-26</th></tr></thead><tbody>
-          {overnightAreas.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(a.pn[0]/legacyOvernightCopy.total2425*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
+          {historicalRows.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(Number(a.pn[0])/historicalTotal*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
         </tbody></table></div>
         <div className="analytics-note-small analytics-legacy-inline"><strong>Legacy archive · </strong>{legacyOvernightCopy.sourceNote}</div>
       </Card>
@@ -523,8 +554,8 @@ export function OvernightModule(){
 
 
 export function IntensityModule(){
-  const {snapshot,intensityLiveReady}=useAnalyticsLive();
-  const dataset=useMemo(()=>selectIntensityDataset(snapshot,intensityLiveReady),[snapshot,intensityLiveReady]);
+  const {snapshot,intensityLiveReady,publicBaseline}=useAnalyticsLive();
+  const dataset=useMemo(()=>selectIntensityDataset(snapshot,intensityLiveReady,publicBaseline),[snapshot,intensityLiveReady,publicBaseline]);
   const areas=dataset.rows.map(a=>({
     ...a,
     pnWK:a.wk*.75*6,
@@ -538,7 +569,7 @@ export function IntensityModule(){
   const netInt=totalFondo/totalPn*100;
   return <Module>
     <div className={`analytics-source-badge is-${dataset.source}`}>
-      {dataset.source==='live' ? 'DNS_Core Sales + DNS FAIR PN · parity verified' : 'Compatibility dataset · intensity inputs A.2.1'}
+      {dataset.source==='live' ? 'DNS_Core Sales + DNS FAIR PN · parity verified' : dataset.source==='public' ? 'DNS_Core public baseline · intensity inputs zero-loss verified' : 'Compatibility dataset · intensity inputs A.2.1'}
     </div>
     <div className="analytics-assumption-note">
       Model assumptions preserved: 75% overnight share × 6 nights for weekly tickets; 45% overnight share for DAY scenario.
