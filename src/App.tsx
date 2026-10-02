@@ -215,7 +215,7 @@ export default function App() {
         aria-labelledby={`analytics-tab-${active}`}
         tabIndex={0}
       >
-        <ActiveComponent/>
+        <ActiveComponent language={language}/>
       </section>
     </main>
 
@@ -224,6 +224,6 @@ export default function App() {
       <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
     </footer>
 
-    <AnalyticsPrintSheet active={printActive} title={tabLabel}><ActiveComponent/></AnalyticsPrintSheet>
+    <AnalyticsPrintSheet active={printActive} title={tabLabel}><ActiveComponent language={language}/></AnalyticsPrintSheet>
   </div></AnalyticsLiveProvider>;
 }
