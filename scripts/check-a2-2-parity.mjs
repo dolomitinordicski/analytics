@@ -139,7 +139,7 @@ for (const [label, content, tokens] of [
   ['auth layer', auth, ['signInWithEmailAndPassword','ticketSales.read','kp.read']],
   ['live adapter', liveAnalytics, ['ticketSales','kpEntries','kpFairValidations','aggregateSales','aggregateKp']],
   ['parity diagnostics', parity, ['compareLiveToCompatibility','tickets-total','revenue-total']],
-  ['live source UI', livePanel, ['LiveSourcePanel','Compatibility-Datensatz','paritySummary']],
+  ['live source UI', livePanel, ['LiveSourcePanel','DNS_Core Live-Daten','öffentliche Baseline','paritySummary']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.1 ${label} missing: ${token}`);
 }
@@ -148,7 +148,7 @@ if (!process.exitCode) ok('A.3.1 authenticated operational layer and parity diag
 for (const [label, content, tokens] of [
   ['live runtime context', liveContext, ['AnalyticsLiveProvider','overviewLiveReady']],
   ['Overview selector', overviewSelector, ['selectOverviewDataset','source:\'live\'','byReportingArea','byProduct']],
-  ['Overview live switch', modules, ['useAnalyticsLive','selectOverviewDataset','analytics-source-badge']],
+  ['Overview live switch', modules, ['useAnalyticsLive','selectOverviewDataset','SourceBadge']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.2 ${label} missing: ${token}`);
 }
@@ -158,7 +158,7 @@ for (const [label, content, tokens] of [
   ['regional matrix aggregate', liveAnalytics, ['byReportingAreaProduct']],
   ['regional parity gate', parity, ['compareRegionalToCompatibility','regionalParitySummary','regional-qty-','regional-revenue-']],
   ['Regional selector', regionalSelector, ['selectRegionalDataset','source:\'live\'','totalRevenue']],
-  ['Regional live switch', modules, ['regionalLiveReady','selectRegionalDataset','regional parity verified']],
+  ['Regional live switch', modules, ['regionalLiveReady','selectRegionalDataset','regionale Parität geprüft']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.3 ${label} missing: ${token}`);
 }
@@ -168,7 +168,7 @@ for (const [label, content, tokens] of [
   ['KP milestone aggregate', liveAnalytics, ['kpMilestones','byAreaMilestone','source:\'validation\'','source:\'entries\'']],
   ['KP parity gate', parity, ['compareKpToCompatibility','kpParitySummary','kp-potential-','kp-opened-','kp-artificial-']],
   ['Reliability selector', reliabilitySelector, ['selectReliabilityDataset','source:\'live\'','MILESTONE_DATES']],
-  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP parity verified','partner zero-loss verified']],
+  ['Reliability live switch', modules, ['reliabilityLiveReady','selectReliabilityDataset','KP-Parität geprüft','Partner Zero-Loss geprüft']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.4 ${label} missing: ${token}`);
 }
@@ -178,7 +178,7 @@ for (const [label, content, tokens] of [
   ['historical adapter', liveAnalytics, ['historicalSeasonRecords','historicalSalesRows','historicalKpSnapshot','historical-season-records']],
   ['KP partner parity', parity, ['compareKpPartnersToCompatibility','kpPartnerParitySummary','kp-partner-pot-','kp-partner-open3-']],
   ['KP partner selector', kpPartnerSelector, ['selectKpPartnerDataset','item.label===legacy.p','source:\'live\'']],
-  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historical · partner parity verified','DNS_Core public baseline · partner zero-loss verified']],
+  ['KP partner module switch', modules, ['kpPartnerLiveReady','selectKpPartnerDataset','DNS_Core historisch · Partnerparität geprüft','DNS_Core öffentliche Baseline · Partner Zero-Loss geprüft']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.5 ${label} missing: ${token}`);
 }
@@ -188,7 +188,7 @@ for (const [label, content, tokens] of [
   ['annual historical loader', liveAnalytics, ['LiveAnnualSeries','annualCategoryCode','annualFrom2024Record','annual2025FromSales','loadHistoricalAnnualSeries','sk-instructor']],
   ['annual parity gate', parity, ['compareAnnualToCompatibility','annualParitySummary','annual-total-qty-','annual-total-revenue-']],
   ['Annual selector', annualSelector, ['selectAnnualDataset','source:\'live\'','revenueByType']],
-  ['Annual module switch', modules, ['annualLiveReady','selectAnnualDataset','annual parity verified']],
+  ['Annual module switch', modules, ['annualLiveReady','selectAnnualDataset','Jahresparität geprüft']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.6 ${label} missing: ${token}`);
 }
@@ -197,7 +197,7 @@ if (!process.exitCode) ok('A.3.6 immutable four-season Annual switch is present'
 for (const [label, content, tokens] of [
   ['Advanced observed selector', advancedSelector, ['selectAdvancedObservedInputs','weeklyTicketsNetwork','weeklyTicketsSouthTyrol','dayTickets']],
   ['Advanced observed parity', parity, ['compareAdvancedObservedInputs','advancedObservedParitySummary','advanced-weekly-network','advanced-day']],
-  ['Advanced module switch', modules, ['advancedLiveReady','selectAdvancedObservedInputs','observed inputs verified','Assumptions: nights/guest']],
+  ['Advanced module switch', modules, ['advancedLiveReady','selectAdvancedObservedInputs','beobachtete Inputs geprüft','Beobachtet: Ticketmengen']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.7 ${label} missing: ${token}`);
 }
@@ -207,7 +207,7 @@ for (const [label, content, tokens] of [
   ['FAIR snapshot loader', liveAnalytics, ['fairModel','ws-2026-27','readFairSnapshot','FairRegionInput']],
   ['Overnight selector', overnightSelector, ['selectOvernightDataset','seiser-alm-dolomites-val-gardena','source:\'fair\'']],
   ['Overnight parity', parity, ['compareFairOvernightsToCompatibility','overnightParitySummary','overnight-pn-']],
-  ['Overnight module switch', modules, ['overnightLiveReady','selectOvernightDataset','PN parity verified','not provided by FAIR']],
+  ['Overnight module switch', modules, ['overnightLiveReady','selectOvernightDataset','PN-Parität geprüft','nicht von FAIR bereitgestellt']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.8 ${label} missing: ${token}`);
 }
@@ -216,7 +216,7 @@ if (!process.exitCode) ok('A.3.8 Overnight PN is sourced from FAIR with guarded 
 for (const [label, content, tokens] of [
   ['Intensity selector', intensitySelector, ['selectIntensityDataset','wk-area','wk-dns','products.day','fairPn']],
   ['Intensity parity', parity, ['compareIntensityInputsToCompatibility','intensityParitySummary','intensity-wk-','intensity-day-','intensity-pn-']],
-  ['Intensity module switch', modules, ['intensityLiveReady','selectIntensityDataset','DNS_Core Sales + DNS FAIR PN','Model assumptions preserved']],
+  ['Intensity module switch', modules, ['intensityLiveReady','selectIntensityDataset','DNS_Core Verkäufe + DNS FAIR PN','Modellannahmen:']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.9 ${label} missing: ${token}`);
 }
@@ -224,7 +224,7 @@ if (!process.exitCode) ok('A.3.9 Langlauf intensity is sourced from DNS_Core sal
 
 for (const [label, content, tokens] of [
   ['Editorial protocol', editorial, ['classification:\'observed\'','classification:\'external-source\'','classification:\'assumption\'','classification:\'limitation\'','ASTAT','Seilbahnen Österreich','DNS FAIR Model']],
-  ['Editorial UI', ui, ['EditorialSummary','MethodologyPanel','Quelle · Fonte']],
+  ['Editorial UI', ui, ['EditorialSummary','MethodologyPanel','BilingualText de="Quelle:" it="Fonte:"']],
   ['Editorial module integration', modules, ['editorialSummaries.overview','editorialSummaries.annual','editorialSummaries.regional','reliabilityMethodology','advancedMethodology','overnightMethodology','intensityMethodology']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.10 ${label} missing: ${token}`);
@@ -287,7 +287,7 @@ const legacyRenderTokens = [
   'deltaRows.map',
   'priceRows.map',
   'legacyRegionalInsights.map',
-  'legacyReliabilityCopy.classification.map',
+  'KP ≥ 70% — Hohe KS-Abhängigkeit',
   'legacyAdvancedCopy.insights.map',
   'historicalTotal',
   'historicalRows.map',
@@ -305,7 +305,7 @@ for (const [label, content, tokens] of [
   ['Advanced public fallback', advancedSelector, ['PublicBaselineData','weeklyRevenueArea','publicBaseline?.seasonOverview.ticketRevenue']],
   ['Overnight public fallback', overnightSelector, ['PublicBaselineData','publicBaseline?.overnightAreas','source:publicBaseline?\'public\':\'compatibility\'']],
   ['Intensity public fallback', intensitySelector, ['PublicBaselineData','publicBaseline?.intensityAreas','source:publicBaseline?\'public\':\'compatibility\'']],
-  ['H2 module routing', modules, ['publicBaseline','DNS_Core public baseline · zero-loss verified','DNS_Core public baseline · observed inputs','DNS_Core public baseline · PN','DNS_Core public baseline · intensity']],
+  ['H2 module routing', modules, ['publicBaseline','DNS_Core öffentliche Baseline · Zero-Loss geprüft','DNS_Core öffentliche Baseline · beobachtete Inputs','DNS_Core öffentliche Baseline · PN','DNS_Core öffentliche Baseline · Intensitätsinputs']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.11H2 ${label} missing: ${token}`);
 }
@@ -314,14 +314,14 @@ if (!process.exitCode) ok('A.3.11H2 remaining modules prefer the verified public
 for (const [label, content, tokens] of [
   ['source badge component', ui, ['SourceBadge','data-analytics-source','AnalyticsSourceState']],
   ['source state CSS', css, ['is-public','is-fair','is-historical','is-compatibility']],
-  ['source rendering', modules, ['<SourceBadge state={data.source}>','partnerData.source===\'public\'','Monthly context · historical source']],
+  ['source rendering', modules, ['<SourceBadge state={data.source','partnerData.source===\'public\'','Monatskontext · historische Quelle']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.11I ${label} missing: ${token}`);
 }
-if (modules.includes("data.source==='live' ? 'DNS_Core LIVE · regional parity verified' : 'Compatibility dataset · A.2.1'")) {
+if (modules.includes("data.source==='live' ? 'DNS_Core LIVE · regionale Parität geprüft' : 'Kompatibilitätsdatensatz · A.2.1'")) {
   fail('A.3.11I Regional public source is still mislabeled as compatibility');
 }
-if (modules.includes("partnerData.source==='live' ? 'DNS_Core historical · partner parity verified' : 'Partner detail · Compatibility dataset · A.2.1'")) {
+if (modules.includes("partnerData.source==='live' ? 'DNS_Core historisch · Partnerparität geprüft' : 'Partnerdetail · Kompatibilitätsdatensatz · A.2.1'")) {
   fail('A.3.11I KP partner public source is still mislabeled as compatibility');
 }
 if (!process.exitCode) ok('A.3.11I source-state UI is canonical across live/public/fair/historical/compatibility');
