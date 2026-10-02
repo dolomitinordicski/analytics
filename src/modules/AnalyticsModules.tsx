@@ -103,7 +103,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
       </Card>
       <Card titleDe="Vertriebskanal" titleIt="Canale di vendita">
         <ChartCanvas height={195} config={{type:'doughnut',data:{labels:[...data.channels.labels],datasets:[{data:[...data.channels.values],backgroundColor:[COLORS.deep,COLORS.mid,COLORS.light],borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
-        <div className="analytics-note-small analytics-legacy-inline"><BilingualText de={legacyOverviewNotes.channelMix} it="Ufficio 77% · Online 15% · Pista 7%"/></div>
+        <div className="dns-readable-copy analytics-note-small analytics-legacy-inline"><BilingualText de={legacyOverviewNotes.channelMix} it="Ufficio 77% · Online 15% · Pista 7%"/></div>
       </Card>
     </div>
 
@@ -117,7 +117,7 @@ export function OverviewModule({language}:AnalyticsModuleProps){
           {label:'Entrate',data:[...data.ticketRevenue],backgroundColor:palette,borderWidth:2,borderColor:COLORS.background},
           {label:'Menge',data:[...data.ticketQty],backgroundColor:palette.map(c=>c+'99'),borderWidth:2,borderColor:COLORS.background},
         ]},options:{...baseOptions,cutout:'40%',plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
-        <div className="analytics-note-small analytics-legacy-inline"><BilingualText de="Außen: Einnahmen · Innen: Menge" it={legacyOverviewNotes.revenueVsQuantity}/></div>
+        <div className="dns-readable-copy analytics-note-small analytics-legacy-inline"><BilingualText de="Außen: Einnahmen · Innen: Menge" it={legacyOverviewNotes.revenueVsQuantity}/></div>
       </Card>
     </div>
 
@@ -224,12 +224,12 @@ export function AnnualModule({language}:AnalyticsModuleProps){
     <SectionHeading de="Delta 2022-23 → 2025-26 & Ø Preise" it="Variazione 2022-23 → 2025-26 & prezzi medi"/>
     <div className="analytics-grid-2">
       <Card titleDe="Δ Menge & Einnahmen" titleIt="Δ quantità & entrate">
-        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Tickettyp" it="Tipo biglietto"/></th><th><BilingualText de="Δ Menge" it="Δ quantità"/></th><th><BilingualText de="Δ Einnahmen" it="Δ entrate"/></th><th><BilingualText de="% Menge" it="% quantità"/></th><th><BilingualText de="% Einnahmen" it="% entrate"/></th></tr></thead><tbody>
+        <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Tickettyp" it="Tipo biglietto"/></th><th><BilingualText de="Δ Menge" it="Δ quantità"/></th><th><BilingualText de="Δ Einnahmen" it="Δ entrate"/></th><th><BilingualText de="% Menge" it="% quantità"/></th><th><BilingualText de="% Einnahmen" it="% entrate"/></th></tr></thead><tbody>
           {deltaRows.map(row=><tr key={row.type}><td>{row.type}</td><td>{row.qty>0?'+':''}{integer(row.qty)}</td><td>{row.revenue>0?'+':''}{euro(row.revenue)}</td><td>{row.qtyPct>0?'+':''}{pct(row.qtyPct,Math.abs(row.qtyPct)<10?2:1)}</td><td>{row.revenuePct>0?'+':''}{pct(row.revenuePct,Math.abs(row.revenuePct)<10?2:1)}</td></tr>)}
         </tbody></table></div>
       </Card>
       <Card titleDe="Ø Ticketpreis WS 2025-26" titleIt="Prezzo medio per tipo SI 2025-26">
-        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Tickettyp" it="Tipo biglietto"/></th><th><BilingualText de="Ø Preis" it="Prezzo medio"/></th></tr></thead><tbody>
+        <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Tickettyp" it="Tipo biglietto"/></th><th><BilingualText de="Ø Preis" it="Prezzo medio"/></th></tr></thead><tbody>
           {priceRows.map(row=><tr key={row.type}><td>{row.type}</td><td><strong>€ {row.value.toFixed(2).replace('.',',')}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
@@ -285,7 +285,7 @@ export function RegionalModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Heatmap — Menge pro Region & Tickettyp" it="Heatmap — quantità per regione e tipo"/>
     <Card titleDe="Regionale Verteilung" titleIt="Distribuzione regionale">
-      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Region" it="Regione"/></th>{TICKET_TYPES.map(t=><th key={t}>{t}</th>)}<th><BilingualText de="Einnahmen" it="Entrate"/></th></tr></thead><tbody>
+      <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Region" it="Regione"/></th>{TICKET_TYPES.map(t=><th key={t}>{t}</th>)}<th><BilingualText de="Einnahmen" it="Entrate"/></th></tr></thead><tbody>
         {REGIONS.map((r,i)=><tr key={r}><td><RegionLabel name={r} compact/></td>{qty.map((a,j)=><td key={j}>{integer(a[i])}</td>)}<td>{euro(data.totalRevenue[i])}</td></tr>)}
       </tbody></table></div>
     </Card>
@@ -348,7 +348,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
         ]},options:{...baseOptions,plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}},scales:{x:axis,y:{...axis,max:110,ticks:{...axis.ticks,callback:(v:any)=>v+'%'}}}}} as any}/>
       </Card>
       <Card titleDe="Tabelle — KP pro Region WS 2025-26" titleIt="Tabella — KP per regione SI 2025-26">
-        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Region" it="Regione"/></th><th>Pot.</th><th>23.12</th><th>06.01</th><th>20.01</th><th>KP</th></tr></thead><tbody>
+        <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Region" it="Regione"/></th><th>Pot.</th><th>23.12</th><th>06.01</th><th>20.01</th><th>KP</th></tr></thead><tbody>
           {rows.map(d=><tr key={d.r}><td><RegionLabel name={d.r} compact/></td><td>{d.pot}</td><td>{pct(d.pct1,0)}</td><td>{pct(d.pct2,0)}</td><td>{pct(d.pct3,0)}</td><td><strong>{pct(d.kp)}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
@@ -364,7 +364,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
         </div>
       </Card>
       <Card titleDe="Klassifikation nach KP-Index" titleIt="Classificazione per indice KP">
-        <div className="analytics-legacy-list">
+        <div className="dns-readable-copy analytics-legacy-list">
           {[
             {de:'KP ≥ 70% — Hohe KS-Abhängigkeit',it:'KP ≥ 70% — Alta dipendenza KS'},
             {de:'KP 30–70% — Mix KS / NS',it:'KP 30–70% — Mix KS / NS'},
@@ -381,7 +381,7 @@ export function ReliabilityModule({language}:AnalyticsModuleProps){
       it={partnerData.source==='live' ? 'DNS_Core storico · parità partner verificata' : partnerData.source==='public' ? 'Baseline pubblica DNS_Core · zero-loss partner verificato' : 'Dettaglio partner · dataset di compatibilità · A.2.1'}
     />
     <Card titleDe="KP pro Partner — KS-km / individuelle potenzielle km" titleIt="KP per partner — km KS / km potenziali individuali">
-      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th><BilingualText de="Geöffnet" it="Aperto"/></th><th>KP</th></tr></thead><tbody>
+      <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th>Partner</th><th>Pot.</th><th>KS 23.12</th><th>KS 06.01</th><th>KS 20.01</th><th><BilingualText de="Geöffnet" it="Aperto"/></th><th>KP</th></tr></thead><tbody>
         {partnerData.rows.map(d=>{const kp=d.excluded?null:Math.min(100,d.ks3/d.pot*100);const open=d.excluded?null:Math.min(100,d.tot3/d.pot*100);return <tr key={d.p} className={d.excluded?'is-muted':''}><td>{d.p}{d.excluded ? <><span className="analytics-lang-de"> · ausgeschlossen</span><span className="analytics-lang-it"> · escluso</span></> : null}</td><td>{d.pot}</td><td>{d.ks1}</td><td>{d.ks2}</td><td>{d.ks3}</td><td>{open==null?'—':pct(open,0)}</td><td>{kp==null?'—':pct(kp)}</td></tr>})}
       </tbody></table></div>
     </Card>
@@ -416,7 +416,7 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
       it={observed.source==='live' ? 'DNS_Core storico · input osservati verificati' : observed.source==='public' ? 'Baseline pubblica DNS_Core · input osservati zero-loss verificati' : 'Dataset di compatibilità · input osservati A.2.1'}
     />
     <BilingualNote de={legacyAdvancedCopy.introDe} it={legacyAdvancedCopy.introIt}/>
-    <div className="analytics-assumption-note">
+    <div className="dns-readable-copy analytics-assumption-note">
       <span className="analytics-lang-de">Beobachtet: Ticketmengen · Annahmen: Nächte/Gast, Übernachtungsanteil, Ausgaben/Nacht, Multiplikator, DAY-Übernachtungsanteil.</span>
       <span className="analytics-lang-it">Osservato: volumi ticket · Assunzioni: notti/ospite, quota pernottanti, spesa/notte, moltiplicatore, quota pernottanti DAY.</span>
     </div>
@@ -463,7 +463,7 @@ export function AdvancedModule({language}:AnalyticsModuleProps){
         <ChartCanvas config={{type:'doughnut',data:{labels:advancedDefaults.astat.map(v=>language==='de'?v.de:v.it),datasets:[{data:advancedDefaults.astat.map(v=>derived.directNet*v.q),backgroundColor:advancedDefaults.astat.map(v=>v.c),borderWidth:2,borderColor:COLORS.background}]},options:{...baseOptions,cutout:'58%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,font:{size:9},color:COLORS.mid}}}}} as any}/>
       </Card>
       <Card titleDe="Werte nach Ausgabeposten · Network" titleIt="Valori per voce di spesa · network">
-        <table className="analytics-table"><thead><tr><th><BilingualText de="Posten" it="Voce"/></th><th>%</th><th>EUR</th></tr></thead><tbody>{advancedDefaults.astat.map(v=><tr key={v.it}><td>{language==='de'?v.de:v.it}</td><td>{pct(v.q*100,1)}</td><td>{euro(derived.directNet*v.q)}</td></tr>)}</tbody></table>
+        <table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Posten" it="Voce"/></th><th>%</th><th>EUR</th></tr></thead><tbody>{advancedDefaults.astat.map(v=><tr key={v.it}><td>{language==='de'?v.de:v.it}</td><td>{pct(v.q*100,1)}</td><td>{euro(derived.directNet*v.q)}</td></tr>)}</tbody></table>
       </Card>
     </div>
 
@@ -532,10 +532,10 @@ export function OvernightModule({language}:AnalyticsModuleProps){
         <ChartCanvas config={{type:'bar',data:{labels:historicalSorted.map(a=>a.area),datasets:[{data:historicalSorted.map(a=>a.pn[0]),backgroundColor:historicalSorted.map((_,i)=>i===0?COLORS.deep:COLORS.light),borderWidth:0,borderRadius:3}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>(Number(v)/1000).toFixed(0)+'k'}},y:axis}}} as any}/>
       </Card>
       <Card titleDe="Datentabelle · Zeitreihe (Basis)" titleIt="Tabella dati · serie storica (base)">
-        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>PN 2024-25</th><th><BilingualText de="Anteil" it="Quota"/></th><th>PN 2025-26</th></tr></thead><tbody>
+        <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>PN 2024-25</th><th><BilingualText de="Anteil" it="Quota"/></th><th>PN 2025-26</th></tr></thead><tbody>
           {historicalRows.map(a=><tr key={a.area}><td>{a.area}</td><td>{integer(a.pn[0])}</td><td>{pct(Number(a.pn[0])/historicalTotal*100)}</td><td>{integer(a.pn[1])}</td></tr>)}
         </tbody></table></div>
-        <div className="analytics-note-small analytics-legacy-inline">
+        <div className="dns-readable-copy analytics-note-small analytics-legacy-inline">
           <span className="analytics-lang-de"><strong>Legacy-Archiv · </strong>Quelle: DNS FAIR Model (PN WS 2024-25) · Disaggregation Seiser Alm/Gröden und Ahrntal/Sand in Taufers aus regionalen Tourismusdaten · vorläufig.</span>
           <span className="analytics-lang-it"><strong>Archivio legacy · </strong>Fonte: DNS FAIR Model (PN SI 2024-25) · disaggregazione Alpe di Siusi/Val Gardena e Ahrntal/Sand in Taufers da dati turistici regionali · provvisorio.</span>
         </div>
@@ -555,7 +555,7 @@ export function OvernightModule({language}:AnalyticsModuleProps){
 
     <SectionHeading de="Datentabelle · Zeitreihe" it="Tabella dati · serie storica"/>
     <Card titleDe="WS 2025-26 vs. WS 2024-25" titleIt="SI 2025-26 vs. SI 2024-25">
-      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>2025-26</th><th><BilingualText de="Anteil" it="Quota"/></th><th>2024-25</th><th>Δ</th></tr></thead><tbody>
+      <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>2025-26</th><th><BilingualText de="Anteil" it="Quota"/></th><th>2024-25</th><th>Δ</th></tr></thead><tbody>
         {sorted.map(a=><tr key={a.areaId}><td><RegionLabel name={a.area} compact/></td><td><strong>{integer(a.pn2526)}</strong></td><td>{pct(a.pn2526/total2526*100)}</td><td>{integer(a.pn2425)}</td><td className={a.pn2526-a.pn2425>=0?'is-positive':'is-negative'}>{integer(a.pn2526-a.pn2425)}</td></tr>)}
       </tbody></table></div>
     </Card>
@@ -566,7 +566,7 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       <span className="analytics-lang-it">Questi valori provengono dal dossier fonti aggiuntivo (associazioni turistiche / dati forniti). Servono solo come documentazione e non sostituiscono i valori FAIR canonici. Le differenze vanno validate separatamente prima dell’uso esterno.</span>
     </Alert>
     <Card titleDe="PN nach Gebiet — Arbeitsdossier" titleIt="PN per area — dossier di lavoro">
-      <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr>
+      <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr>
         <th><BilingualText de="Gebiet" it="Area"/></th>
         <th>PN 2025-26</th>
         <th>Δ</th>
@@ -599,7 +599,7 @@ export function OvernightModule({language}:AnalyticsModuleProps){
       <Metric label="Saison gesamt 2025/26" sublabel="Stagione totale 2025/26" value="14,8 Mio" noteDe={`${integer(legacyOvernightCopy.seasonTotalArrivals)} Ankünfte`} noteIt={`${integer(legacyOvernightCopy.seasonTotalArrivals)} arrivi`}/>
       <Metric label="Top-Gemeinde März" sublabel="Comune top marzo" value={legacyOvernightCopy.topMunicipalityMarch} noteDe={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} Übernachtungen`} noteIt={`${integer(legacyOvernightCopy.topMunicipalityMarchNights)} presenze`} top/>
     </div>
-    <div className="analytics-note-small analytics-legacy-inline">
+    <div className="dns-readable-copy analytics-note-small analytics-legacy-inline">
       <span className="analytics-lang-de">Quelle: ASTAT — Landesinstitut für Statistik, monatliche Tourismusentwicklung (Dez. 2025–März 2026). Provinzkontext, nicht DNS-spezifisch. Die Summe Dez–März umfasst ganz Südtirol.</span>
       <span className="analytics-lang-it">{legacyOvernightCopy.provinceSource.replace('Quelle · Fonte: ','Fonte: ')}</span>
     </div>
@@ -628,7 +628,7 @@ export function IntensityModule({language}:AnalyticsModuleProps){
       de={dataset.source==='live' ? 'DNS_Core Verkäufe + DNS FAIR PN · Parität geprüft' : dataset.source==='public' ? 'DNS_Core öffentliche Baseline · Intensitätsinputs Zero-Loss geprüft' : 'Kompatibilitätsdatensatz · Intensitätsinputs A.2.1'}
       it={dataset.source==='live' ? 'Vendite DNS_Core + PN DNS FAIR · parità verificata' : dataset.source==='public' ? 'Baseline pubblica DNS_Core · input intensità zero-loss verificati' : 'Dataset di compatibilità · input intensità A.2.1'}
     />
-    <div className="analytics-assumption-note">
+    <div className="dns-readable-copy analytics-assumption-note">
       <span className="analytics-lang-de">Modellannahmen: 75% Übernachtungsanteil × 6 Nächte für Wochenkarten; 45% Übernachtungsanteil im DAY-Szenario.</span>
       <span className="analytics-lang-it">Assunzioni del modello: 75% pernottanti × 6 notti per i settimanali; 45% pernottanti nello scenario DAY.</span>
     </div>
@@ -645,7 +645,7 @@ export function IntensityModule({language}:AnalyticsModuleProps){
         <ChartCanvas config={{type:'bar',data:{labels:sorted.map(a=>a.area),datasets:[{data:sorted.map(a=>a.intWK),backgroundColor:sorted.map(a=>a.intWK>=2?COLORS.deep:a.intWK>=1?COLORS.mid:COLORS.light),borderWidth:0,borderRadius:4}]},options:{...baseOptions,indexAxis:'y',scales:{x:{...axis,ticks:{...axis.ticks,callback:(v:any)=>Number(v).toFixed(1)+'%'}},y:axis}}} as any}/>
       </Card>
       <Card titleDe="WK-Tickets vs. Gesamtübernachtungen — Verhältnis" titleIt="Ticket WK vs. pernottamenti totali — rapporto">
-        <div className="analytics-table-wrap"><table className="analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>SWDNS</th><th><BilingualText de="geschätzte PN" it="PN stimati"/></th><th><BilingualText de="PN gesamt" it="PN totali"/></th><th><BilingualText de="Intensität" it="Intensità"/></th></tr></thead><tbody>
+        <div className="dns-table-wrap analytics-table-wrap"><table className="dns-table analytics-table"><thead><tr><th><BilingualText de="Gebiet" it="Area"/></th><th>SWDNS</th><th><BilingualText de="geschätzte PN" it="PN stimati"/></th><th><BilingualText de="PN gesamt" it="PN totali"/></th><th><BilingualText de="Intensität" it="Intensità"/></th></tr></thead><tbody>
           {sorted.map(a=><tr key={a.area}><td><RegionLabel name={a.area} compact/></td><td>{integer(a.wk)}</td><td>{integer(a.pnWK)}</td><td>{integer(a.pn)}</td><td><strong>{pct(a.intWK,2)}</strong></td></tr>)}
         </tbody></table></div>
       </Card>
@@ -675,7 +675,7 @@ export function IntensityModule({language}:AnalyticsModuleProps){
 }
 
 function BilingualNote({de,it}:{de:string;it:string}){
-  return <div className="analytics-assumption-note analytics-bilingual-note" data-dns-reveal>
+  return <div className="dns-readable-copy analytics-assumption-note analytics-bilingual-note" data-dns-reveal>
     <p className="analytics-lang-de">{de}</p>
     <p className="analytics-lang-it">{it}</p>
   </div>;

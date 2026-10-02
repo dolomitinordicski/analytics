@@ -5,8 +5,8 @@ export function Metric({ label, sublabel, value, note, noteDe, noteIt, top = fal
     <div className="analytics-label analytics-lang-de">{label}</div>
     {sublabel && <div className="analytics-sublabel analytics-lang-it">{sublabel}</div>}
     <div className="analytics-metric-value">{value}</div>
-    {note && <div className="analytics-note-small">{note}</div>}
-    {(noteDe || noteIt) && <div className="analytics-note-small">
+    {note && <div className="dns-readable-copy analytics-note-small">{note}</div>}
+    {(noteDe || noteIt) && <div className="dns-readable-copy analytics-note-small">
       {noteDe && <span className="analytics-lang-de">{noteDe}</span>}
       {noteIt && <span className="analytics-lang-it">{noteIt}</span>}
     </div>}
@@ -45,8 +45,8 @@ export function Insight({ n, de, it, bodyDe, bodyIt, tag, tagDe, tagIt }: { n: s
     <div>
       <div className="analytics-card-title analytics-lang-de">{de}</div>
       <div className="analytics-card-subtitle analytics-lang-it">{it}</div>
-      <p className="analytics-insight-body analytics-lang-de">{bodyDe}</p>
-      <p className="analytics-insight-body is-it analytics-lang-it">{bodyIt}</p>
+      <p className="dns-readable-copy analytics-insight-body analytics-lang-de">{bodyDe}</p>
+      <p className="dns-readable-copy analytics-insight-body is-it analytics-lang-it">{bodyIt}</p>
       <span className="analytics-tag"><BilingualText de={tagDe ?? fallbackDe} it={tagIt ?? fallbackIt}/></span>
     </div>
   </article>;
@@ -82,7 +82,7 @@ const methodologyLabels:Record<string,{de:string;it:string}>={
 export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt:string;items:Array<{
   key:string;labelDe:string;labelIt:string;value:string;classification:string;source:string;sourceYear?:string;sourceUrl?:string;noteDe:string;noteIt:string;
 }>}) {
-  return <article className="analytics-methodology" data-dns-reveal>
+  return <article className="dns-methodology analytics-methodology" data-dns-reveal>
     <header>
       <div className="analytics-card-title analytics-lang-de">{titleDe}</div>
       <div className="analytics-card-subtitle analytics-lang-it">{titleIt}</div>
@@ -100,7 +100,7 @@ export function MethodologyPanel({titleDe,titleIt,items}:{titleDe:string;titleIt
         <div className="analytics-methodology-value">{item.value}</div>
         <p className="analytics-lang-de">{item.noteDe}</p>
         <p className="analytics-lang-it">{item.noteIt}</p>
-        <div className="analytics-methodology-source">
+        <div className="dns-source analytics-methodology-source">
           <BilingualText de="Quelle:" it="Fonte:"/> {item.source}{item.sourceYear ? ` · ${item.sourceYear}` : ''}
           {item.sourceUrl && <> · <a href={item.sourceUrl} target="_blank" rel="noreferrer"><BilingualText de="Quelle öffnen" it="Apri fonte"/></a></>}
         </div>

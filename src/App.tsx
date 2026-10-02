@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { formatDNSCoreHeaderStatus } from '@dolomitinordicski/dns-shared-data/ui/header-status';
-import { initDNSFooterRuntime } from '@dolomitinordicski/dns-shared-data/ui/footer';
-import { AccessibilityMount } from './components/AccessibilityMount';
 import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
 import { LiveSourcePanel } from './components/LiveSourcePanel';
 import { AnalyticsLiveProvider } from './components/AnalyticsLiveContext';
@@ -17,10 +15,12 @@ import {
   ReliabilityModule,
 } from './modules/AnalyticsModules';
 import {
-  applyDNSFoundation,
   DNS_ANALYTICS_FOUNDATION_VERSION,
   DNS_SHARED_WEB_LOGO_URL,
-  printDNSDocument,
+  dnsAnalyticsCapabilities,
+  getDNSAnalyticsLanguage,
+  setDNSAnalyticsLanguage,
+  subscribeDNSAnalyticsLanguage,
 } from './services/foundation';
 import { loadDNSCoreMaster, type DNSCoreStatus } from './services/dnsCore';
 import { getAnalyticsBoundaryMode } from './services/analyticsBoundary';
@@ -38,22 +38,13 @@ const TABS = [
 type TabId = typeof TABS[number]['id'];
 type Language = 'de' | 'it';
 
-const LANGUAGE_KEY = 'dns-analytics-language';
-
-function detectLanguage(): Language {
-  const stored = window.localStorage.getItem(LANGUAGE_KEY);
-  if (stored === 'de' || stored === 'it') return stored;
-  return 'de';
-}
-
 export default function App() {
-  useEffect(() => { initDNSFooterRuntime(); }, []);
   const [active,setActive] = useState<TabId>(() => {
     const hash = window.location.hash.replace(/^#/, '') as TabId;
     return TABS.some(tab => tab.id === hash) ? hash : 'overview';
   });
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [language,setLanguage] = useState<Language>(detectLanguage);
+  const [language,setLanguage] = useState<Language>(() => getDNSAnalyticsLanguage());
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
   const [printActive,setPrintActive] = useState(false);
   const [liveSnapshot,setLiveSnapshot] = useState<LiveAnalyticsSnapshot|null>(null);
@@ -63,12 +54,10 @@ export default function App() {
     setCore(await loadDNSCoreMaster());
   }, []);
 
-  useEffect(() => applyDNSFoundation(),[]);
+  useEffect(() => subscribeDNSAnalyticsLanguage(setLanguage),[]);
   useEffect(() => { void refreshCore(); },[refreshCore]);
   useEffect(() => {
-    document.documentElement.lang = language;
     document.documentElement.dataset.analyticsLanguage = language;
-    window.localStorage.setItem(LANGUAGE_KEY, language);
   },[language]);
   useEffect(() => {
     const onHashChange = () => {
@@ -103,7 +92,7 @@ export default function App() {
   );
 
   return <AnalyticsLiveProvider snapshot={liveSnapshot}><div className="min-h-screen bg-dns-bg text-dns-deep">
-    <header data-dns-tool-header id="dns-analytics-header" className="bg-dns-deep text-white shadow-[0_1px_0_rgba(255,255,255,.08)]">
+    <header data-dns-tool-header id="dns-analytics-header" className="bg-[var(--dns-header-bg)] text-white shadow-[var(--dns-header-shadow)]">
       <div className="dns-tool-header-shell">
         <div className="dns-tool-header-brand">
           <img src={DNS_SHARED_WEB_LOGO_URL} alt="Dolomiti NordicSki" className="dns-tool-header-logo"/>
@@ -114,7 +103,7 @@ export default function App() {
         </div>
         <div className="dns-tool-header-actions">
           <div className="dns-tool-header-controls">
-            <AccessibilityMount language={language}/>
+            <div data-dns-accessibility-mount className="flex items-center"/>
             <div className="dns-tool-header-language" role="group" aria-label={language === 'de' ? 'Sprache' : 'Lingua'}>
               {(['de','it'] as const).map(l=><button
                 key={l}
@@ -122,7 +111,7 @@ export default function App() {
                 data-dns-press
                 className={['border-0 border-b-2 bg-transparent px-1 py-1 text-white',language===l?'border-white':'border-transparent opacity-60'].join(' ')}
                 aria-pressed={language===l}
-                onClick={()=>setLanguage(l)}
+                onClick={()=>setDNSAnalyticsLanguage(l)}
               >{l.toUpperCase()}</button>)}
             </div>
           </div>
@@ -174,7 +163,7 @@ export default function App() {
           onClick={() => {
             setPrintActive(true);
             window.requestAnimationFrame(() => {
-              window.requestAnimationFrame(() => printDNSDocument());
+              window.requestAnimationFrame(() => void dnsAnalyticsCapabilities.run('print'));
             });
           }}
         >
@@ -195,7 +184,7 @@ export default function App() {
 
       <LiveSourcePanel language={language} seasonId="2025-26" onSnapshot={setLiveSnapshot}/>
 
-      {core.state !== 'ready' && <div className={`analytics-runtime-state is-${core.state}`} role={core.state === 'error' ? 'alert' : 'status'} aria-live="polite">
+      {core.state !== 'ready' && <div className={`dns-state analytics-runtime-state is-${core.state}`} data-state={core.state} role={core.state === 'error' ? 'alert' : 'status'} aria-live="polite">
         <div>
           <strong>{core.state === 'loading'
             ? (language === 'de' ? 'DNS_Core wird geladen' : 'Caricamento DNS_Core')
@@ -204,7 +193,7 @@ export default function App() {
             ? (language === 'de' ? ' Stammdaten werden synchronisiert.' : ' Sincronizzazione delle anagrafiche in corso.')
             : (language === 'de' ? ' Analytics arbeitet mit den erhaltenen lokalen Datensätzen weiter.' : ' Analytics continua con i dataset locali preservati.')}</span>
         </div>
-        {core.state === 'error' && <button type="button" onClick={()=>void refreshCore()}>
+        {core.state === 'error' && <button className="dns-button" data-variant="secondary" type="button" onClick={()=>void refreshCore()}>
           {language === 'de' ? 'Erneut verbinden' : 'Riprova connessione'}
         </button>}
       </div>}
@@ -220,8 +209,10 @@ export default function App() {
     </main>
 
     <footer data-dns-tool-footer className="analytics-footer">
-      <span>Dolomiti NordicSki</span>
-      <span>DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
+      <div className="dns-tool-footer-shell">
+        <span className="dns-tool-footer-primary">Dolomiti NordicSki</span>
+        <span className="dns-tool-footer-meta">DNS Analytics · Foundation v{DNS_ANALYTICS_FOUNDATION_VERSION} · Data Contracts v{DNS_DATA_CONTRACTS_VERSION} · {analyticsContract?.status ?? 'analytics'} · © {new Date().getFullYear()}</span>
+      </div>
     </footer>
 
     <AnalyticsPrintSheet active={printActive} title={tabLabel} language={language}><ActiveComponent language={language}/></AnalyticsPrintSheet>

@@ -1,17 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
-
-@theme {
-  --color-dns-deep: #0D4D5E;
-  --color-dns-mid: #417483;
-  --color-dns-light: #AAD0D1;
-  --color-dns-bg: #F4F8F9;
-  --color-dns-surface: #FFFFFF;
-  --color-dns-muted: #5A7F8A;
-  --color-dns-border: rgba(65,116,131,.20);
-  --font-display: "Be Vietnam Pro", sans-serif;
-  --font-alt: "Roboto", sans-serif;
-}
+@config "../../tailwind.config.js";
 
 @layer base {
   * { box-sizing: border-box; }
@@ -26,45 +15,6 @@
 }
 
 @layer components {
-  .analytics-header-inner {
-    @apply mx-auto flex min-h-[68px] w-full max-w-[1440px] items-center justify-between gap-4 px-5 py-3 md:px-8;
-  }
-
-  .analytics-brand {
-    @apply flex min-w-0 items-center gap-4;
-  }
-
-  .analytics-logo {
-    @apply block h-10 w-auto flex-none;
-  }
-
-  .analytics-title {
-    @apply whitespace-nowrap text-[21px] uppercase leading-none tracking-[.035em] text-white;
-  }
-
-  .analytics-title span { @apply font-normal; }
-
-  .analytics-subtitle {
-    @apply mt-1 font-alt text-[11px] uppercase tracking-[.055em] text-dns-light;
-  }
-
-  .analytics-header-actions {
-    @apply flex items-center gap-3;
-  }
-
-  .analytics-core-status {
-    @apply hidden whitespace-nowrap font-alt text-[10px] tracking-[.04em] text-white/65 lg:block;
-  }
-
-  .analytics-core-status.is-ready { @apply text-dns-light; }
-  .analytics-core-status.is-error { @apply text-white/80; }
-
-  .analytics-lang { @apply flex gap-2; }
-  .analytics-lang button {
-    @apply border-0 border-b-2 border-transparent bg-transparent px-1 py-1 text-[10px] font-bold uppercase tracking-[.06em] text-white/60;
-  }
-  .analytics-lang button.is-active { @apply border-white text-white; }
-
   .analytics-nav-inner { @apply gap-0; }
 
   .analytics-print-button {
@@ -84,7 +34,9 @@
   }
 
   .analytics-live-panel {
-    @apply mb-4 flex flex-col gap-3 rounded-[10px] border border-dns-mid/20 bg-white px-4 py-3 text-[11px] text-dns-mid shadow-[0_1px_4px_rgba(13,77,94,.04)];
+    @apply mb-4 flex flex-col gap-3 border border-dns-mid/20 bg-dns-surface px-4 py-3 text-[11px] text-dns-mid;
+    border-radius: var(--dns-card-radius);
+    box-shadow: var(--dns-card-shadow);
   }
 
   .analytics-live-panel.is-auth {
@@ -104,12 +56,12 @@
   }
 
   .analytics-live-login input {
-    @apply min-h-9 w-full rounded-md border border-dns-mid/25 bg-white px-3 text-[11px] text-dns-deep outline-none focus:border-dns-mid;
+    @apply min-h-9 w-full text-[11px];
   }
 
-  .analytics-live-login button,
-  .analytics-live-meta button {
-    @apply inline-flex min-h-9 items-center justify-center rounded-md border border-dns-mid/30 bg-white px-3 text-[10px] font-semibold uppercase tracking-[.05em] text-dns-deep hover:bg-dns-bg disabled:cursor-not-allowed disabled:opacity-50;
+  .analytics-live-login .dns-button,
+  .analytics-live-meta .dns-button {
+    @apply min-h-9 text-[10px] uppercase tracking-[.05em];
   }
 
   .analytics-live-meta {
@@ -118,10 +70,6 @@
 
   .analytics-live-meta .is-ready { @apply font-semibold text-[#0F6E56]; }
   .analytics-live-meta .is-warning { @apply font-semibold text-[#993C1D]; }
-
-  .analytics-live-error {
-    @apply rounded-md border border-[#B86B52]/30 bg-[#B86B52]/[.06] px-3 py-2 font-alt text-[10px] text-[#8A432C];
-  }
 
   .analytics-live-diagnostics {
     @apply border-t border-dns-mid/10 pt-2;
@@ -149,7 +97,7 @@
   }
 
   .analytics-runtime-state {
-    @apply mb-5 flex flex-col items-start justify-between gap-3 rounded-[10px] border border-dns-mid/20 bg-white px-4 py-3 text-[11px] leading-relaxed text-dns-mid sm:flex-row sm:items-center;
+    @apply mb-5 text-[11px] leading-relaxed text-dns-mid;
   }
 
   .analytics-runtime-state strong { @apply text-dns-deep; }
@@ -162,8 +110,8 @@
     @apply border-[#B86B52]/35 bg-[#B86B52]/[.06];
   }
 
-  .analytics-runtime-state button {
-    @apply inline-flex min-h-9 flex-none items-center justify-center rounded-md border border-dns-mid/30 bg-white px-3 text-[10px] font-semibold uppercase tracking-[.05em] text-dns-deep hover:bg-dns-bg;
+  .analytics-runtime-state .dns-button {
+    @apply min-h-9 text-[10px] uppercase tracking-[.05em];
   }
 
   html[data-analytics-language="de"] .analytics-lang-it,
@@ -195,7 +143,7 @@
   }
 
   .analytics-source-badge.is-compatibility {
-    @apply border-dns-mid/20 bg-white text-dns-muted;
+    @apply border-dns-mid/20 bg-dns-surface text-dns-muted;
   }
 
   .analytics-metrics {
@@ -203,7 +151,9 @@
   }
 
   .analytics-metric {
-    @apply rounded-[10px] border-t-[3px] border-dns-light bg-white p-4 shadow-[0_1px_4px_rgba(13,77,94,.07)];
+    @apply border-t-[3px] border-dns-light bg-dns-surface p-4;
+    border-radius: var(--dns-card-radius);
+    box-shadow: var(--dns-card-shadow);
   }
 
   .analytics-metric.is-top { @apply border-dns-deep; }
@@ -245,7 +195,9 @@
   }
 
   .analytics-card {
-    @apply min-w-0 overflow-hidden rounded-[10px] border-l-4 border-dns-light bg-white p-4 shadow-[0_1px_4px_rgba(13,77,94,.07)];
+    @apply min-w-0 overflow-hidden border-l-4 border-dns-light bg-dns-surface p-4;
+    border-radius: var(--dns-card-radius);
+    box-shadow: var(--dns-card-shadow);
   }
 
   .analytics-card.is-accent { @apply border-dns-deep; }
@@ -263,7 +215,9 @@
   }
 
   .analytics-insight {
-    @apply flex gap-3 rounded-[10px] border-t-[3px] border-dns-light bg-white p-4 shadow-[0_1px_4px_rgba(13,77,94,.07)];
+    @apply flex gap-3 border-t-[3px] border-dns-light bg-dns-surface p-4;
+    border-radius: var(--dns-card-radius);
+    box-shadow: var(--dns-card-shadow);
   }
 
   .analytics-insight-n {
@@ -344,16 +298,8 @@
     @apply text-right font-alt text-[11px] text-dns-deep;
   }
 
-  .analytics-big-impact {
-    @apply mt-6 text-center text-[30px] font-bold text-dns-deep;
-  }
-
-  .analytics-big-impact.secondary {
-    @apply mt-6 text-[24px] text-dns-mid;
-  }
-
   .analytics-footer {
-    @apply mt-8 flex flex-col items-center justify-between gap-2 bg-dns-deep px-5 py-3 font-alt text-[9px] uppercase tracking-[.04em] text-white/65 md:flex-row md:px-8;
+    @apply mt-8;
   }
 
   .analytics-print-content {
@@ -366,19 +312,6 @@
 }
 
 @media (max-width: 767px) {
-  .analytics-header-inner {
-    min-height: 62px;
-    align-items: flex-start;
-    gap: .65rem;
-    padding-left: .9rem;
-    padding-right: .9rem;
-  }
-  .analytics-brand { gap: .65rem; }
-  .analytics-logo { height: 32px; }
-  .analytics-title { font-size: 16px; }
-  .analytics-subtitle { font-size: 9px; }
-  .analytics-header-actions { gap: .5rem; }
-  .analytics-lang { gap: .25rem; }
   .analytics-page { padding-left: .9rem; padding-right: .9rem; }
   .analytics-print-button { position: sticky; right: .5rem; }
   .analytics-card { padding: .85rem; }
@@ -389,18 +322,12 @@
 }
 
 @media (max-width: 420px) {
-  .analytics-logo { height: 28px; }
-  .analytics-title { font-size: 14px; }
-  .analytics-subtitle { display: none; }
-  .analytics-header-inner { padding-top: .7rem; padding-bottom: .7rem; }
   .analytics-metric-value { font-size: 19px; }
-  .analytics-big-impact { font-size: 25px; }
-  .analytics-big-impact.secondary { font-size: 20px; }
 }
 
 
 .analytics-assumption-note {
-  @apply mb-4 rounded-md border border-dns-mid/20 bg-white px-3 py-2 font-alt text-[10px] leading-5 text-dns-muted;
+  @apply mb-4 rounded-md border border-dns-mid/20 bg-dns-surface px-3 py-2 font-alt text-[10px] leading-5 text-dns-muted;
 }
 
 
@@ -426,7 +353,7 @@
   @apply grid gap-3 md:grid-cols-2;
 }
 .analytics-methodology-item {
-  @apply rounded-md border border-dns-mid/15 bg-white p-3 text-[10px] leading-5 text-dns-muted;
+  @apply rounded-md border border-dns-mid/15 bg-dns-surface p-3 text-[10px] leading-5 text-dns-muted;
 }
 .analytics-methodology-topline {
   @apply flex items-start justify-between gap-3;
@@ -523,37 +450,8 @@
   font-weight: 700;
   line-height: 1;
 }
-.analytics-legacy-columns {
-  display: grid;
-  gap: 1rem;
-  color: var(--color-dns-deep);
-  font-size: 10px;
-  line-height: 1.55;
-}
-.analytics-legacy-columns strong {
-  display: block;
-  margin-bottom: .35rem;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-}
-.analytics-legacy-columns ul {
-  margin: 0;
-  padding-left: 1.15rem;
-}
-.analytics-legacy-columns li {
-  margin-bottom: .25rem;
-}
-.analytics-legacy-columns li span {
-  display: block;
-}
-.analytics-legacy-columns p {
-  margin: 0 0 .55rem;
-}
-
 @media (min-width: 768px) {
-  .analytics-bilingual-note,
-  .analytics-legacy-columns {
+  .analytics-bilingual-note {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -566,7 +464,7 @@
 
 
 .analytics-reference-panel {
-  @apply my-5 rounded-lg border border-dns-mid/20 bg-white p-4;
+  @apply my-5 rounded-lg border border-dns-mid/20 bg-dns-surface p-4;
 }
 .analytics-reference-header {
   @apply mb-3 border-b border-dns-mid/10 pb-3;

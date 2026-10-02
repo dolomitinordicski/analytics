@@ -1,47 +1,76 @@
 import { useEffect, useMemo, useState } from 'react';
-import { resolveReportingAreaId } from '@dolomitinordicski/dns-shared-data';
+import {
+  findRegionLogosForEntity,
+  regionLogoPath,
+  resolveReportingAreaId,
+  type DNSRegionLogoAsset,
+} from '@dolomitinordicski/dns-shared-data';
+import { DNS_FOUNDATION_RELEASE_VERSION } from '@dolomitinordicski/dns-shared-data/release';
 
-type ManifestAsset = {
-  id: string;
-  label: string;
-  filename: string;
-  priority?: 'primary' | 'secondary';
-  entityBindings?: Array<{
-    entityType: 'reportingArea' | 'destination' | 'organization';
-    entityId: string;
-  }>;
+type Manifest = {
+  assets?: DNSRegionLogoAsset[];
 };
 
-const MANIFEST_URL =
-  'https://dolomitinordicski.github.io/dns-shared-data/brand/regions/manifest.json';
-const ASSET_BASE =
-  'https://dolomitinordicski.github.io/dns-shared-data/brand/regions';
+const FOUNDATION_ASSET_BASE =
+  `https://raw.githubusercontent.com/dolomitinordicski/dns-shared-data/foundation-v${DNS_FOUNDATION_RELEASE_VERSION}`;
+const MANIFEST_URL = `${FOUNDATION_ASSET_BASE}/brand/regions/manifest.json`;
 
-let promise: Promise<ManifestAsset[]> | null = null;
+let manifestPromise: Promise<DNSRegionLogoAsset[]> | null = null;
+
 function loadAssets() {
-  if (!promise) {
-    promise = fetch(MANIFEST_URL, { cache: 'no-cache' })
-      .then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
-      .then(v => Array.isArray(v.assets) ? v.assets : [])
-      .catch(() => []);
+  if (!manifestPromise) {
+    manifestPromise = fetch(MANIFEST_URL, { cache: 'force-cache' })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Region logo manifest HTTP ${response.status}`);
+        }
+        return response.json() as Promise<Manifest>;
+      })
+      .then((manifest) => Array.isArray(manifest.assets) ? manifest.assets : [])
+      .catch((error) => {
+        console.warn('Shared DNS region-logo manifest unavailable', error);
+        return [];
+      });
   }
-  return promise;
+
+  return manifestPromise;
 }
 
 export function RegionLabel({ name, compact = false }: { name: string; compact?: boolean }) {
-  const [assets,setAssets] = useState<ManifestAsset[]>([]);
-  useEffect(() => { let live=true; void loadAssets().then(v=>live&&setAssets(v)); return()=>{live=false}; },[]);
+  const [assets, setAssets] = useState<DNSRegionLogoAsset[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    void loadAssets().then((next) => {
+      if (active) setAssets(next);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const logos = useMemo(() => {
-    const id = resolveReportingAreaId(name);
-    if (!id) return [];
-    return assets
-      .filter(a => a.entityBindings?.some(b => b.entityType === 'reportingArea' && b.entityId === id))
-      .sort((a,b) => (a.priority === 'primary' ? 0 : 1) - (b.priority === 'primary' ? 0 : 1));
-  },[assets,name]);
-  return <span className="analytics-region-label">
-    {logos.length > 0 && <span className="analytics-region-logos">
-      {logos.map(a => <img key={a.id} src={`${ASSET_BASE}/${a.filename}`} alt={a.label} className={compact ? 'is-compact' : ''}/>)}
-    </span>}
-    <span>{name}</span>
-  </span>;
+    const reportingAreaId = resolveReportingAreaId(name);
+    if (!reportingAreaId) return [];
+    return findRegionLogosForEntity(assets, 'reportingArea', reportingAreaId);
+  }, [assets, name]);
+
+  return (
+    <span className="analytics-region-label">
+      {logos.length > 0 && (
+        <span className="analytics-region-logos">
+          {logos.map((asset) => (
+            <img
+              key={asset.id}
+              src={`${FOUNDATION_ASSET_BASE}/${regionLogoPath(asset)}`}
+              alt={asset.label}
+              className={compact ? 'is-compact' : ''}
+              loading="lazy"
+            />
+          ))}
+        </span>
+      )}
+      <span>{name}</span>
+    </span>
+  );
 }
