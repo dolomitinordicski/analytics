@@ -12,6 +12,7 @@ const modules = read('src/modules/AnalyticsModules.tsx');
 const data = read('src/data/analyticsData.ts');
 const css = read('src/styles/index.css');
 const printSheet = read('src/components/AnalyticsPrintSheet.tsx');
+const chartCanvas = read('src/components/ChartCanvas.tsx');
 const pkg = JSON.parse(read('package.json'));
 const metrics = read('src/data/metrics.ts');
 const scopes = read('src/data/scopes.ts');
@@ -123,6 +124,15 @@ if (!printSheet.includes('DNS_SHARED_PRINT_LOGO_URL')) {
 } else {
   ok('print sheet uses the canonical DNS print logo');
 }
+
+for (const [label, content, tokens] of [
+  ['Analytics print profile', foundation, ["printProfile: 'report'"]],
+  ['print invocation', app, ["dnsAnalyticsCapabilities.run('print', { profile: 'report' })"]],
+  ['print chart render', chartCanvas, ["useLayoutEffect", "closest('.dns-print-sheet')", "animation: false"]],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`print rendering contract missing: ${label} · ${token}`);
+}
+if (!process.exitCode) ok('Analytics print rendering waits for the print portal and uses the Foundation report profile');
 
 for (const path of ['dns-core.js','fairmodel.html','logo.png','DNS_Guida_Aggiornamento_Dati.md.pdf']) {
   if (fs.existsSync(path)) fail(`legacy repository file still present: ${path}`);
