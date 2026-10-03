@@ -14,7 +14,7 @@
     "check:references": "node scripts/check-reference-sources.mjs"
   },
   "dependencies": {
-    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#foundation-v1.2.0",
+    "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#foundation-v1.2.1",
     "chart.js": "^4.4.8",
     "firebase": "^12.6.0",
     "react": "^18.3.1",
