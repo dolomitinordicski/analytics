@@ -21,6 +21,7 @@ export function initDNSAnalyticsFoundation(language?: DNSAnalyticsLanguage) {
       language,
       shellProfile: 'operational',
       capabilities: ['print'],
+      printProfile: 'report',
       accessibility: {
         enabled: true,
         mountSelector: '[data-dns-accessibility-mount]',
