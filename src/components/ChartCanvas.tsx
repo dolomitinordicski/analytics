@@ -8,12 +8,12 @@ export function ChartCanvas({ config, height = 210 }: { config: ChartConfigurati
     if (!ref.current) return;
 
     const isPrintCopy = ref.current.closest('.dns-print-sheet') !== null;
-    const chartConfig = isPrintCopy
+    const chartConfig: ChartConfiguration = isPrintCopy
       ? {
           ...config,
           options: {
             ...config.options,
-            animation: false,
+            animation: false as const,
           },
         }
       : config;
