@@ -77,6 +77,28 @@ export default function App() {
     return () => window.removeEventListener('afterprint', handleAfterPrint);
   },[]);
 
+  useEffect(() => {
+    if (!printActive) return;
+
+    let cancelled = false;
+    let frameA = 0;
+    let frameB = 0;
+
+    frameA = window.requestAnimationFrame(() => {
+      frameB = window.requestAnimationFrame(() => {
+        if (!cancelled) {
+          void dnsAnalyticsCapabilities.run('print', { profile: 'report' });
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameA);
+      window.cancelAnimationFrame(frameB);
+    };
+  },[printActive]);
+
   const tab = useMemo(() => TABS.find(t=>t.id===active) ?? TABS[0],[active]);
   const ActiveComponent = tab.component;
   const tabLabel = language === 'de' ? tab.labelDe : tab.labelIt;
@@ -160,12 +182,7 @@ export default function App() {
           className="analytics-print-button"
           data-dns-press
           data-dns-hover
-          onClick={() => {
-            setPrintActive(true);
-            window.requestAnimationFrame(() => {
-              window.requestAnimationFrame(() => void dnsAnalyticsCapabilities.run('print'));
-            });
-          }}
+          onClick={() => setPrintActive(true)}
         >
           {language === 'de' ? 'Drucken · PDF' : 'Stampa · PDF'}
         </button>
