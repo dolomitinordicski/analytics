@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DNS_DATA_CONTRACTS, DNS_DATA_CONTRACTS_VERSION } from '@dolomitinordicski/dns-shared-data/data-contracts';
 import { formatDNSCoreHeaderStatus } from '@dolomitinordicski/dns-shared-data/ui/header-status';
-import { printAnalyticsReport } from './services/nativePrint';
+import { AnalyticsPrintSheet } from './components/AnalyticsPrintSheet';
 import { LiveSourcePanel } from './components/LiveSourcePanel';
 import { AnalyticsLiveProvider } from './components/AnalyticsLiveContext';
 import type { LiveAnalyticsSnapshot } from './services/liveAnalytics';
@@ -17,6 +17,7 @@ import {
 import {
   DNS_ANALYTICS_FOUNDATION_VERSION,
   DNS_SHARED_WEB_LOGO_URL,
+  dnsAnalyticsCapabilities,
   getDNSAnalyticsLanguage,
   setDNSAnalyticsLanguage,
   subscribeDNSAnalyticsLanguage,
@@ -45,6 +46,7 @@ export default function App() {
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [language,setLanguage] = useState<Language>(() => getDNSAnalyticsLanguage());
   const [core,setCore] = useState<DNSCoreStatus>({state:'loading',text:'DNS_Core · connecting…'});
+  const [printActive,setPrintActive] = useState(false);
   const [liveSnapshot,setLiveSnapshot] = useState<LiveAnalyticsSnapshot|null>(null);
 
   const refreshCore = useCallback(async () => {
@@ -69,6 +71,34 @@ export default function App() {
     const button = tabRefs.current[active];
     button?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   },[active]);
+  useEffect(() => {
+    const handleAfterPrint = () => setPrintActive(false);
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  },[]);
+
+  useEffect(() => {
+    if (!printActive) return;
+
+    let cancelled = false;
+    let frameA = 0;
+    let frameB = 0;
+
+    frameA = window.requestAnimationFrame(() => {
+      frameB = window.requestAnimationFrame(() => {
+        if (!cancelled) {
+          void dnsAnalyticsCapabilities.run('print', { profile: 'report' });
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameA);
+      window.cancelAnimationFrame(frameB);
+    };
+  },[printActive]);
+
   const tab = useMemo(() => TABS.find(t=>t.id===active) ?? TABS[0],[active]);
   const ActiveComponent = tab.component;
   const tabLabel = language === 'de' ? tab.labelDe : tab.labelIt;
@@ -152,7 +182,7 @@ export default function App() {
           className="analytics-print-button"
           data-dns-press
           data-dns-hover
-          onClick={() => { void printAnalyticsReport(tabLabel,language).catch(error => { console.error('Analytics print failed:',error); window.alert(language==='de'?'Druck fehlgeschlagen. Bitte Bericht prüfen.':'Stampa non riuscita. Controlla il report.'); }); }}
+          onClick={() => setPrintActive(true)}
         >
           {language === 'de' ? 'Drucken · PDF' : 'Stampa · PDF'}
         </button>
@@ -202,5 +232,6 @@ export default function App() {
       </div>
     </footer>
 
+    <AnalyticsPrintSheet active={printActive} title={tabLabel} language={language}><ActiveComponent language={language}/></AnalyticsPrintSheet>
   </div></AnalyticsLiveProvider>;
 }
