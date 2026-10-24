@@ -17,6 +17,9 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
   const styles=Array.from(document.querySelectorAll('link[rel="stylesheet"],style')).map(x=>x.outerHTML).join('\n');
   const logo=document.querySelector<HTMLImageElement>('.dns-tool-header-logo');
   const date=new Date().toLocaleDateString(language==='de'?'de-DE':'it-IT');
+  // Chart.js animation can still be painting when print is clicked.
+  // Freeze it on the live canvas before copying pixels to the print document.
+  await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
   const cloned=source.cloneNode(true) as HTMLElement;
   const canvases=[...source.querySelectorAll('canvas')];
   const copied=[...cloned.querySelectorAll('canvas')];
@@ -24,10 +27,12 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
     const target=copied[i];
     if(!target)return;
     try{
-      const image=doc.createElement('img');
+      if (canvas.width === 0 || canvas.height === 0) throw new Error('Chart canvas has no pixels');
+      const image=document.createElement('img');
       image.src=canvas.toDataURL('image/png');
       image.alt=canvas.getAttribute('aria-label')||'Analytics chart';
-      image.style.cssText='display:block;width:100%;height:auto;max-width:100%;max-height:190px;object-fit:contain;object-position:left top;';
+      image.style.cssText='display:block;width:100%;height:auto;max-width:100%;object-fit:contain;object-position:left top;';
+      image.className='analytics-print-chart-image';
       target.replaceWith(image);
     }catch {throw new Error('A chart could not be prepared for printing');}
   });
@@ -42,8 +47,17 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
     .analytics-print-document-header h1 {font-size:19px;font-weight:800;margin:0;}
     .analytics-print-document-header small {font-size:10px;}
     .analytics-page,.analytics-module,#analytics-active-panel {width:100%!important;max-width:100%!important;padding:0!important;margin:0!important;}
-    .analytics-grid-2,.analytics-grid-3,.analytics-metrics,.analytics-insights,.analytics-kpi-stack,.analytics-methodology-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}\n    .analytics-reference-grid {grid-template-columns:minmax(0,1fr)!important;}\n    .analytics-grid-2>*,.analytics-grid-3>*,.analytics-reference-grid>*,.analytics-metrics>*,.analytics-insights>* {min-width:0!important;}\n    .analytics-card {height:auto!important;min-height:0!important;overflow:visible!important;}\n    .analytics-card canvas,.analytics-card img[src^=\"data:image/png\"] {max-height:190px!important;height:auto!important;object-fit:contain!important;}\n    .analytics-reference-item {min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:normal!important;}\n    .analytics-reference-item * {max-width:100%!important;min-width:0!important;}\n    .analytics-reference-topline {display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;}\n    .analytics-reference-topline>*,.analytics-reference-item span {white-space:normal!important;overflow-wrap:anywhere!important;}
-    .analytics-table-wrap {overflow:visible!important;width:100%!important;}\n    html[data-analytics-language=\"de\"] .analytics-lang-it,html[data-analytics-language=\"it\"] .analytics-lang-de {display:none!important;}
+    .analytics-grid-2,.analytics-grid-3,.analytics-metrics,.analytics-insights,.analytics-kpi-stack,.analytics-methodology-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;} 
+    .analytics-reference-grid {grid-template-columns:minmax(0,1fr)!important;} 
+    .analytics-grid-2>*,.analytics-grid-3>*,.analytics-reference-grid>*,.analytics-metrics>*,.analytics-insights>* {min-width:0!important;} 
+    .analytics-card {height:auto!important;min-height:0!important;overflow:visible!important;} 
+    .analytics-print-chart-image {display:block!important;width:100%!important;height:auto!important;max-height:none!important;visibility:visible!important;object-fit:contain!important;} 
+    .analytics-reference-item {min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:normal!important;} 
+    .analytics-reference-item * {max-width:100%!important;min-width:0!important;} 
+    .analytics-reference-topline {display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;} 
+    .analytics-reference-topline>*,.analytics-reference-item span {white-space:normal!important;overflow-wrap:anywhere!important;}
+    .analytics-table-wrap {overflow:visible!important;width:100%!important;} 
+    html[data-analytics-language=\"de\"] .analytics-lang-it,html[data-analytics-language=\"it\"] .analytics-lang-de {display:none!important;}
     .analytics-table {min-width:0!important;width:100%!important;font-size:9px;}
     .analytics-card,.analytics-metric,.analytics-insight,.analytics-reference-item,.analytics-methodology-item {break-inside:avoid;page-break-inside:avoid;box-shadow:none!important;}
     h1,h2,h3,h4,.analytics-section-heading {break-after:avoid;page-break-after:avoid;}
