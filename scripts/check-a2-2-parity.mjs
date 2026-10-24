@@ -11,7 +11,7 @@ const app = read('src/App.tsx');
 const modules = read('src/modules/AnalyticsModules.tsx');
 const data = read('src/data/analyticsData.ts');
 const css = read('src/styles/index.css');
-const nativePrint = read('src/services/nativePrint.ts');
+const printSheet = read('src/components/AnalyticsPrintSheet.tsx');
 const chartCanvas = read('src/components/ChartCanvas.tsx');
 const pkg = JSON.parse(read('package.json'));
 const metrics = read('src/data/metrics.ts');
@@ -113,24 +113,26 @@ for (const token of ['data-analytics-language','analytics-runtime-state','@media
 }
 if (!process.exitCode) ok('responsive and language CSS guardrails are present');
 
-// Native print replaces the historical React portal and avoids duplicate Chart.js mounts.
-if (!app.includes('printAnalyticsReport(tabLabel,language)') || !nativePrint.includes("getElementById('analytics-active-panel')") || app.includes('AnalyticsPrintSheet')) {
-  fail('native print must use the active module without a duplicate React portal');
+if (!app.includes('printActive') || !printSheet.includes('if (!active) return null')) {
+  fail('print portal must mount only during an active print cycle');
 } else {
-  ok('native print uses the active Analytics module without duplicate chart instances');
+  ok('print portal does not duplicate hidden Chart.js instances during normal use');
 }
 
-if (!nativePrint.includes("'.dns-tool-header-logo'")) {
-  fail('native report must use the displayed canonical DNS logo');
+if (!printSheet.includes('DNS_SHARED_PRINT_LOGO_URL')) {
+  fail('print sheet does not use the canonical DNS print logo');
 } else {
-  ok('native report uses the DNS header logo');
+  ok('print sheet uses the canonical DNS print logo');
 }
 
-for (const token of ['document.fonts.ready', "toDataURL('image/png')", 'win.print()', 'break-inside:avoid']) {
-  if (!nativePrint.includes(token)) fail('native print contract missing: '+token);
+for (const [label, content, tokens] of [
+  ['Analytics print profile', foundation, ["printProfile: 'report'"]],
+  ['print invocation', app, ["dnsAnalyticsCapabilities.run('print', { profile: 'report' })"]],
+  ['print chart render', chartCanvas, ["useLayoutEffect", "closest('.dns-print-sheet')", "animation: false"]],
+]) {
+  for (const token of tokens) if (!content.includes(token)) fail(`print rendering contract missing: ${label} · ${token}`);
 }
-if (!app.includes("printAnalyticsReport(tabLabel,language)")) fail('native print invocation not connected');
-if (!process.exitCode) ok('browser-native report printing preserves text and handles canvas charts');
+if (!process.exitCode) ok('Analytics print rendering waits for the print portal and uses the Foundation report profile');
 
 for (const path of ['dns-core.js','fairmodel.html','logo.png','DNS_Guida_Aggiornamento_Dati.md.pdf']) {
   if (fs.existsSync(path)) fail(`legacy repository file still present: ${path}`);
