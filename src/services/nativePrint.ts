@@ -1,3 +1,4 @@
+import Chart from 'chart.js/auto';
 /**
  * DNS Analytics browser-native report printing.
  * Text, tables and SVG stay native; canvas charts are copied as images because
@@ -20,8 +21,13 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
   // Chart.js animation can still be painting when print is clicked.
   // Freeze it on the live canvas before copying pixels to the print document.
   await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
-  const cloned=source.cloneNode(true) as HTMLElement;
   const canvases=[...source.querySelectorAll('canvas')];
+  // Chart.js may be mid-animation. Render each existing chart at its final frame.
+  for (const canvas of canvases) {
+    const chart=Chart.getChart(canvas);
+    if(chart){chart.stop();chart.update('none');}
+  }
+  const cloned=source.cloneNode(true) as HTMLElement;
   const copied=[...cloned.querySelectorAll('canvas')];
   canvases.forEach((canvas,i)=>{
     const target=copied[i];
@@ -30,6 +36,8 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
       if (canvas.width === 0 || canvas.height === 0) throw new Error('Chart canvas has no pixels');
       const image=document.createElement('img');
       image.src=canvas.toDataURL('image/png');
+      image.width=canvas.width;
+      image.height=canvas.height;
       image.alt=canvas.getAttribute('aria-label')||'Analytics chart';
       image.style.cssText='display:block;width:100%;height:auto;max-width:100%;object-fit:contain;object-position:left top;';
       image.className='analytics-print-chart-image';
@@ -41,7 +49,7 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
     @page {size:A4 portrait;margin:12mm 12mm 14mm;}
     html,body {margin:0!important;padding:0!important;background:white!important;min-width:0!important;}
     *,*::before,*::after {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-    .analytics-print-document {width:100%;max-width:100%;font-family:inherit;color:#0D4D5E;}
+    .analytics-print-document {width:100%;max-width:100%;font-family:inherit;color:#0D4D5E;display:block!important;visibility:visible!important;}\n    .analytics-print-content,#analytics-print-mount,#analytics-active-panel,.analytics-module {display:block!important;visibility:visible!important;opacity:1!important;}
     .analytics-print-document-header {display:flex;align-items:center;gap:14px;border-bottom:2px solid #0D4D5E;margin-bottom:18px;padding-bottom:12px;}
     .analytics-print-document-header img {max-height:44px;max-width:145px;object-fit:contain;}
     .analytics-print-document-header h1 {font-size:19px;font-weight:800;margin:0;}
@@ -51,7 +59,7 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
     .analytics-reference-grid {grid-template-columns:minmax(0,1fr)!important;} 
     .analytics-grid-2>*,.analytics-grid-3>*,.analytics-reference-grid>*,.analytics-metrics>*,.analytics-insights>* {min-width:0!important;} 
     .analytics-card {height:auto!important;min-height:0!important;overflow:visible!important;} 
-    .analytics-print-chart-image {display:block!important;width:100%!important;height:auto!important;max-height:none!important;visibility:visible!important;object-fit:contain!important;} 
+    .analytics-print-chart-image {display:block!important;width:100%!important;height:auto!important;max-height:210px!important;visibility:visible!important;opacity:1!important;object-fit:contain!important;} 
     .analytics-reference-item {min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:normal!important;} 
     .analytics-reference-item * {max-width:100%!important;min-width:0!important;} 
     .analytics-reference-topline {display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;} 
@@ -63,12 +71,15 @@ export async function printAnalyticsReport(title: string, language: 'de'|'it'): 
     h1,h2,h3,h4,.analytics-section-heading {break-after:avoid;page-break-after:avoid;}
     img,svg,canvas {max-width:100%;}
     button,input,select,.analytics-sliders {display:none!important;}
-  </style></head><body><article class="analytics-print-document"><header class="analytics-print-document-header">
+  </style></head><body><article class="dns-print-sheet analytics-print-document"><header class="analytics-print-document-header">
    ${logo?.src?'<img src="'+logo.src+'" alt="Dolomiti NordicSki">':''}
    <div><h1>DNS Analytics · ${title.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</h1><small>${date}</small></div>
-  </header><main id="analytics-print-mount"></main></article></body></html>`);
+  </header><main id="analytics-print-mount" class="analytics-print-content"></main></article></body></html>`);
   doc.close();
-  doc.getElementById('analytics-print-mount')?.appendChild(doc.importNode(cloned,true));
+  const mount=doc.getElementById('analytics-print-mount');
+  if(!mount){frame.remove();throw new Error('Print report mount missing');}
+  mount.appendChild(doc.importNode(cloned,true));
+  if(canvases.length && mount.querySelectorAll('.analytics-print-chart-image').length!==canvases.length){frame.remove();throw new Error('Print chart transfer incomplete');}
   try {
     await Promise.all([doc.fonts.ready,...[...doc.images].map(im=>im.decode?.().catch(()=>undefined))]);
     await new Promise<void>(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>resolve())));
