@@ -86,9 +86,24 @@ export default function App() {
 
     frameA = window.requestAnimationFrame(() => {
       frameB = window.requestAnimationFrame(() => {
-        if (!cancelled) {
-          void dnsAnalyticsCapabilities.run('print', { profile: 'report' });
-        }
+        if (cancelled) return;
+        // The print sheet is a React portal: wait for images and fonts before printing.
+        const prepareAndPrint = async () => {
+          const sheet = document.querySelector<HTMLElement>('.dns-print-sheet');
+          if (!sheet) return;
+          try {
+            await document.fonts?.ready;
+            await Promise.all(Array.from(sheet.querySelectorAll('img')).map(async (img) => {
+              if (img.decode) await img.decode();
+              else if (!img.complete || img.naturalWidth === 0) throw new Error('print-image-not-ready');
+            }));
+            if (!cancelled) await dnsAnalyticsCapabilities.run('print', { profile: 'report' });
+          } catch (error) {
+            console.error('DNS Analytics print preflight failed', error);
+            if (!cancelled) setPrintActive(false);
+          }
+        };
+        void prepareAndPrint();
       });
     });
 
