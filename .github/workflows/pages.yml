@@ -24,7 +24,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      - name: Verify Foundation before installation
+        run: node scripts/foundation-lock.mjs
+      - run: npm ci --no-audit --no-fund
+      - name: Verify installed Foundation
+        run: node scripts/foundation-lock.mjs --installed
       - run: npm run check:parity
       - run: npm run check:zero-loss
       - run: npm run check:bilingual
