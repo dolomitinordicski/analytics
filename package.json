@@ -15,7 +15,8 @@
     "build:partner": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=partner vite build",
     "check:partner-assets": "node scripts/check-partner-bundle.mjs --partner-only",
     "build:secure": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=secure vite build",
-    "check:secure-assets": "node scripts/check-secure-bundle.mjs"
+    "check:secure-assets": "node scripts/check-secure-bundle.mjs",
+    "test:share-policy": "node scripts/test-share-policy.mjs"
   },
   "dependencies": {
     "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#foundation-v1.4.1",
