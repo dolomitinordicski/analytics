@@ -11,7 +11,12 @@
     "validate": "npm run check:parity && npm run check:zero-loss && npm run check:bilingual && npm run check:references && npm run build",
     "check:zero-loss": "node scripts/check-zero-loss-golden.mjs",
     "check:bilingual": "node scripts/check-bilingual.mjs",
-    "check:references": "node scripts/check-reference-sources.mjs"
+    "check:references": "node scripts/check-reference-sources.mjs",
+    "build:partner": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=partner vite build",
+    "check:partner-assets": "node scripts/check-partner-bundle.mjs --partner-only",
+    "build:secure": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=secure vite build",
+    "check:secure-assets": "node scripts/check-secure-bundle.mjs",
+    "test:share-policy": "node scripts/test-share-policy.mjs"
   },
   "dependencies": {
     "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#foundation-v1.4.1",

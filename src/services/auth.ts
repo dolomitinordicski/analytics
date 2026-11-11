@@ -1,5 +1,7 @@
 import {
   getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
@@ -28,6 +30,12 @@ export function subscribeAnalyticsAuth(callback: (user: User | null) => void) {
   return onAuthStateChanged(auth, callback);
 }
 
+export async function signInAnalyticsGoogle() {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  return signInWithPopup(auth, provider);
+}
+
 export async function signInAnalytics(email: string, password: string) {
   return signInWithEmailAndPassword(auth, email.trim(), password);
 }
@@ -46,7 +54,9 @@ export async function loadAnalyticsAccess(uid: string): Promise<AnalyticsAccessC
     && Array.isArray(profile.globalRoles)
     && profile.globalRoles.includes('dns-admin');
 
-  const grants = grantsSnap.docs.map(d=>d.data()).filter(active);
+  // Inactive or missing user profiles never inherit effective grants.
+  const profileActive = profile?.active === true;
+  const grants = profileActive ? grantsSnap.docs.map(d=>d.data()).filter(active) : [];
   const has = (permission:string) => grants.some((g:any) =>
     Array.isArray(g.permissions)
     && g.permissions.includes(permission)

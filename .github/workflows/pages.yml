@@ -33,12 +33,43 @@ jobs:
       - run: npm run check:zero-loss
       - run: npm run check:bilingual
       - run: npm run check:references
+      - run: npm run test:share-policy
       - run: npm run build
+      - name: Validate public Partner asset isolation
+        run: node scripts/check-partner-bundle.mjs
+      - name: Build isolated Partner distribution
+        run: npm run build:partner
+      - name: Check isolated Partner distribution
+        run: npm run check:partner-assets
+      - name: Build Firebase-only internal preview
+        run: npm run build:secure
+      - name: Verify secure preview contains no legacy analytical baseline
+        run: npm run check:secure-assets
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-internal-firebase-candidate
+          path: ./dist-secure
+          if-no-files-found: error
+          retention-days: 7
+      # PR-only candidate: inspect the isolated partner output without modifying Pages.
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-partner-candidate
+          path: ./dist-partner
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve existing Workspace entrypoint
+        run: test -s dist/index.html
       - if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
+          # Compatibility release only. Do not switch to dist-partner until
+          # the internal dashboard has a verified replacement and rollback.
+          # The original Pages entrypoint is still required by DNS Workspace.
           path: ./dist
 
   deploy:

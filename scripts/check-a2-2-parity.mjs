@@ -159,7 +159,7 @@ for (const [label, content, tokens] of [
   ['auth layer', auth, ['signInWithEmailAndPassword','ticketSales.read','kp.read']],
   ['live adapter', liveAnalytics, ['ticketSales','kpEntries','kpFairValidations','aggregateSales','aggregateKp']],
   ['parity diagnostics', parity, ['compareLiveToCompatibility','tickets-total','revenue-total']],
-  ['live source UI', livePanel, ['LiveSourcePanel','DNS_Core Live-Daten','öffentliche Baseline','paritySummary']],
+  ['live source UI', livePanel, ['LiveSourcePanel','DNS_Core Live-Daten','Öffentliche Baseline','paritySummary']],
 ]) {
   for (const token of tokens) if (!content.includes(token)) fail(`A.3.1 ${label} missing: ${token}`);
 }

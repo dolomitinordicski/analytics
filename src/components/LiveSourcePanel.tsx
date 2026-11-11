@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { User } from 'firebase/auth';
 import {
   loadAnalyticsAccess,
-  signInAnalytics,
   signOutAnalytics,
   subscribeAnalyticsAuth,
   type AnalyticsAccessContext,
@@ -39,8 +38,6 @@ export function LiveSourcePanel({
   const [user,setUser]=useState<User|null>(null);
   const [access,setAccess]=useState<AnalyticsAccessContext|null>(null);
   const [snapshot,setSnapshot]=useState<LiveAnalyticsSnapshot|null>(null);
-  const [email,setEmail]=useState('');
-  const [password,setPassword]=useState('');
   const [busy,setBusy]=useState(true);
   const [error,setError]=useState('');
   const [audit,setAudit]=useState<AuditParity|null>(null);
@@ -110,82 +107,14 @@ export function LiveSourcePanel({
   const intensityChecks=useMemo(()=>compareIntensityInputsToCompatibility(snapshot),[snapshot]);
   const intensitySummary=useMemo(()=>intensityParitySummary(intensityChecks),[intensityChecks]);
 
-  async function login(){
-    setBusy(true);
-    setError('');
-    try {
-      await signInAnalytics(email,password);
-      setPassword('');
-    } catch (cause:any) {
-      setError(cause?.code ?? cause?.message ?? 'LOGIN_FAILED');
-      setBusy(false);
-    }
-  }
-
-  if (!user) return <section className="analytics-live-panel is-auth" aria-label="DNS_Core live source">
-    <div className="analytics-live-copy">
-      <strong>{language==='de'?'DNS_Core Live-Daten':'Dati live DNS_Core'}</strong>
-      <span>{language==='de'
-        ? ' Für operative Analytics-Daten ist eine DNS-Anmeldung erforderlich. Bis dahin bleibt die validierte öffentliche Baseline aktiv.'
-        : ' Per i dati operativi di Analytics è necessario un accesso DNS. Fino ad allora resta attiva la baseline pubblica validata.'}</span>
-    </div>
-    <div className="analytics-live-login">
-      <input className="dns-input" type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="E-Mail"/>
-      <input className="dns-input" type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder={language==='de'?'Passwort':'Password'} onKeyDown={e=>{if(e.key==='Enter') void login();}}/>
-      <button className="dns-button" data-variant="primary" type="button" disabled={busy||!email||!password} onClick={()=>void login()}>
-        {busy ? '…' : (language==='de'?'Anmelden':'Accedi')}
-      </button>
-    </div>
-    <div className="analytics-live-meta">
-      <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
-        {publicBaseline?.state==='ready'
-          ? (publicBaseline.matches
-              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Baseline pubblica: 100% · Rev. ${publicBaseline.revision ?? '—'}`)
-              : (language==='de' ? `Öffentliche Baseline: ${publicBaseline.mismatchCount} Abweichungen` : `Baseline pubblica: ${publicBaseline.mismatchCount} differenze`))
-          : publicBaseline?.state==='missing'
-            ? (language==='de' ? 'Öffentliche Baseline: noch nicht veröffentlicht' : 'Baseline pubblica: non ancora pubblicata')
-            : publicBaseline?.state==='error'
-              ? (language==='de' ? 'Öffentliche Baseline: Fehler' : 'Baseline pubblica: errore')
-              : (language==='de' ? 'Öffentliche Baseline wird geprüft…' : 'Verifica baseline pubblica…')}
-      </span>
-      <span className={audit?.state==='ready' && audit.matches ? 'is-ready' : audit?.state==='ready' ? 'is-warning' : ''}>
-        {audit?.state==='ready'
-          ? (audit.matches
-              ? (language==='de' ? 'Zero-Loss Audit: 100% · 0 Abweichungen' : 'Audit zero-loss: 100% · 0 differenze')
-              : (language==='de' ? `Zero-Loss Audit: ${audit.mismatchCount} Abweichungen` : `Audit zero-loss: ${audit.mismatchCount} differenze`))
-          : audit?.state==='missing'
-            ? (language==='de' ? 'Zero-Loss Audit: DNS_Core Snapshot fehlt' : 'Audit zero-loss: snapshot DNS_Core assente')
-            : audit?.state==='error'
-              ? (language==='de' ? 'Zero-Loss Audit: Fehler' : 'Audit zero-loss: errore')
-              : (language==='de' ? 'Zero-Loss Audit wird geprüft…' : 'Verifica audit zero-loss…')}
-      </span>
-    </div>
-    {audit?.state==='ready' && audit.mismatchCount>0 && <details className="analytics-live-diagnostics">
-      <summary>{language==='de'?'Zero-Loss Abweichungen anzeigen':'Mostra differenze zero-loss'}</summary>
-      <div className="analytics-live-diagnostic-grid">
-        {audit.mismatches.slice(0,100).map(item=><div key={item.path}>
-          <span>{item.path}</span>
-          <strong>{String(item.remote)}</strong>
-          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
-        </div>)}
-      </div>
-    </details>}
-    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
-      <summary>{language==='de'?'Abweichungen der öffentlichen Baseline anzeigen':'Mostra differenze baseline pubblica'}</summary>
-      <div className="analytics-live-diagnostic-grid">
-        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
-          <span>{item.path}</span>
-          <strong>{String(item.remote)}</strong>
-          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
-        </div>)}
-      </div>
-    </details>}
-    {error && <div className="dns-alert analytics-live-error" data-variant="error" role="alert"><div className="dns-alert-body">{error}</div></div>}
-  </section>;
+  // Authentication belongs to AnalyticsAccessGate (or the future authorized
+  // Hub share session). This diagnostic panel must never prompt for separate
+  // credentials or expose a fallback interface to signed-out visitors.
+  if (!user) return null;
 
   return <section className="analytics-live-panel" aria-label="DNS_Core live source">
     <div className="analytics-live-copy">
-      <strong>DNS_Core · {seasonId}</strong>
+      <strong>{language==='de'?'DNS_Core Live-Daten':'Dati live DNS_Core'} · {seasonId}</strong>
       <span>{busy
         ? (language==='de'?' Live-Daten werden geladen…':'Caricamento dati live…')
         : snapshot
@@ -204,8 +133,8 @@ export function LiveSourcePanel({
       <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
         {publicBaseline?.state==='ready'
           ? (publicBaseline.matches
-              ? (language==='de' ? `Öffentlich 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Pubblica 100% · Rev. ${publicBaseline.revision ?? '—'}`)
-              : (language==='de' ? `Öffentlich ${publicBaseline.mismatchCount} Δ` : `Pubblica ${publicBaseline.mismatchCount} Δ`))
+              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Pubblica 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              : (language==='de' ? `Öffentliche Baseline: ${publicBaseline.mismatchCount} Δ` : `Pubblica ${publicBaseline.mismatchCount} Δ`))
           : publicBaseline?.state==='missing' ? (language==='de'?'Öffentlicher Snapshot —':'Snapshot pubblico —')
           : publicBaseline?.state==='error' ? (language==='de'?'Öffentliche Baseline: Fehler':'Baseline pubblica: errore')
           : (language==='de'?'Öffentliche Baseline …':'Baseline pubblica …')}
@@ -234,6 +163,16 @@ export function LiveSourcePanel({
           <span>{c.label}</span>
           <strong>{c.live?.toLocaleString(language==='de'?'de-DE':'it-IT')}</strong>
           <small>{language==='de'?'Legacy':'Legacy'} {c.legacy.toLocaleString(language==='de'?'de-DE':'it-IT')} · Δ {c.delta?.toLocaleString(language==='de'?'de-DE':'it-IT')}</small>
+        </div>)}
+      </div>
+    </details>}
+    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Abweichungen der öffentlichen Baseline anzeigen':'Mostra differenze baseline pubblica'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
         </div>)}
       </div>
     </details>}
