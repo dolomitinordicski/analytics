@@ -16,11 +16,9 @@ type View = { status: 'loading'|'unavailable'|'ready'; summary?: PublicSummary }
 function validatedSummary(raw: Record<string, unknown>, seasonId: string): PublicSummary | null {
   if (raw.publicationStatus !== 'published' || raw.seasonId !== seasonId) return null;
   // No fallback to raw historical/operational data or compatibility literals.
-  const summary = raw.partnerSummary;
-  if (!summary || typeof summary !== 'object') return null;
-  const metrics = summary as Record<string, unknown>;
-  const totalTickets = metrics.totalTickets;
-  const totalRevenue = metrics.totalRevenue;
+  if (raw.schemaVersion !== 1) return null;
+  const totalTickets = raw.totalTickets;
+  const totalRevenue = raw.totalRevenue;
   if (typeof totalTickets !== 'number' || !Number.isFinite(totalTickets) || totalTickets < 0) return null;
   if (typeof totalRevenue !== 'number' || !Number.isFinite(totalRevenue) || totalRevenue < 0) return null;
   return {seasonId,publicationStatus:'published',totalTickets,totalRevenue,
@@ -32,7 +30,7 @@ export function PartnerDashboard() {
   const [language,setLanguage] = useState<'de'|'it'>('de');
   useEffect(() => {
     let active = true;
-    void getDoc(doc(db,'analyticsPublicSnapshots','2025-26'))
+    void getDoc(doc(db,'analyticsPartnerPublic','2025-26'))
       .then(snapshot => {
         if (!active) return;
         const summary = snapshot.exists() ? validatedSummary(snapshot.data(), '2025-26') : null;
