@@ -54,7 +54,9 @@ export async function loadAnalyticsAccess(uid: string): Promise<AnalyticsAccessC
     && Array.isArray(profile.globalRoles)
     && profile.globalRoles.includes('dns-admin');
 
-  const grants = grantsSnap.docs.map(d=>d.data()).filter(active);
+  // Inactive or missing user profiles never inherit effective grants.
+  const profileActive = profile?.active === true;
+  const grants = profileActive ? grantsSnap.docs.map(d=>d.data()).filter(active) : [];
   const has = (permission:string) => grants.some((g:any) =>
     Array.isArray(g.permissions)
     && g.permissions.includes(permission)
