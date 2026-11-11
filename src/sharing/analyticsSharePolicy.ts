@@ -52,7 +52,7 @@ const VALID_METRICS:ReadonlySet<string>=new Set([
 ]);
 
 function validDate(value:string):number|null {
-  if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$/.test(value))return null;
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value))return null;
   const epoch=Date.parse(value);
   return Number.isFinite(epoch)?epoch:null;
 }
@@ -76,7 +76,7 @@ export function evaluateAnalyticsShare(
   if(!grant.id||!grant.sections.length||!grant.metricIds.length||!grant.seasonIds.length)return {allowed:false};
   if(grant.sections.some(s=>!VALID_SECTIONS.has(s)))return {allowed:false};
   if(grant.metricIds.some(m=>!VALID_METRICS.has(m)))return {allowed:false};
-  if(grant.seasonIds.some(s=>!/^20\\d{2}-\\d{2}$/.test(s)))return {allowed:false};
+  if(grant.seasonIds.some(s=>!/^20\d{2}-\d{2}$/.test(s)))return {allowed:false};
   if(new Set(grant.sections).size!==grant.sections.length
     ||new Set(grant.metricIds).size!==grant.metricIds.length)return {allowed:false};
   return {allowed:true,sections:grant.sections,metricIds:grant.metricIds,seasonIds:grant.seasonIds};
