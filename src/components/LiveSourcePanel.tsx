@@ -166,6 +166,16 @@ export function LiveSourcePanel({
         </div>)}
       </div>
     </details>}
+    {publicBaseline?.state==='ready' && publicBaseline.mismatchCount>0 && <details className="analytics-live-diagnostics">
+      <summary>{language==='de'?'Abweichungen der öffentlichen Baseline anzeigen':'Mostra differenze baseline pubblica'}</summary>
+      <div className="analytics-live-diagnostic-grid">
+        {publicBaseline.mismatches.slice(0,100).map(item=><div key={item.path}>
+          <span>{item.path}</span>
+          <strong>{String(item.remote)}</strong>
+          <small>{language==='de'?'lokal':'locale'} {String(item.local)}</small>
+        </div>)}
+      </div>
+    </details>}
     {audit?.state==='ready' && audit.mismatchCount>0 && <details className="analytics-live-diagnostics">
       <summary>{language==='de'?'Zero-Loss Audit-Abweichungen':'Differenze audit zero-loss'}</summary>
       <div className="analytics-live-diagnostic-grid">
