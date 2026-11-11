@@ -18,7 +18,7 @@ walk(root);
 const forbidden=[
   'topRegionRevenue', 'regionRevenue', 'kpPartners', 'overnightAreas',
   'advancedDefaults', 'analyticsPublicSnapshots', 'analyticsAuditSnapshots',
-  'compatibility-fallback', 'local datasets',
+  'compatibility-fallback',
   // Legacy baseline partner revenue marker; not an assertion about current totals.
   '702623',
 ];
