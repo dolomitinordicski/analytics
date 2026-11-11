@@ -54,8 +54,8 @@ const sourceBadgeItCount=(modules.match(/\sit=\{/g)||[]).length+(modules.match(/
 if (sourceBadgeCount<8) fail('expected source badges not found');
 if (sourceBadgeDeCount<sourceBadgeCount || sourceBadgeItCount<sourceBadgeCount) fail('one or more source badges are not DE/IT paired');
 
-if (!live.includes("language==='de'?'Passwort':'Password'")) fail('login password placeholder is not localized');
-if ((live.match(/publicBaseline\.mismatches\.slice/g)||[]).length!==1) fail('public baseline diagnostics should render exactly once in unauthenticated panel');
+if (live.includes('signInAnalytics') || live.includes('analytics-live-login')) fail('redundant login form must not return to the live diagnostics panel');
+if ((live.match(/publicBaseline\.mismatches\.slice/g)||[]).length!==1) fail('public baseline diagnostics should be retained exactly once in the authenticated panel');
 
 if (!print.includes("language:'de'|'it'")) fail('print sheet does not receive active language');
 if (!print.includes("language==='de'?'WS 2025-26':'SI 2025-26'")) fail('print season label is not localized');
