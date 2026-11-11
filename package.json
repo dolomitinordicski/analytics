@@ -13,7 +13,8 @@
     "check:bilingual": "node scripts/check-bilingual.mjs",
     "check:references": "node scripts/check-reference-sources.mjs",
     "build:partner": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=partner vite build",
-    "check:partner-assets": "node scripts/check-partner-bundle.mjs --partner-only"
+    "check:partner-assets": "node scripts/check-partner-bundle.mjs --partner-only",
+    "build:secure": "tsc -b && DNS_ANALYTICS_BUILD_TARGET=secure vite build"
   },
   "dependencies": {
     "@dolomitinordicski/dns-shared-data": "github:dolomitinordicski/dns-shared-data#foundation-v1.4.1",
