@@ -8,6 +8,7 @@ import {
   type AnalyticsAccessContext,
 } from '../services/auth';
 import { loadLiveAnalyticsSnapshot, type LiveAnalyticsSnapshot } from '../services/liveAnalytics';
+import { SecureSalesCharts, validateSalesAggregate } from './SecureSalesCharts';
 
 // Isolated INTERNAL PREVIEW: no import of App, parity, publicBaseline or
 // analyticsData.ts. This is deliberately not a replacement for the full
@@ -44,6 +45,7 @@ export function SecureAnalyticsPreview() {
   },[]);
 
   const totals=view.data?.sales?.aggregate;
+  const validTotals=totals && validateSalesAggregate(totals) ? totals : null;
   return <main className="min-h-screen p-6" style={{background:'var(--dns-bg,#f5f8f8)',color:'var(--dns-deep,#124b56)'}}>
     <div className="mx-auto max-w-5xl">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -64,10 +66,11 @@ export function SecureAnalyticsPreview() {
       {view.state==='loading' && <p role="status">Caricamento dati da Firebase…</p>}
       {view.state==='error' && <p role="alert">{view.message}</p>}
       {view.state==='ready' && <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border p-5"><div>Biglietti totali</div><strong className="text-3xl">{totals ? integer(totals.totalTickets) : '—'}</strong></div>
-        <div className="rounded-xl border p-5"><div>Fatturato totale</div><strong className="text-3xl">{totals ? euro(totals.totalRevenue) : '—'}</strong></div>
-        <div className="rounded-xl border p-5"><div>Prezzo medio</div><strong className="text-3xl">{totals ? euro(totals.averageTicketPrice) : '—'}</strong></div>
-        <p className="sm:col-span-3 text-sm">Fonte: {view.data?.sales?.source ?? 'non disponibile'}. Nessun fallback a dataset statici. Grafici e viste per area da migrare e collaudare prima della sostituzione.</p>
+        <div className="rounded-xl border p-5"><div>Biglietti totali</div><strong className="text-3xl">{validTotals ? integer(validTotals.totalTickets) : '—'}</strong></div>
+        <div className="rounded-xl border p-5"><div>Fatturato totale</div><strong className="text-3xl">{validTotals ? euro(validTotals.totalRevenue) : '—'}</strong></div>
+        <div className="rounded-xl border p-5"><div>Prezzo medio</div><strong className="text-3xl">{validTotals ? euro(validTotals.averageTicketPrice) : '—'}</strong></div>
+        <div className="sm:col-span-3">{totals && <SecureSalesCharts aggregate={totals} />}</div>
+        <p className="sm:col-span-3 text-sm">Fonte: {view.data?.sales?.source ?? 'non disponibile'}. Nessun fallback a dataset statici. Le viste per area e i grafici rimanenti richiedono collaudo prima della sostituzione.</p>
       </section>}
     </div>
   </main>;
