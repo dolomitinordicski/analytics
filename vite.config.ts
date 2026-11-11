@@ -13,7 +13,9 @@ const html = (relativePath: string) => fileURLToPath(new URL(relativePath, impor
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: target === 'partner' ? '/analytics/partner/' : '/analytics/',
+  // Both builds are served from the same GitHub Pages project root.
+  // Partner HTML lives at /analytics/partner/; its JS chunks live at /analytics/assets/.
+  base: '/analytics/',
   build: {
     outDir: target === 'partner' ? 'dist-partner' : 'dist',
     rollupOptions: {
