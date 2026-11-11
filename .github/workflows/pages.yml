@@ -45,7 +45,8 @@ jobs:
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          # Never upload dist: it still bundles historical internal datasets.
+          path: ./dist-partner
 
   deploy:
     if: github.event_name != 'pull_request'
