@@ -114,7 +114,7 @@ export function LiveSourcePanel({
 
   return <section className="analytics-live-panel" aria-label="DNS_Core live source">
     <div className="analytics-live-copy">
-      <strong>DNS_Core · {seasonId}</strong>
+      <strong>{language==='de'?'DNS_Core Live-Daten':'Dati live DNS_Core'} · {seasonId}</strong>
       <span>{busy
         ? (language==='de'?' Live-Daten werden geladen…':'Caricamento dati live…')
         : snapshot
@@ -133,8 +133,8 @@ export function LiveSourcePanel({
       <span className={publicBaseline?.state==='ready' && publicBaseline.matches ? 'is-ready' : publicBaseline?.state==='ready' ? 'is-warning' : ''}>
         {publicBaseline?.state==='ready'
           ? (publicBaseline.matches
-              ? (language==='de' ? `Öffentlich 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Pubblica 100% · Rev. ${publicBaseline.revision ?? '—'}`)
-              : (language==='de' ? `Öffentlich ${publicBaseline.mismatchCount} Δ` : `Pubblica ${publicBaseline.mismatchCount} Δ`))
+              ? (language==='de' ? `Öffentliche Baseline: 100% · Rev. ${publicBaseline.revision ?? '—'}` : `Pubblica 100% · Rev. ${publicBaseline.revision ?? '—'}`)
+              : (language==='de' ? `Öffentliche Baseline: ${publicBaseline.mismatchCount} Δ` : `Pubblica ${publicBaseline.mismatchCount} Δ`))
           : publicBaseline?.state==='missing' ? (language==='de'?'Öffentlicher Snapshot —':'Snapshot pubblico —')
           : publicBaseline?.state==='error' ? (language==='de'?'Öffentliche Baseline: Fehler':'Baseline pubblica: errore')
           : (language==='de'?'Öffentliche Baseline …':'Baseline pubblica …')}
