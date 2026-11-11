@@ -34,6 +34,8 @@ jobs:
       - run: npm run check:bilingual
       - run: npm run check:references
       - run: npm run build
+      - name: Validate public Partner asset isolation
+        run: node scripts/check-partner-bundle.mjs
       - if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
       - if: github.event_name != 'pull_request'
