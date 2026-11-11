@@ -38,7 +38,7 @@ if (partnerOnly) {
   }};
   walk(dist);
   if (fs.existsSync(path.join(dist,'index.html'))) throw new Error('INTERNAL_HTML_IN_PUBLIC_BUILD');
-  for (const file of allAssets.filter(name => /\\.(js|map|json|html)$/.test(name))) {
+  for (const file of allAssets.filter(name => /\.(js|map|json|html)$/.test(name))) {
     const source = fs.readFileSync(file,'utf8');
     for (const marker of ['topRegionRevenue','regionRevenue','kpPartners','overnightAreas','historicalSeasonRecords','702623']) {
       if (source.includes(marker)) throw new Error('PUBLIC_ARTIFACT_CONTAINS_INTERNAL_DATA: ' + marker + ' in ' + path.relative(dist,file));
