@@ -40,6 +40,17 @@ jobs:
         run: npm run build:partner
       - name: Check isolated Partner distribution
         run: npm run check:partner-assets
+      - name: Build Firebase-only internal preview
+        run: npm run build:secure
+      - name: Verify secure preview contains no legacy analytical baseline
+        run: npm run check:secure-assets
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-internal-firebase-candidate
+          path: ./dist-secure
+          if-no-files-found: error
+          retention-days: 7
       # PR-only candidate: inspect the isolated partner output without modifying Pages.
       - if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
