@@ -21,6 +21,27 @@ const AREA_NAMES:Record<string,string>={
 const integer=(n:number)=>n.toLocaleString('it-IT');
 const euro=(n:number)=>n.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0});
 const valid=(n:number)=>Number.isFinite(n)&&n>=0;
+const CHANNEL_NAMES:Record<string,string>={
+  official:'Uffici',online:'Online',track:'Pista',
+};
+const EPSILON=0.011;
+const sum=(values:ReadonlyArray<number>)=>values.reduce((total,value)=>total+value,0);
+function matchesTotal(actual:number,expected:number) {
+  return Math.abs(actual-expected)<=Math.max(EPSILON,Math.abs(expected)*1e-8);
+}
+export function verifySalesBreakdowns(s:LiveSalesAggregate) {
+  const products=Object.values(s.byProduct);
+  const regions=Object.values(s.byReportingArea);
+  const channels=Object.values(s.byChannel);
+  // Zero rows can produce a genuine zero total; nonzero totals must be
+  // fully reconciled on every independently aggregated dimension.
+  const complete=[products,regions,channels].every(rows=>
+    matchesTotal(sum(rows.map(row=>row.quantity)),s.totalTickets)
+    && matchesTotal(sum(rows.map(row=>row.revenue)),s.totalRevenue)
+  );
+  return complete && matchesTotal(s.averageTicketPrice,s.totalTickets?s.totalRevenue/s.totalTickets:0);
+}
+
 
 export function validateSalesAggregate(s:LiveSalesAggregate):boolean {
   if(!valid(s.totalTickets)||!valid(s.totalRevenue)||!valid(s.averageTicketPrice)) return false;
@@ -49,19 +70,48 @@ function RevenueBars({title,rows}:{title:string;rows:SeriesRow[]}) {
   </section>;
 }
 
+
+function QuantityBars({title,rows}:{title:string;rows:SeriesRow[]}) {
+  const max=Math.max(0,...rows.map(row=>row.quantity));
+  return <section className="rounded-xl border p-5" aria-label={title}>
+    <h2 className="mb-4 text-xl font-semibold">{title}</h2>
+    {rows.length===0 && <p>Non ci sono dati disponibili.</p>}
+    <div className="grid gap-4">
+      {rows.map(row=><div key={row.key}>
+        <div className="mb-1 flex flex-wrap justify-between gap-2 text-sm">
+          <strong>{row.label}</strong><span>{integer(row.quantity)} biglietti</span>
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-gray-200" role="img"
+          aria-label={row.label+': '+integer(row.quantity)+' biglietti'}>
+          <div className="h-full rounded-full" style={{width:(max?Math.max(0,row.quantity/max*100):0)+'%',background:'var(--dns-primary, #237b85)'}}/>
+        </div>
+      </div>)}
+    </div>
+  </section>;
+}
+
 // Only render aggregates calculated from Firestore-authorized records.
 // Do not import analyticsData.ts, compatibility snapshots or hard-coded totals.
 export function SecureSalesCharts({aggregate}:{aggregate:LiveSalesAggregate}) {
-  if(!validateSalesAggregate(aggregate)) return <p role="alert">Aggregati Firebase non validi. Grafici non disponibili.</p>;
-  const products=PRODUCTS.map(p=>({
-    ...p,quantity:aggregate.byProduct[p.key]?.quantity??0,revenue:aggregate.byProduct[p.key]?.revenue??0,
-  }));
+  if(!validateSalesAggregate(aggregate)||!verifySalesBreakdowns(aggregate)) return <p role="alert">Aggregati Firebase non validi o non riconciliati. Grafici non disponibili.</p>;
+  // Preserve every observed product rather than hiding unknown codes.
+  const productNames=new Map(PRODUCTS.map(product=>[product.key,product.label]));
+  const products=Object.entries(aggregate.byProduct).map(([key,value])=>({
+    key,label:productNames.get(key)??key,quantity:value.quantity,revenue:value.revenue,
+  })).sort((a,b)=>b.revenue-a.revenue);
   const regions=Object.entries(aggregate.byReportingArea).map(([key,value])=>({
     key,label:AREA_NAMES[key]??key,quantity:value.quantity,revenue:value.revenue,
   })).sort((a,b)=>b.revenue-a.revenue);
+  const channels=Object.entries(aggregate.byChannel).map(([key,value])=>({
+    key,label:CHANNEL_NAMES[key]??key,quantity:value.quantity,revenue:value.revenue,
+  })).sort((a,b)=>b.quantity-a.quantity);
   return <div className="grid gap-6 lg:grid-cols-2">
     <RevenueBars title="Fatturato per tipologia di biglietto" rows={products}/>
     <RevenueBars title="Fatturato per area" rows={regions}/>
+    <QuantityBars title="Biglietti per tipologia" rows={products}/>
+    <QuantityBars title="Biglietti per area" rows={regions}/>
+    <QuantityBars title="Biglietti per canale di vendita" rows={channels}/>
+    <RevenueBars title="Fatturato per canale di vendita" rows={channels}/>
     {aggregate.unmappedProducts.length>0 && <p className="lg:col-span-2 text-sm" role="status">
       Attenzione: {aggregate.unmappedProducts.length} tipologie non mappate nei dati Firebase.
     </p>}
