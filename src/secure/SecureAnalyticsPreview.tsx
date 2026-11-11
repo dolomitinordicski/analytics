@@ -9,6 +9,8 @@ import {
 } from '../services/auth';
 import { loadLiveAnalyticsSnapshot, type LiveAnalyticsSnapshot } from '../services/liveAnalytics';
 import { SecureSalesCharts, validateSalesAggregate } from './SecureSalesCharts';
+import { SecureKpAnalysis } from './SecureKpAnalysis';
+import { SecureAnnualComparison } from './SecureAnnualComparison';
 
 // Isolated INTERNAL PREVIEW: no import of App, parity, publicBaseline or
 // analyticsData.ts. This is deliberately not a replacement for the full
@@ -70,7 +72,11 @@ export function SecureAnalyticsPreview() {
         <div className="rounded-xl border p-5"><div>Fatturato totale</div><strong className="text-3xl">{validTotals ? euro(validTotals.totalRevenue) : '—'}</strong></div>
         <div className="rounded-xl border p-5"><div>Prezzo medio</div><strong className="text-3xl">{validTotals ? euro(validTotals.averageTicketPrice) : '—'}</strong></div>
         <div className="sm:col-span-3">{totals && <SecureSalesCharts aggregate={totals} />}</div>
-        <p className="sm:col-span-3 text-sm">Fonte: {view.data?.sales?.source ?? 'non disponibile'}. Nessun fallback a dataset statici. Le viste per area e i grafici rimanenti richiedono collaudo prima della sostituzione.</p>
+        <div className="sm:col-span-3 grid gap-6 lg:grid-cols-2">
+          {view.data && <SecureKpAnalysis snapshot={view.data}/>}
+          {view.data && <SecureAnnualComparison snapshot={view.data}/>}
+        </div>
+        <p className="sm:col-span-3 text-sm">Fonte: {view.data?.sales?.source ?? 'non disponibile'}. Nessun fallback a dataset statici. Le viste per area e il confronto completo con la dashboard storica richiedono collaudo prima della sostituzione.</p>
       </section>}
     </div>
   </main>;
