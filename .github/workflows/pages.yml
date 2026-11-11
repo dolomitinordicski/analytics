@@ -40,13 +40,25 @@ jobs:
         run: npm run build:partner
       - name: Check isolated Partner distribution
         run: npm run check:partner-assets
+      # PR-only candidate: inspect the isolated partner output without modifying Pages.
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-partner-candidate
+          path: ./dist-partner
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve existing Workspace entrypoint
+        run: test -s dist/index.html
       - if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          # Never upload dist: it still bundles historical internal datasets.
-          path: ./dist-partner
+          # Compatibility release only. Do not switch to dist-partner until
+          # the internal dashboard has a verified replacement and rollback.
+          # The original Pages entrypoint is still required by DNS Workspace.
+          path: ./dist
 
   deploy:
     if: github.event_name != 'pull_request'
